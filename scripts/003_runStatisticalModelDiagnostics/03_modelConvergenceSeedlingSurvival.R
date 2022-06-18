@@ -32,10 +32,9 @@ outputDirectory = "outputs/003_runStatisticalModelDiagnostics/01_tracePlots/3_se
 
 f(x = "mu0", model = "seedlingSurvival")
 f(x = "sigma0", model = "seedlingSurvival")
-f(x = "sigma_transect", model = "seedlingSurvival")
 
 # - +Recover chains ----
-all.chains = MCMCchains(mcmcSamples, params = c("mu0", "sigma0", "sigma_transect"), mcmc.list = TRUE)
+all.chains = MCMCchains(mcmcSamples, params = c("mu0", "sigma0"), mcmc.list = TRUE)
 
 # - +R-hat ----
 par(mfrow = c(1, 1))

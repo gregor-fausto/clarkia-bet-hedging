@@ -19,22 +19,6 @@ library(tidyr)
 library(HDInterval)
 library(bayesplot)
 
-
-# -------------------------------------------------------------------
-# Functions for use when analyzing data
-# -------------------------------------------------------------------
-posterior.mode = function(x){
-  if(!is.na(x[1])){ x.max=max(x)
-  x.min=min(x)
-  dres <- density( x ,from = x.min, to = x.max)
-  modeParam <- dres$x[which.max(dres$y)]}else if(is.na(x[1])){
-    modeParam <- NA
-  }
-  return(modeParam)
-}
-
-modeEst <- function(x){return(apply(x,2,posterior.mode))}
-
 # ---
 # - Read in germination and survival estimates ----
 # ---
@@ -63,7 +47,7 @@ rs.mode <- lapply(rs,apply,2,posterior.mode)
 # ---
 # - Site names ----
 # ---
-position<-read.csv(file="~/Dropbox/projects/clarkiaScripts/data/reshapeData/siteAbiotic.csv",header=TRUE) %>% 
+position<-read.csv(file="data/siteAbioticData.csv",header=TRUE) %>% 
   dplyr::select(site,easting) %>%
   dplyr::mutate(easting=easting/1000)
 

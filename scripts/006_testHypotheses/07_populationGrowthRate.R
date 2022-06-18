@@ -44,7 +44,7 @@ rs <- readRDS("/Users/Gregor/Dropbox/clarkiaSeedBanks/analysis/outputs/006_deriv
 # ---
 # - Site names ----
 # ---
-position<-read.csv(file="~/Dropbox/projects/clarkiaScripts/data/reshapeData/siteAbiotic.csv",header=TRUE) %>% 
+position<-read.csv(file="data/siteAbioticData.csv",header=TRUE) %>% 
   dplyr::select(site,easting) %>%
   dplyr::mutate(easting=easting/1000)
 

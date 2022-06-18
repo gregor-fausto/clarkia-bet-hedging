@@ -14,47 +14,6 @@ library(HDInterval)
 library(bayesplot)
 library(rethinking)
 
-# -------------------------------------------------------------------
-# Functions for use when analyzing data
-# -------------------------------------------------------------------
-temporal_variance <- function(x,fun=var){
-  apply(x,1,fun)
-}
-
-cols_fun <- function(x,fun=var){
-  apply(x,2,fun)
-}
-
-# geometric var
-gsd <- function(x){
-  y <- exp(sd(log(x)))
-  return(y)
-}
-
-# sample based calculation of gsd
-gsd.am <- function(x){
-  x=x+.5
-  n = length(x[!is.na(x)])
-  mu = exp(mean(log(x),na.rm=TRUE))
-  y <- exp(sqrt(sum((log(x/mu))^2,na.rm=TRUE)/(n-1)))
-  return(y)
-}
-
-f<-function(x="param"){
-  chain<-MCMCchains(zc,params = x)
-  BCI <- t(apply(p,2,FUN = function(x) quantile(x, c(.025, .5, .975))))
-  return(BCI)
-}
-
-posterior.mode = function(x){
- if(!is.na(x[1])){ x.max=max(x)
-  x.min=min(x)
-  dres <- density( x ,from = x.min, to = x.max)
-  modeParam <- dres$x[which.max(dres$y)]}else if(is.na(x[1])){
-    modeParam <- NA
-  }
-  return(modeParam)
-}
 
 # -------------------------------------------------------------------
 # Read in samples from posterior distributions
@@ -80,7 +39,7 @@ rs.mode <- lapply(rs,apply,2,posterior.mode)
 # ---
 # - Site names by position ----
 # ---
-siteAbiotic <- read.csv("data/siteAbiotic.csv",header=TRUE)
+siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 
 position<-siteAbiotic %>% 
   dplyr::select(site,easting) %>%
@@ -874,6 +833,9 @@ dev.off()
 # # # 
 # # # ## Reproductive success
 # # # lapply(aboveground,)
+# # # temporal_variance <- function(x,fun=var){
+# # #   apply(x,1,fun)
+# # # }
 # # # 
 # # # d<-lapply(aboveground,temporal_variance,fun=gsd)
 # # # reproductiveSuccess<-matrix(unlist(d), ncol = 20, byrow = FALSE)

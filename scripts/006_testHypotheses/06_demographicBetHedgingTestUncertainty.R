@@ -17,19 +17,6 @@ library(tidyverse)
 library(magrittr)
 library(bayesplot)
 library(rethinking)
-# -------------------------------------------------------------------
-# Functions for use when analyzing data
-# -------------------------------------------------------------------
-posterior.mode = function(x){
-  if(!is.na(x[1])){ x.max=max(x)
-  x.min=min(x)
-  dres <- density( x ,from = x.min, to = x.max)
-  modeParam <- dres$x[which.max(dres$y)]}else if(is.na(x[1])){
-    modeParam <- NA
-  }
-  return(modeParam)
-}
-
 
 # ---
 # - Read in germination and survival estimates ----
@@ -45,7 +32,7 @@ rs <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePo
 # ---
 # - Site names ----
 # ---
-siteAbiotic <- read.csv("data/siteAbiotic.csv",header=TRUE)
+siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 siteNames <- siteAbiotic$site
 
 # ---
