@@ -9,7 +9,7 @@
 rm(list=(ls())) # if using in source(script), include variables to keep
 options(stringsAsFactors = FALSE)
 
-tmpDataDirectory = "outputs/001_prepareDataForModels/"
+fullDataDirectory = "outputs/001_prepareDataForModels/"
 mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
 modelDataDirectory = "outputs/002_fitStatisticalModels/data/"
 outputDirectory = "outputs/004_checkStatisticalModels/"
@@ -25,16 +25,15 @@ library(rethinking)
 # - Read in what's needed for plotting ----
 
 # - +Read in data ----
-tmpDataDirectory <- paste0(tmpDataDirectory,list.files(tmpDataDirectory))
-data <- readRDS(tmpDataDirectory[[grep("fruitsPerPlantAllPlants.RDS",tmpDataDirectory)]])
-
+fullDataDirectory <- paste0(fullDataDirectory,list.files(fullDataDirectory))
+data <- readRDS(fullDataDirectory[[grep("fruitsPerPlantAllPlants.RDS",fullDataDirectory)]])
 
 # - +Read in MCMC samples ----
 mcmcSampleDirectory <- paste0(mcmcDirectory,list.files(mcmcDirectory))
 mcmcSamples <- readRDS(mcmcSampleDirectory[[grep("fruitsPerPlantPosteriorSamples.RDS",mcmcSampleDirectory)]])
 
 # - +Read in site names ----
-siteAbiotic <- read.csv("data/siteAbiotic.csv",header=TRUE)
+siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 # create variable that arranges populations by easting
 siteIndex <- order(siteAbiotic$easting,decreasing=FALSE)
 siteNames = unique(siteAbiotic$site)[siteIndex]
