@@ -1,11 +1,32 @@
 # -------------------------------------------------------------------
-# Density-independent model of germination
+# Density-independent model of germination + uncertainty
 # -------------------------------------------------------------------
+
+# - Environment ----
 rm(list=ls(all=TRUE)) # clear R environment
 options(stringsAsFactors = FALSE,max.print=100000)
-# -------------------------------------------------------------------
-# Loading required packages
-# -------------------------------------------------------------------
+
+# - Function to calculate one step population growth rate ----
+
+fitness <- function(g=g1,s0=s0,s1=s1,s2=s2,s3=s3,rs=rs){
+  p1 = g*rs*s0*s1
+  p2 = (1-g)*(s2*s3)
+  return(as.numeric(p1+p2))
+}
+
+# - Site names ----
+position<-read.csv(file="data/siteAbioticData.csv",header=TRUE) %>%
+  dplyr::select(site,easting) %>%
+  dplyr::mutate(easting=easting/1000)
+
+siteNames <- unique(position$site)
+
+# - Create data frame to match sites and years  ----
+siteIndex <- data.frame(site=siteNames,siteIndex=1:20)
+yearIndex <- data.frame(year=2006:2020,yearIndex=1:15)
+index=expand.grid(1:20,1:15)
+
+# - Libraries ----
 library(MCMCvis)
 library(dplyr)
 library(reshape2)
@@ -32,27 +53,6 @@ s3.hat  <- apply(s3,2,posterior.mode)
 s0.hat  <- apply(s0,2,posterior.mode)
 rs.hat <- lapply(rs,apply,2,posterior.mode)
 
-# - Read in the site names ----
-
-siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
-
-position<-siteAbiotic %>% 
-  dplyr::select(site,easting) %>%
-  dplyr::mutate(easting=easting/1000)
-
-siteNames = unique(position$site)
-
-siteIndex <- data.frame(site=siteNames,siteIndex=1:20)
-yearIndex <- data.frame(year=2006:2020,yearIndex=1:15)
-index=expand.grid(1:20,1:15)
-
-# - Function to calculate fitness ----
-
-fitness <- function(g=g1,s0=s0,s1=s1,s2=s2,s3=s3,rs=rs){
-  p1 = g*rs*s0*s1
-  p2 = (1-g)*(s2*s3)
-  return(as.numeric(p1+p2))
-}
 
 
 # - Compare 2 methods for calculating the optimal value of germination ----

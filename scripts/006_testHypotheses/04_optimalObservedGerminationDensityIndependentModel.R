@@ -3,6 +3,17 @@
 # -------------------------------------------------------------------
 rm(list=ls(all=TRUE)) # clear R environment
 options(stringsAsFactors = FALSE,max.print=100000)
+
+# - Source functions for analysis ----
+source("scripts/006_testHypotheses/00_utilityFunctions.R")
+
+# - Function to calculate one-step population growth rate based on vital rates ----
+fitness <- function(g=g1,s0=s0,s1=s1,s2=s2,s3=s3,rs=rs){
+  p1 = g*rs*s0*s1
+  p2 = (1-g)*(s2*s3)
+  return(as.numeric(p1+p2))
+}
+
 # -------------------------------------------------------------------
 # Loading required packages
 # -------------------------------------------------------------------
@@ -13,52 +24,26 @@ library(ggplot2)
 library(reshape2)
 library(tidyr)
 library(HDInterval)
-library(bayesplot)
+library(bayesplot
 
-# -------------------------------------------------------------------
-# Functions for use when analyzing data
-# -------------------------------------------------------------------
-temporal_variance <- function(x,fun=var){
-  apply(x,1,fun)
-}
+  # - Read in site abiotic data ----
 
-cols_fun <- function(x,fun=var){
-  apply(x,2,fun)
-}
+  siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 
-# geometric var
-gsd <- function(x){
-  y <- exp(sd(log(x)))
-  return(y)
-}
+  position<-siteAbiotic %>%
+    dplyr::select(site,easting) %>%
+    dplyr::mutate(easting=easting/1000)
 
+  siteNames = unique(position$site)
 
-f<-function(x="parm",chain){
-  chain<-MCMCchains(chain=belowground,params = x)
-  p<-boot::inv.logit(chain)
-  BCI <- t(apply(p,2,FUN = function(x) quantile(x, c(.025, .5, .975))))
-  return(BCI)
-}
+  # - Create index of site numbers and years ----
 
-# geometric mean from 
-# https://stackoverflow.com/questions/2602583/geometric-mean-is-there-a-built-in
-gm_mean = function(x, na.rm=TRUE){
-exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
-}
+  siteIndex <- data.frame(site=siteNames,siteIndex=1:20)
+  yearIndex <- data.frame(year=2006:2020,yearIndex=1:15)
+  index=expand.grid(1:20,1:15)
 
-gm_mean = function(x, na.rm=TRUE){
-  exp(sum(log(x), na.rm=na.rm) / length(x))
-}
+  # - Read in samples from posterior distribution ----
 
-# geometric mean from +.5 to 0
-# gm_mean = function(x, na.rm=TRUE){
-#   exp(sum(log(x+.5)) / length(x))
-# }
-
-
-# -------------------------------------------------------------------
-
-# read in samples from posterior distributions
 s0 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s0-population-level.RDS")
 g1 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/g1-population-level.RDS")
 s1 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s1-population-level.RDS")
@@ -66,38 +51,6 @@ s2 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePo
 s3 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s3-population-level.RDS")
 rs <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/reproductiveSuccess-population-year-level-mat.RDS")
 
-
-siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
-
-position<-siteAbiotic %>% 
-  dplyr::select(site,easting) %>%
-  dplyr::mutate(easting=easting/1000)
-
-siteNames = unique(position$site)
-
-siteIndex <- data.frame(site=siteNames,siteIndex=1:20)
-yearIndex <- data.frame(year=2006:2020,yearIndex=1:15)
-index=expand.grid(1:20,1:15)
-
-# -------------------------------------------------------------------
-
-fitness <- function(g=g1,s0=s0,s1=s1,s2=s2,s3=s3,rs=rs){
-  p1 = g*rs*s0*s1
-  p2 = (1-g)*(s2*s3)
-  return(as.numeric(p1+p2))
-}
-
-posterior.mode = function(x){
-  if(!is.na(x[1])){ x.max=max(x)
-  x.min=min(x)
-  dres <- density( x ,from = x.min, to = x.max)
-  modeParam <- dres$x[which.max(dres$y)]}else if(is.na(x[1])){
-    modeParam <- NA
-  }
-  return(modeParam)
-}
-
-modeEst <- function(x){return(apply(x,2,posterior.mode))}
 
 # get mode from full posterior and calculate var in RS based on modes
 g1.hat  <- apply(g1,2,posterior.mode)
@@ -128,6 +81,7 @@ for( k in allPopulations){
 # calculate harmonic mean for each population
 # -------------------------------------------------------------------
 
+# function for harmonic mean
 f = function(x){1/mean(1/x,na.rm=TRUE)}
 
 pop.harmonicMean =c ()
@@ -166,11 +120,11 @@ for( k in 1:20){
   # - ++get the population index  ----
  # pop.index=index[,1]==k
   pop.index = k
-  
+
   # - ++draw the 15 years of reproductive success estimates  ----
   y_t = rs.hat[[pop.index]]
   y_t = y_t[!is.na(y_t)]
-  
+
   # - ++draw 10000 samples for reproductive success with replacement  ----
   y_t.resample = sample(y_t,10000,replace=TRUE)
 
@@ -183,11 +137,6 @@ for( k in 1:20){
   g.sites[[k]] <- g.mat
 }
 
-
-par(mfrow=c(1,1))
-#plot(g.seq,apply(g.mat,2,gm_mean))
-
-# apply(g.mat,2,prod)
 # -------------------------------------------------------------------
 # Plots of geometric mean fitness
 # note that without reproductive failure fitness
@@ -237,9 +186,8 @@ dev.off()
 
 optimalGerminationFractions = data.frame(site=siteNames,optima=optima,g1.hat=g1.hat)
 
-outputDirectory <- "~/Dropbox/clarkiaSeedBanks/analysis/outputs/007_hypothesisTesting/objects-reanalysis/"
+outputDirectory <- "outputs/006_hypothesisTesting/"
 saveRDS(optimalGerminationFractions,paste0(outputDirectory,"optimalGerminationFractions.RDS"))
-
 
 pt12 = 1
 pt10 = 10/12
@@ -249,13 +197,12 @@ pt7 = 7/12
 pt6 = 6/12
 pt5 = 5/12
 
-# tiff(filename=paste0("/Users/Gregor/Dropbox/clarkiaSeedBanks/analysis/products/figures/optimalGerminationFraction.tif"),
-#      height=3.75,width=3.5,units="in",res=300,compression="lzw",pointsize=12)
+tiff(filename=paste0("products/figures/optimalGerminationFraction.tif"),
+     height=3.75,width=3.5,units="in",res=300,compression="lzw",pointsize=12)
 
 par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2.2,.7,1)+.1,mgp=c(3,.45,0))
 
 plot(NA,NA,xlim=c(0,1),ylim=c(0,1),
-      #cex.lab = 1.25, cex.axis = 1,    
      xlab = "",
      ylab = "",bty='n',
      xaxt= "n", yaxt="n",)
@@ -265,9 +212,6 @@ points(x=optima,y=g1.hat,pch=21,col='black',bg='white',cex=2.5)
 # Now, define a custom axis
 d.plot=data.frame(optima,
                   g1.hat,site=siteNames)
-# d.plot[c(3:6,10,13,11),1]=1.025
-# d.plot[c(3,10,11,13),2]=c(.12,.095,.089,.08)
-# d.plot[12,c(1:2)]=d.plot[12,c(1:2)]*c(1,1.05)
 
 text(d.plot[,1:2],siteNames,cex=4/12)
 
@@ -292,14 +236,4 @@ mtext("Predicted germination fraction",
 
 mtext("A.", adj = 0, cex=pt10)
 
-#dev.off()
-
-
-
-plot(position$easting,optima)
-abline(h=1,col='gray90')
-points(position$easting,mode.lambda.s.sb,pch=16)
-segments(x0=position$easting,y0=HPDI.lambda.s.sb[1,],y1=HPDI.lambda.s.sb[2,])
-
-
-
+dev.off()

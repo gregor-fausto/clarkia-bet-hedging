@@ -1,26 +1,35 @@
 #################################################################################
-################################################################################
-################################################################################
-# Simulation
-#
-# Scripts by Gregor Siegmund
-# fausto.siegmund@gmail.com
-# last updated 06-01-2021
-#################################################################################
-#################################################################################
+# Script to conduct demographic bet hedging test + uncertainty
 #################################################################################
 
-library(tidyverse)
+# - Environment ----
+rm(list=ls(all=TRUE)) # clear R environment
+options(stringsAsFactors = FALSE,max.print=100000)
+
+# - Source functions for analysis ----
+source("scripts/006_testHypotheses/00_utilityFunctions.R")
+
+# - Libraries ----
+library(rjags) # jags interface
 library(MCMCvis)
-library(tidybayes)
 library(tidyverse)
-library(magrittr)
+library(reshape2)
+library(HDInterval)
 library(bayesplot)
-library(rethinking)
 
-# ---
+# - Site names ----
+position<-read.csv(file="data/siteAbioticData.csv",header=TRUE) %>%
+  dplyr::select(site,easting) %>%
+  dplyr::mutate(easting=easting/1000)
+
+siteNames <- unique(position$site)
+
+# - Create data frame to match sites and years  ----
+siteIndex <- data.frame(site=siteNames,siteIndex=1:20)
+yearIndex <- data.frame(year=2006:2020,yearIndex=1:15)
+index=expand.grid(1:20,1:15)
+
 # - Read in germination and survival estimates ----
-# ---
 
 s0 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s0-population-level.RDS")
 g1 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/g1-population-level.RDS")
@@ -29,22 +38,7 @@ s2 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePo
 s3 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s3-population-level.RDS")
 rs <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/reproductiveSuccess-population-year-level-mat.RDS")
 
-# ---
-# - Site names ----
-# ---
-siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
-siteNames <- siteAbiotic$site
-
-# ---
-# - Create data frame to match sites and years  ----
-# ---
-siteIndex <- data.frame(site=siteNames,siteIndex=1:20)
-yearIndex <- data.frame(year=2006:2020,yearIndex=1:15)
-index=expand.grid(1:20,1:15)
-
-# ---
 # - Test of bet hedging with equal resampling; pooled estimates  ----
-# ---
 
 # - +Estimate posterior mode for seed survival, germination, and reproductive success  ----
 g1.hat  <- apply(g1,2,posterior.mode)
@@ -78,21 +72,21 @@ lambda.a.point = lambda.a.nosb.point = c()
 for( k in 1:20){
   # - ++get the population index  ----
   pop.index=k
-  
+
   # - ++draw the 15 years of reproductive success estimates  ----
   y_t = rs.hat[[pop.index]]
   y_t = y_t[!is.na(y_t)]
-  
+
   lambda.a.point[k] = mean(g1.hat[k]*y_t*s0.hat[k]*s1.hat[k]+(1-g1.hat[k])*s2.hat[k]*s3.hat[k])
   lambda.a.nosb.point[k] = mean(y_t*s0.hat[k]*s1.hat[k])
-  
+
   # - ++draw 10000 samples for reproductive success with replacement  ----
   y_t.resample = sample(y_t,1000,replace=TRUE)
-  
+
   # - ++for each resample year, calculate the population growth rate with and without the seed bank  ----
   fit.point[,k] = g1.hat[k]*y_t.resample*s0.hat[k]*s1.hat[k]+(1-g1.hat[k])*s2.hat[k]*s3.hat[k]
   fit.nosb.point[,k] = y_t.resample*s0.hat[k]*s1.hat[k]
-  
+
   # - ++calculate the stochastic population growth rate by approximation, with and without the seed bank  ----
   lambda.point[k] = exp(sum(log(fit.point[,k]))/1000)
   lambda.nosb.point[k] = exp(sum(log(fit.nosb.point[,k]))/1000)
@@ -117,29 +111,29 @@ lambda.a = lambda.a.nosb = matrix(NA,ncol=20,nrow=length(sample.index))
 for( k in 1:20){
   # - ++get the population index  ----
   pop.index=k
-  
+
   # - ++draw the 15 years of reproductive success estimates  ----
   y_t = rs[[pop.index]][sample.index,]
   y_t = y_t[,!is.na(y_t[1,])]
-  
+
   # - ++calculate the arithmetic mean population growth rate with and without the seed bank  ----
   lambda.a.mat=g1[sample.index,k]*y_t*s0[sample.index,k]*s1[sample.index,k]+(1-g1[sample.index,k])*s2[sample.index,k]*s3[sample.index,k]
   lambda.a[,k] = apply(lambda.a.mat,1,mean)
-  
+
   lambda.a.nosb.mat = y_t*s0[sample.index,k]*s1[sample.index,k]
   lambda.a.nosb[,k] = apply(lambda.a.nosb.mat,1,mean)
-  
+
 }
 
 
 # - +Summary statistics on lambda_a with sb ----
-# - ++Calculate the 95% highest posterior density interval ----
+# - ++Calculate the 68% highest posterior density interval ----
 HPDI.lambda.a.sb <- apply(lambda.a,2,FUN = function(x) hdi(x, .68))
 # - ++Calculate the posterior mode ----
 mode.lambda.a.sb <- apply(lambda.a,2, FUN = posterior.mode)
 
 # - +Summary statistics on lambda_a without sb----
-# - ++Calculate the 95% highest posterior density interval ----
+# - ++Calculate the 68% highest posterior density interval ----
 HPDI.lambda.a.nosb <- apply(lambda.a.nosb,2,FUN = function(x) hdi(x, .68))
 # - ++Calculate the posterior mode ----
 mode.lambda.a.nosb <- apply(lambda.a.nosb,2, FUN = posterior.mode)
@@ -155,7 +149,7 @@ var.nosb = array(NA,dim=c(length(sample.index),20))
 for( k in 1:20){
   # - ++get the population index  ----
   pop.index=k
-  
+
   # - ++draw the 15 years of reproductive success estimates  ----
   y_t = rs[[pop.index]][sample.index,]
   y_t = y_t[,!is.na(y_t[1,])]
@@ -164,23 +158,23 @@ for( k in 1:20){
   s1.tmp = s1[sample.index,k]
   s2.tmp = s2[sample.index,k]
   s3.tmp = s3[sample.index,k]
-  
+
   for(j in 1:length(sample.index)){
-    
+
     # - ++draw 10000 samples for reproductive success with replacement  ----
     y_t.resample = sample(y_t[j,],1000,replace=TRUE)
-    
+
     # - ++for each resample year, calculate the population growth rate with and without the seed bank  ----
     fit = g1.tmp[j]*y_t.resample*s0.tmp[j]*s1.tmp[j]+(1-g1.tmp[j])*s2.tmp[j]*s3.tmp[j]
     fit.nosb = y_t.resample*s0.tmp[j]*s1.tmp[j]
-    
+
     # - ++calculate the stochastic population growth rate by approximation, with and without the seed bank  ----
     lambda.s.sb[j,k] = exp(sum(log(fit))/1000)
     lambda.s.nosb[j,k] = exp(sum(log(fit.nosb))/1000)
-    
+
     var.sb[j,k] = var(fit)
     var.nosb[j,k] =  var(fit.nosb)
-    
+
   }
 }
 
@@ -241,13 +235,14 @@ pt7 = 7/12
 pt6 = 6/12
 pt5 = 5/12
 
+# - PLOT FIGURE ----
 
-# tiff(filename=paste0("/Users/Gregor/Dropbox/clarkiaSeedBanks/analysis/products/figures/betHedgingTest-robust.tif"),
-#     height=2.5,width=7,units="in",res=300,compression="lzw",pointsize=12)
-tiff(filename=paste0("~/Desktop/figures/betHedgingTest-robust.tif"),
+tiff(filename=paste0("products/figures/betHedgingTest-robust.tif"),
      height=2.5,width=7,units="in",res=300,compression="lzw",pointsize=12)
 
 par(mfrow=c(1,3),mar=c(0,3,0,0)+.1,oma=c(2.5,0,.8,0)+.1,mgp=c(3,.45,0))
+
+# - +PANEL A ----
 plot(mode.lambda.a.sb,mode.lambda.a.nosb,
      pch=21, cex = .75, bg='white', type='n',
      xlim=c(0,7),ylim=c(0,40),
@@ -281,8 +276,7 @@ mtext(expression(lambda[a] ~ 'with seedbank'),
 abline(a=0,b=1,lty='dotted')
 mtext("A.", adj = 0, cex=pt10)
 
-#mtext("A. Arithmetic population growth rate\nis greater without a seedbank",adj=0,cex=.75)
-
+# - +PANEL B ----
 plot(NA,type='n',
      pch=21, cex = .75, bg='white',
      xlim=c(0,80),ylim=c(0,3500),
@@ -316,9 +310,7 @@ mtext(expression(Var(lambda) ~ 'with seedbank'),
 abline(a=0,b=1,lty='dotted')
 mtext("B.", adj = 0, cex=pt10)
 
-#mtext("B. Variation in population growth\nis greater without a seedbank",adj=0,cex=.75)
-
-
+# - +PANEL C ----
 plot(mode.lambda.s.sb,mode.lambda.s.nosb,
      type='n',
      xlim=c(0,3.5),ylim=c(0,9),
@@ -327,7 +319,6 @@ plot(mode.lambda.s.sb,mode.lambda.s.nosb,
      xaxt= "n", yaxt="n",
      cex.lab = pt10, cex.axis = pt8)
 abline(a=0,b=1,lty='dotted')
-
 
 d.plot=data.frame(lambda=mode.lambda.s.sb,
                   lambda.nosb=mode.lambda.s.nosb)
@@ -356,11 +347,4 @@ mtext(expression(lambda[s] ~ 'with seedbank'),
 
 mtext("C.", adj = 0, cex=pt10)
 
-
-#mtext("C. Stochastic population growth is\ngreater without a seedbank (not expected)",adj=0,cex=.75)
-
-
 dev.off()
-
-
-
