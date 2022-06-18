@@ -13,52 +13,6 @@ library(tidyr)
 library(HDInterval)
 library(bayesplot)
 
-# -------------------------------------------------------------------
-# Functions for use when analyzing data
-# -------------------------------------------------------------------
-temporal_variance <- function(x,fun=var){
-  apply(x,1,fun)
-}
-
-cols_fun <- function(x,fun=var){
-  apply(x,2,fun)
-}
-
-# geometric var
-gsd <- function(x){
-  y <- exp(sd(log(x)))
-  return(y)
-}
-
-
-f<-function(x="parm",chain){
-  chain<-MCMCchains(chain=belowground,params = x)
-  p<-boot::inv.logit(chain)
-  BCI <- t(apply(p,2,FUN = function(x) quantile(x, c(.025, .5, .975))))
-  return(BCI)
-}
-
-# geometric mean from 
-# https://stackoverflow.com/questions/2602583/geometric-mean-is-there-a-built-in
-gm_mean = function(x, na.rm=TRUE){
-  exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
-}
-
-gm_mean = function(x, na.rm=TRUE){
-  exp(sum(log(x), na.rm=na.rm) / length(x))
-}
-
-posterior.mode = function(x){
-  if(!is.na(x[1])){ x.max=max(x)
-  x.min=min(x)
-  dres <- density( x ,from = x.min, to = x.max)
-  modeParam <- dres$x[which.max(dres$y)]}else if(is.na(x[1])){
-    modeParam <- NA
-  }
-  return(modeParam)
-}
-
-
 # - Samples from the posterior distribution ----
 
 s0 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s0-population-level.RDS")
@@ -80,7 +34,7 @@ rs.hat <- lapply(rs,apply,2,posterior.mode)
 
 # - Read in the site names ----
 
-siteAbiotic <- read.csv("data/siteAbiotic.csv",header=TRUE)
+siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 
 position<-siteAbiotic %>% 
   dplyr::select(site,easting) %>%
