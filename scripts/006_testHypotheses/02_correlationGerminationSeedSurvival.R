@@ -17,22 +17,6 @@ library(HDInterval)
 library(bayesplot)
 
 # ---
-# - Functions to analyze data ----
-# ---
-
-cols_fun <- function(x,fun=var){
-  apply(x,2,fun)
-}
-
-posterior.mode = function(x){
-  x.max=max(x)
-  x.min=min(x)
-  dres <- density( x ,from = x.min, to = x.max)
-  modeParam <- dres$x[which.max(dres$y)]
-  return(modeParam)
-}
-
-# ---
 # - Read in germination and survival estimates ----
 # ---
 
@@ -43,7 +27,7 @@ s3 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePo
 # ---
 # - Site names by position ----
 # ---
-siteAbiotic <- read.csv("data/siteAbiotic.csv",header=TRUE)
+siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 
 position<-siteAbiotic %>% 
   dplyr::select(site,easting) %>%

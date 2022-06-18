@@ -67,7 +67,7 @@ s3 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePo
 rs <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/reproductiveSuccess-population-year-level-mat.RDS")
 
 
-siteAbiotic <- read.csv("data/siteAbiotic.csv",header=TRUE)
+siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 
 position<-siteAbiotic %>% 
   dplyr::select(site,easting) %>%
