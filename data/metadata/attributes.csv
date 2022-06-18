@@ -1,0 +1,62 @@
+fileName,variableName,description,unitText
+countFruitsPerPlantAllPlants.csv,site,Site acronym,NA
+countFruitsPerPlantAllPlants.csv,countFruitNumberPerPlant,Count of fruits on a plant; the count combined undamaged and damaged fruits into a single value when fruits were surveyed in the field,NA
+countFruitsPerPlantAllPlants.csv,permanentPlot,"Binary variable indicating whether the plant on which fruits were counted was growing in one of 30 permanent plots at the site (1=true) or located in either an additional, haphazardly located plot or found by surveying the site (0=false)",NA
+countFruitsPerPlantAllPlants.csv,damage,Binary variable indicating whether the fruit that was used to count seeds was undamaged (0=false) or damaged (1=true); all observations in this dataset have NA here because the count is of total fruit equivalents,NA
+countFruitsPerPlantAllPlants.csv,year,Year in which observations were made,NA
+countFruitsPerPlantFromPermanentPlots.csv,site,Site acronym,NA
+countFruitsPerPlantFromPermanentPlots.csv,transect,Transect number,NA
+countFruitsPerPlantFromPermanentPlots.csv,position,Plot number,NA
+countFruitsPerPlantFromPermanentPlots.csv,plantNumber,Variable indexing the plants on which fruits per plant was recorded; the index starts at 1 in each permanent plot in each year at each site,NA
+countFruitsPerPlantFromPermanentPlots.csv,countFruitsPerPlant,Count of fruits on a plant; the count combined undamaged and damaged fruits into a single value when fruits were surveyed in the field,NA
+countFruitsPerPlantFromPermanentPlots.csv,year,Year in which observations were made,NA
+countSeedPerFruit.csv,site,Site acronym,NA
+countSeedPerFruit.csv,year,Year in which observations were made,NA
+countSeedPerFruit.csv,damaged,Binary variable indicating whether seeds were counted from a fruit that was undamaged (0=false) or damaged (1=true),NA
+countSeedPerFruit.csv,sdno,Count of seeds,NA
+countUndamagedDamagedFruitsPerPlantAllPlants.csv,site,Site acronym,NA
+countUndamagedDamagedFruitsPerPlantAllPlants.csv,countUndamagedFruitNumberPerPlant,Count of undamaged fruits on a plant,NA
+countUndamagedDamagedFruitsPerPlantAllPlants.csv,countDamagedFruitNumberPerPlant,Count of damaged fruits on a plant,NA
+countUndamagedDamagedFruitsPerPlantAllPlants.csv,permanentPlot,"Binary variable indicating whether the plant on which fruits were counted was growing in one of 30 permanent plots at the site (1=true, 0=false)",NA
+countUndamagedDamagedFruitsPerPlantAllPlants.csv,year,Year in which observations were made,NA
+countUndamagedDamagedFruitsPerPlantFromPermanentPlots.csv,site,Site acronym,NA
+countUndamagedDamagedFruitsPerPlantFromPermanentPlots.csv,transect,Transect number,NA
+countUndamagedDamagedFruitsPerPlantFromPermanentPlots.csv,position,Plot number,NA
+countUndamagedDamagedFruitsPerPlantFromPermanentPlots.csv,plantNumber,Variable indexing the plants on which fruits per plant was recorded; the index starts at 1 in each permanent plot in each year at each site,NA
+countUndamagedDamagedFruitsPerPlantFromPermanentPlots.csv,countUndamagedFruitsPerPlant,Count of undamaged fruits on a plant,NA
+countUndamagedDamagedFruitsPerPlantFromPermanentPlots.csv,year,Year in which observations were made,NA
+countUndamagedDamagedFruitsPerPlantFromPermanentPlots.csv,countDamagedFruitsPerPlant,Count of damaged fruits on a plant,NA
+seedBagsData.csv,site,Site acronym,NA
+seedBagsData.csv,transect,Transect number,NA
+seedBagsData.csv,position,Plot number,NA
+seedBagsData.csv,bagNo,Bag number,NA
+seedBagsData.csv,round,Experimental round in which the bag was buried,NA
+seedBagsData.csv,yearStart,Year in which the experimental round started; bags were buried In October of this year,NA
+seedBagsData.csv,age,Number of years the bag had been buried when it was collected from the field in October,NA
+seedBagsData.csv,yearData,Year in which observations were made for this bag; the bag was dug up in January and October of this year,NA
+seedBagsData.csv,seedlingJan,Count of seedlings in the bag when it was dug up in January,NA
+seedBagsData.csv,intactJan,"Count of intact, ungerminated seeds in the bag when it was dug up in January",NA
+seedBagsData.csv,totalJan,"Sum of the count of seedlings and intact, ungerminated seeds in the bag when it was dug up in January",NA
+seedBagsData.csv,intactOct,Count of intact seeds in the bag when it was dug up in October,NA
+seedlingFruitingPlantCountsPermanentPlots.csv,site,Site acronym,NA
+seedlingFruitingPlantCountsPermanentPlots.csv,transect,Transect number,NA
+seedlingFruitingPlantCountsPermanentPlots.csv,position,Plot number,NA
+seedlingFruitingPlantCountsPermanentPlots.csv,year,Year in which observations were made,NA
+seedlingFruitingPlantCountsPermanentPlots.csv,seedlingNumber,Count of seedlings in 0.5 m x 1 m permanent plot; NA if not recorded,NA
+seedlingFruitingPlantCountsPermanentPlots.csv,fruitplNumber,Count of fruiting plants in 0.5 m x 1 m permanent plot; NA if not recorded,NA
+siteAbioticData.csv,site,Site acronym,NA
+siteAbioticData.csv,siteName,Full name for site,NA
+siteAbioticData.csv,easting,"Geographic position reported as eastward measured distance, reported for UTM zone 11, NAD 1927",100 meters
+siteAbioticData.csv,northing,"Geographic position reported as northward measured distance, reported for UTM zone 11, NAD 1927",100 meters
+siteAbioticData.csv,elevation,Height above sea level,meters
+siteAbioticData.csv,area,Size of the Clarkia xantiana ssp. xantiana population at the study site ,hectares
+siteAbioticData.csv,surfaceRock,Dominant soil parent material,NA
+viabilityData.csv,site,Site acronym,NA
+viabilityData.csv,bagNo,Bag number,NA
+viabilityData.csv,round,Experimental round in which the bag was buried,NA
+viabilityData.csv,age,Number of years the bag had been buried when it was collected from the field in October,NA
+viabilityData.csv,block,Block number for the Petri dishes used in germination trials,NA
+viabilityData.csv,germStart,Count of seeds starting the germination trials,NA
+viabilityData.csv,germCount,Count of seeds germinating over the course of the germination trials,NA
+viabilityData.csv,viabStart,Count of seeds tested in the viability trials,NA
+viabilityData.csv,viabStain,Count of seeds staining red in the viability trials,NA
