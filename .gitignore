@@ -37,3 +37,11 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# additional directories or scripts to ignore
+products/
+outputs/
+.DS_Store
+scripts/.DS_Store
+scripts/004_checkStatisticalModels/.DS_Store
+models/.DS_Store
