@@ -11,7 +11,8 @@ rm(list=(ls())) # if using in source(script), include variables to keep
 options(stringsAsFactors = FALSE)
 
 mcmcDirectory = "outputs/005_calculatePopulationModelParameters/01_parameterPosteriorDistributions/"
-outputDirectory = "outputs/005_calculatePopulationModelParameters/"
+outputDirectoryPopulation = "outputs/005_calculatePopulationModelParameters/02_populationModelParameters/"
+outputDirectoryMatrix = "outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/"
 
 # - +load libraries ----
 library(MCMCvis)
@@ -137,11 +138,11 @@ s3.v=apply(s3.v,2,resample)
 # ---
 
 # population level estimate
-mu0_s0 = MCMCchains(mcmcSamples,params="mu0_s0")
+mu0_s0 = MCMCchains(mcmcSamplesSeedBags,params="mu0_s0")
 s0 = boot::inv.logit(mu0_s0)
 
 # population*year level estimate
-mu_s0 = MCMCchains(mcmcSamples,params="mu_s0")
+mu_s0 = MCMCchains(mcmcSamplesSeedBags,params="mu_s0")
 mu_s0 = boot::inv.logit(mu_s0)
 
 # - Summarize parameters ----
@@ -156,12 +157,12 @@ s0.sum=apply(s0,2,quantile,probs=c(0.025,.25,.5,.75,.975))
 # - Save structured model parameters ----
 # ---
 
-saveRDS(g1.v,paste0(outputDirectory,"g1-population-level.RDS"))
-saveRDS(s1.v,paste0(outputDirectory,"s1-population-level.RDS"))
-saveRDS(s2.v,paste0(outputDirectory,"s2-population-level.RDS"))
-saveRDS(s3.v,paste0(outputDirectory,"s3-population-level.RDS"))
-saveRDS(s0,paste0(outputDirectory,"s0-population-level.RDS"))
-saveRDS(mu_s0,paste0(outputDirectory,"s0-population-year-level.RDS"))
+saveRDS(g1.v,paste0(outputDirectoryPopulation,"g1-population-level.RDS"))
+saveRDS(s1.v,paste0(outputDirectoryPopulation,"s1-population-level.RDS"))
+saveRDS(s2.v,paste0(outputDirectoryPopulation,"s2-population-level.RDS"))
+saveRDS(s3.v,paste0(outputDirectoryPopulation,"s3-population-level.RDS"))
+saveRDS(s0,paste0(outputDirectoryPopulation,"s0-population-level.RDS"))
+saveRDS(mu_s0,paste0(outputDirectoryPopulation,"s0-population-year-level.RDS"))
 
 
 # ---
@@ -170,7 +171,7 @@ saveRDS(mu_s0,paste0(outputDirectory,"s0-population-year-level.RDS"))
 
 # - +Germination: population-level ----
 
-mu_g=MCMCchains(mcmcSamples,params="mu_g")
+mu_g=MCMCchains(mcmcSamplesSeedBags,params="mu_g")
 
 # - ++index for age 1, 2, 3 ----
 index.g11=grep(",1\\]",colnames(mu_g))
@@ -190,7 +191,7 @@ gamma13 = boot::inv.logit(mu_g[,index.g13])
 
 # - +Survival: population-level ----
 
-mu_s=MCMCchains(mcmcSamples,params="mu_s")
+mu_s=MCMCchains(mcmcSamplesSeedBags,params="mu_s")
 
 index.s11=grep(",1\\]",colnames(mu_s))
 index.s21=grep(",2\\]",colnames(mu_s))
@@ -381,7 +382,7 @@ s32.v=apply(s32.v,2,resample)
 # ---
 
 # population*year level estimate
-mu_s0 = MCMCchains(mcmcSamples,params="mu_s0")
+mu_s0 = MCMCchains(mcmcSamplesSeedBags,params="mu_s0")
 mu_s0 = boot::inv.logit(mu_s0)
 
 # - +s0:convert to matrix ----
@@ -398,7 +399,7 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"s0-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"s0-ex1-population-year-level-mat.RDS"))
 
 # - +s1:convert to matrix ----
 
@@ -411,7 +412,7 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"s1-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"s1-ex1-population-year-level-mat.RDS"))
 
 # - +s2:convert to matrix ----
 
@@ -424,7 +425,7 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"s2-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"s2-ex1-population-year-level-mat.RDS"))
 
 # - +s3:convert to matrix ----
 
@@ -436,7 +437,7 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"s3-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"s3-ex1-population-year-level-mat.RDS"))
 
 # - +s4:convert to matrix ----
 
@@ -448,7 +449,7 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"s4-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"s4-ex1-population-year-level-mat.RDS"))
 
 # - +s5:convert to matrix ----
 
@@ -459,7 +460,7 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"s5-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"s5-ex1-population-year-level-mat.RDS"))
 
 # - +s6:convert to matrix ----
 
@@ -470,7 +471,7 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"s6-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"s6-ex1-population-year-level-mat.RDS"))
 
 
 # - +g1:convert to matrix ----
@@ -484,7 +485,7 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"g1-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"g1-ex1-population-year-level-mat.RDS"))
 
 # - +g2:convert to matrix ----
 
@@ -496,7 +497,7 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"g2-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"g2-ex1-population-year-level-mat.RDS"))
 
 # - +g3:convert to matrix ----
 
@@ -507,4 +508,4 @@ for(i in 1:20){
   dat.list[[i]] <- mat
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"g3-ex1-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"g3-ex1-population-year-level-mat.RDS"))

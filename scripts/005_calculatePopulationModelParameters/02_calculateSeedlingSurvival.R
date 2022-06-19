@@ -11,8 +11,11 @@ rm(list=(ls())) # if using in source(script), include variables to keep
 options(stringsAsFactors = FALSE)
 
 mcmcDirectory = "outputs/005_calculatePopulationModelParameters/01_parameterPosteriorDistributions/"
-outputDirectory = "outputs/005_calculatePopulationModelParameters/"
 tmpDataDirectory = "outputs/001_prepareDataForModels/"
+
+outputDirectoryPopulation = "outputs/005_calculatePopulationModelParameters/02_populationModelParameters/"
+outputDirectoryMatrix = "outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/"
+
 
 # - +load libraries ----
 library(MCMCvis)
@@ -35,14 +38,14 @@ siteNames <- siteAbiotic$site
 mu0Pooled <- MCMCchains(mcmcSamples,params="mu0")
 sigma0Pooled <- apply(mu0Pooled,2,boot::inv.logit)
 
-saveRDS(sigma0Pooled,paste0(outputDirectory,"sigma-population-level.RDS"))
+saveRDS(sigma0Pooled,paste0(outputDirectoryPopulation,"sigma-population-level.RDS"))
 
 # - +Get population- and year-level estimate ----
 
 muPooled <- MCMCchains(mcmcSamples,params="mu")
 sigmaPooled <- apply(muPooled,2,boot::inv.logit)
 
-saveRDS(sigmaPooled,paste0(outputDirectory,"sigma-population-year-level.RDS"))
+saveRDS(sigmaPooled,paste0(outputDirectoryPopulation,"sigma-population-year-level.RDS"))
 
 # - +convert to matrix ----
 
@@ -69,5 +72,5 @@ for(i in 1:20){
   
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"sigma-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"sigma-population-year-level-mat.RDS"))
 
