@@ -1,5 +1,6 @@
 # --
 #  Script checks individual datasets to look for missing data values 
+#  and create figure summarizing reproductive failure
 # --
 
 # ---
@@ -26,7 +27,7 @@ seedlingFruitingPlantCountsPermanentPlots <- read.csv(paste0(dataDirectory,"seed
 countFruitsPerPlantAllPlants <- read.csv(paste0(dataDirectory,"countFruitsPerPlantAllPlants.csv"),header=TRUE)
 countUndamagedDamagedFruitsPerPlantAllPlants <- read.csv(paste0(dataDirectory,"countUndamagedDamagedFruitsPerPlantAllPlants.csv"),header=TRUE)
 countSeedPerFruit <- read.csv(paste0(dataDirectory,"countSeedPerFruit.csv"),header=TRUE)
-siteAbiotic <- read.csv(paste0(dataDirectory,"siteAbiotic.csv"), header=TRUE )
+siteAbiotic <- read.csv(paste0(dataDirectory,"siteAbioticData.csv"), header=TRUE )
 
 # - Seedling survival to fruiting ----
 

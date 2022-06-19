@@ -9,7 +9,7 @@
 rm(list=(ls())) # if using in source(script), include variables to keep
 options(stringsAsFactors = FALSE)
 
-tmpDataDirectory = "outputs/001_prepareDataForModels/"
+fullDataDirectory = "outputs/001_prepareDataForModels/"
 modelDataDirectory = "outputs/002_fitStatisticalModels/data/"
 modelDirectory = "models/"
 outMCMCDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
@@ -20,7 +20,7 @@ library(parallel)
 library(stringr)
 
 # - Read in and process data ----
-data <- readRDS(file=paste0(tmpDataDirectory,"seedsPerFruit.RDS"))
+data <- readRDS(file=paste0(fullDataDirectory,"seedsPerFruit.RDS"))
 
 # - +Filter out variables not used in fitting the model ----
 

@@ -9,6 +9,11 @@
 ####
 ####
 
+# - Environment ----
+# clear environment but keep directories for data, models, and output files
+rm(list=(ls())) # if using in source(script), include variables to keep
+options(stringsAsFactors = FALSE)
+
 # - Libraries ----
 library(tidyverse)
 library(proj4)
@@ -24,6 +29,7 @@ source("scripts/007_createFiguresDiagrams/00_utilityFunctions.R")
 # - Define temporary directory ----
 # define temporary directory to hold shapefiles and rasters for plotting
 
+
 currentDirectory <- getwd()
 tmpDirectory <- "outputs/007_createFiguresDiagrams/"
 figureDirectory <- "products/figures/"
@@ -31,7 +37,7 @@ figureDirectory <- "products/figures/"
 # - Import data ----
 # select population/site name, easting/northing coordinates (units of meters) 
 
-data<-readRDS("~/Dropbox/dataLibrary/01_analysisData/siteAbiotic.RDS") %>% 
+data<-read.csv(file="data/siteAbioticData.csv",header=TRUE) %>% 
   dplyr::select(site,easting,northing)
 
 # - Transform spatial data ----
@@ -62,10 +68,15 @@ proj4string(extentClarkia) <- "+proj=longlat +ellps=GRS80 +datum=NAD83 +no_defs"
 # default resolution is 1 arcsecond (res="1);
 # to get 1/3 arcsecond (res="13)
 
+currentDirectory<-getwd()
+
 setwd(tmpDirectory)
 
 # download National Elevation Database elevation data in extent
 ned_kern<-FedData::get_ned(template=extentClarkia, label="ned_kern", res="1", force.redo = F)
+
+setwd(currentDirectory)
+
 
 # - Download shapefiles for lakes and rivers ----
 
@@ -87,6 +98,7 @@ ned_kern<-FedData::get_ned(template=extentClarkia, label="ned_kern", res="1", fo
 
 # - Shapefile for Lake Isabella ----
 
+setwd("outputs/007_createFiguresDiagrams/waterbodies")
 setwd(paste0(currentDirectory,"/outputs/007_createFiguresDiagrams/waterbodies"))
 
 bodies <- rgdal::readOGR(dsn="Kern_Waterbodies_2014.shp",layer="Kern_Waterbodies_2014")
@@ -103,12 +115,24 @@ kern2<-spTransform(kern2, proj4string(ned_kern))
 kern_to_plot<-raster::crop(kern2,isabella)
 kernFinal=gDifference(kern2, kern_to_plot)
 
+setwd(currentDirectory)
 
 # - Points for population locations ----
 
 xy <- data.frame(data$long,data$lat)
 spdf <- SpatialPoints(coords = xy, 
                       proj4string = CRS("+proj=longlat +ellps=GRS80 +datum=NAD83 +no_defs"))
+
+# Reproject and change scale
+
+# for reprojetion, follow the guidelines here
+# https://datacarpentry.org/r-raster-vector-geospatial/03-raster-reproject-in-r/
+# https://github.com/SpaCE-Lab-MSU/MSUGradSpatialEcology/blob/master/lab4_autocorrelation.Rmd
+# https://stackoverflow.com/questions/15634882/why-the-values-of-my-raster-map-change-when-i-project-it-to-a-new-crs-projectra
+
+# convert scale to km
+
+cord.UTM <- sp::spTransform(spdf, CRS("+init=epsg:32629 +zone=11 +north"))
 
 # Reprojection - followed the guidance here
 # https://datacarpentry.org/r-raster-vector-geospatial/03-raster-reproject-in-r/
@@ -224,7 +248,7 @@ ggplot() +
   geom_path(data=kernUpper.UTM,aes(x = long, y = lat),col='lightgray',alpha=.5) +
   # add the population locations
   geom_point(data=data,aes(x= easting/1000, y = northing/1000),fill="white", col = 'black', 
-             alpha=1,size=3,shape=21) +
+             alpha=.75,size=3,shape=21) +
   # add the population labels
   geom_text(data=dataLabel,aes(x= easting/1000, y = northing/1000,label=site),
             col = colLabels,size=1.9) +

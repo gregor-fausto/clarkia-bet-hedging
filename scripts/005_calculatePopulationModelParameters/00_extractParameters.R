@@ -102,25 +102,3 @@ saveRDS(mcmcSamples.pars,paste0(outputDirectory,"seedsPerFruitParameters.RDS"))
 
 rm(mcmcSamples)
 rm(mcmcSamples.pars)
-
-
-# - Read in MCMC samples for seed bag+pot experiment (field) ----
-
-mcmcDirectory = "~/Dropbox/clarkia-bet-hedging/outputs/002_fitStatisticalModels/mcmcSamples/"
-outputDirectory = "~/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/01_parameterPosteriorDistributions/"
-
-mcmcSampleDirectory <- paste0(mcmcDirectory,list.files(mcmcDirectory))
-
-mcmcSamples <- readRDS(mcmcSampleDirectory[[grep("seedBagPotExperimentsPosteriorSamples-s0.RDS",mcmcSampleDirectory)]])
-
-parameters = c("mu0_s","sigma0_s",
-               "mu0_g","sigma0_g",
-               "mu0_s0","sigma0_s0",
-               "mu_s","mu_g","mu_s0")
-
-mcmcSamples.pars <- MCMCchains(mcmcSamples,params=parameters)
-
-saveRDS(mcmcSamples.pars,paste0(outputDirectory,"seedBagPotExperimentParameters.RDS"))
-
-rm(mcmcSamples)
-rm(mcmcSamples.pars)

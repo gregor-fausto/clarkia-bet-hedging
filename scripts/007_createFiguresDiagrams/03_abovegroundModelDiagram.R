@@ -23,12 +23,12 @@ n.years = 5
 
 # Population mean and standard deviation
 mu0 = -1
-sigma0 = .5
+sigma0 = 1
 
 # Simulate the annual mean for 5 years of observations
 mu = rnorm(n.years,mean=mu0,sd=sigma0)
 # for each of those 5 years, simulate 5 values for the standard deviation
-sigma = runif(n.years,min=0,max=1)
+# sigma = runif(n.years,min=0,max=1)
 
 # pre allocate lists to hold output
 # theta is each individual's intercept
@@ -41,9 +41,9 @@ n = y = list()
 
 # simulate individual observations
 for(i in 1:n.years){
-  theta[[i]] = rnorm(n.obs,mean=mu[i],sd=sigma[i])
+  theta[[i]] = mu[i] # rnorm(n.obs,mean=mu[i],sd=sigma[i])
   theta_p[[i]] = boot::inv.logit(theta[[i]])
-  n[[i]] = sample(1000,n.obs,replace=TRUE)
+  n[[i]] = sample(50,n.obs,replace=TRUE)
   y[[i]] = rbinom(n.obs, n[[i]], theta_p[[i]])
 }
 
@@ -55,7 +55,7 @@ site = rep(as.factor(1),length(n))
 year = rep(as.factor(1:n.years),each=n.obs)
 
 # construct a data frame 
-df=data.frame(fruitplNumber=y,seedlingNumber=n,site=site,year=year)
+df=data.frame(fruitplNumber=y,seedlingNumber=n,site=site,year=year,siteYearIndex=year,site_observed=site)
 
 # - Prepare data for analysis with JAGS ----
 # compose_data turns the data frame into a list for JAGS
@@ -103,7 +103,7 @@ for(i in 1:3){
 # - Call JAGS and fit model ----
 
 # tuning step (n.adapt)
-jm = jags.model("~/Dropbox/clarkiaSeedBanks/scriptsModelFitting/jagsScripts/jags-seedlingSurvival.R",
+jm = jags.model("models/jags-seedlingSurvival.R",
                 data = data, inits = inits,n.chains = length(inits), n.adapt = n.adapt)
 
 # burn-in step (n.update)
@@ -169,7 +169,7 @@ sigma = boot::inv.logit(mu.post)
 # for each year, plot the marginal posterior and then add the observations below
 for(i in 1:5){
   df.tmp=sigma[,i]
-  full.post=rnorm(length(mu.post[,i]),mean=mu.post[,i],sd=sigma.post[,i])
+  full.post=mu.post[,i] #rnorm(length(mu0.post[,i]),mean=mu0.post[,i],sd=sigma0.post[,i])
   full.post = boot::inv.logit(full.post)
   dat.tmp = df[df$year==i,] %>%
     dplyr::mutate(p = fruitplNumber/seedlingNumber) %>%
@@ -287,20 +287,22 @@ plot(x=NA,NA,
      #axes=FALSE,
      frame=FALSE,xaxt='n',yaxt='n')
 
-sigma = (sigma.post)
+# sigma = (sigma.post)
 
 # add population and year marginal posterior distribution for SD of seedling survival to fruiting 
-for(i in 1:5){
-  df.tmp=sigma[,i]
-  dat.tmp = df[df$year==i,] %>%
-    dplyr::mutate(p = fruitplNumber/seedlingNumber) %>%
-    dplyr::filter(!is.na(p))
-  upper.limit=max(f(df.tmp)[,2])*1
-  polygon(y=.5+2*year[i]+f(df.tmp)[,2]/upper.limit,x=f(df.tmp)[,1],col='#d95f02',border='#d95f02')
-  
-  n.obs = length(dat.tmp$seedlingNumber)
-  size = dat.tmp$seedlingNumber/max(df$seedlingNumber,na.rm=TRUE)
-}
+# for(i in 1:5){
+#   df.tmp=sigma[,i]
+#   dat.tmp = df[df$year==i,] %>%
+#     dplyr::mutate(p = fruitplNumber/seedlingNumber) %>%
+#     dplyr::filter(!is.na(p))
+#   upper.limit=max(f(df.tmp)[,2])*1
+#   polygon(y=.5+2*year[i]+f(df.tmp)[,2]/upper.limit,x=f(df.tmp)[,1],col='#d95f02',border='#d95f02')
+#   
+#   n.obs = length(dat.tmp$seedlingNumber)
+#   size = dat.tmp$seedlingNumber/max(df$seedlingNumber,na.rm=TRUE)
+# }
+
+rect(xleft=-1,xright=3,ybottom=1.5,ytop=13,border=FALSE,col='gray90')
 
 # add axis
 axis(1, at= seq(0,4,by=1), labels = seq(0,4,by=1), 
@@ -310,7 +312,7 @@ axis(1, at= seq(0,4,by=1), labels = seq(0,4,by=1),
 
 # add population level marginal posterior distribution for SD of seedling survival to fruiting 
 
-df.tmp=boot::inv.logit(mu0.post)
+df.tmp=boot::inv.logit(sigma0.post)
 
 upper.limit=max(f(df.tmp)[,2])*1
 polygon(y=f(df.tmp)[,2]/upper.limit,x=f(df.tmp)[,1],col='#7570b3',border='#7570b3')

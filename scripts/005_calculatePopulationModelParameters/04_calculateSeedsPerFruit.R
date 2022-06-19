@@ -11,8 +11,10 @@ rm(list=(ls())) # if using in source(script), include variables to keep
 options(stringsAsFactors = FALSE)
 
 mcmcDirectory = "outputs/005_calculatePopulationModelParameters/01_parameterPosteriorDistributions/"
-outputDirectory = "outputs/005_calculatePopulationModelParameters/"
 tmpDataDirectory = "outputs/001_prepareDataForModels/"
+
+outputDirectoryPopulation = "outputs/005_calculatePopulationModelParameters/02_populationModelParameters/"
+outputDirectoryMatrix = "outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/"
 
 # - +load libraries ----
 library(MCMCvis)
@@ -29,6 +31,13 @@ mcmcSamplesSeeds <- readRDS(mcmcSampleDirectory[[grep("seedsPerFruitParameters.R
 siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 siteNames <- siteAbiotic$site
 
+# - ++Seeds per undamaged fruit, population level ----
+mu0_seeds=exp((MCMCchains(mcmcSamplesSeeds, params=c("nu_seeds"))))
+
+# - +Save population- and year-level estimate ----
+
+saveRDS(mu0_seeds,paste0(outputDirectoryPopulation,"phi-population-level.RDS"))
+
 # - +Get population- and year-level estimate ----
 
 # - ++Seeds per undamaged fruit ----
@@ -37,7 +46,7 @@ mu_seeds=MCMCchains(mcmcSamplesSeeds, params=c("mu_seeds"))
 
 # - +Save population- and year-level estimate ----
 
-saveRDS(mu_seeds,paste0(outputDirectory,"phi-population-year-level.RDS"))
+saveRDS(mu_seeds,paste0(outputDirectoryPopulation,"phi-population-year-level.RDS"))
 
 # - +convert to matrix ----
 
@@ -64,7 +73,7 @@ for(i in 1:20){
   
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"phi-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"phi-population-year-level-mat.RDS"))
 
 
 # - +Proportion damage ----
@@ -100,4 +109,4 @@ for(i in 1:20){
   
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"phi-damage-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"phi-damage-population-year-level-mat.RDS"))

@@ -4,6 +4,10 @@
 # -------------------------------------------------------------------
 rm(list=ls(all=TRUE)) # clear R environment
 options(stringsAsFactors = FALSE,max.print=100000)
+
+# - Source functions for analysis ----
+source("scripts/006_testHypotheses/00_utilityFunctions.R")
+
 # -------------------------------------------------------------------
 # Loading required packages
 # -------------------------------------------------------------------
@@ -19,12 +23,12 @@ library(bayesplot)
 # -------------------------------------------------------------------
 
 # read in samples from posterior distributions
-s0 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s0-population-level.RDS")
-g1 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/g1-population-level.RDS")
-s1 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s1-population-level.RDS")
-s2 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s2-population-level.RDS")
-s3 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s3-population-level.RDS")
-rs <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/reproductiveSuccess-population-year-level-mat.RDS")
+s0 <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/s0-population-level.RDS")
+g1 <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/g1-population-level.RDS")
+s1 <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/s1-population-level.RDS")
+s2 <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/s2-population-level.RDS")
+s3 <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/s3-population-level.RDS")
+perCapitaRS <- readRDS("outputs/005_calculatePopulationModelParameters/04_reproductiveSuccess/reproductiveSuccessWithCorrectionForMissingness-populationYear-mat.RDS")
 
 siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 
@@ -46,25 +50,13 @@ fitness <- function(g=g1,s0=s0,s1=s1,s2=s2,s3=s3,rs=rs){
   return(as.numeric(p1+p2))
 }
 
-posterior.mode = function(x){
-  if(!is.na(x[1])){ x.max=max(x)
-  x.min=min(x)
-  dres <- density( x ,from = x.min, to = x.max)
-  modeParam <- dres$x[which.max(dres$y)]}else if(is.na(x[1])){
-    modeParam <- NA
-  }
-  return(modeParam)
-}
-
-modeEst <- function(x){return(apply(x,2,posterior.mode))}
-
 # use mode as Bayesian estimator
 s0.hat  <- apply(s0,2,posterior.mode)
 s1.hat  <- apply(s1,2,posterior.mode)
 g1.hat  <- apply(g1,2,posterior.mode)
 s2.hat  <- apply(s2,2,posterior.mode)
 s3.hat  <- apply(s3,2,posterior.mode)
-rs.hat <- lapply(rs,apply,2,posterior.mode)
+perCapitaRS.hat <- lapply(perCapitaRS,apply,2,posterior.mode)
 
 
 # try optimizer
@@ -87,7 +79,7 @@ for(k in 1:20){
   pop.index=k
   
   # - ++draw the 15 years of reproductive success estimates  ----
-  y_t = rs.hat[[pop.index]]
+  y_t = perCapitaRS.hat[[pop.index]]
   y_t = y_t[!is.na(y_t)]
   
   # - ++draw 10000 samples for reproductive success with replacement  ----
@@ -107,12 +99,9 @@ geo=order(position$easting)
 
 HPDI.s0 <- apply(s0,2,FUN = function(x) hdi(x, .68))
 
-
 # add data
 
-# pdf("~/Dropbox/clarkiaSeedBanks/analysis/products/figures/optimalGerminationSensitivity-s0.pdf",
-#     height = 7, width = 7)
-pdf("~/Desktop/figures/optimalGerminationSensitivity-s0.pdf",
+pdf("products/figures/optimalGerminationSensitivity-s0.pdf",
     height = 7, width = 7)
 
 par(mfrow=c(4,5),mar=c(0,.25,.25,0),
@@ -172,7 +161,7 @@ for(k in 1:20){
   pop.index=k
   
   # - ++draw the 15 years of reproductive success estimates  ----
-  y_t = rs.hat[[pop.index]]
+  y_t = perCapitaRS.hat[[pop.index]]
   y_t = y_t[!is.na(y_t)]
   
   # - ++draw 10000 samples for reproductive success with replacement  ----
@@ -196,11 +185,7 @@ for(k in 1:20){
 
 HPDI.s2 <- apply(s2,2,FUN = function(x) hdi(x, .68))
 
-
-# pdf("~/Dropbox/clarkiaSeedBanks/analysis/products/figures/optimalGerminationSensitivity-s2.pdf",
-#     height = 7, width = 7)
-
-pdf("~/Desktop/figures/optimalGerminationSensitivity-s2.pdf",
+pdf("products/figures/optimalGerminationSensitivity-s2.pdf",
     height = 7, width = 7)
 
 par(mfrow=c(4,5),mar=c(0,.25,.25,0),
@@ -262,7 +247,7 @@ for(k in 1:20){
   pop.index=k
   
   # - ++draw the 15 years of reproductive success estimates  ----
-  y_t = rs.hat[[pop.index]]
+  y_t = perCapitaRS.hat[[pop.index]]
   y_t = y_t[!is.na(y_t)]
   
   # - ++draw 10000 samples for reproductive success with replacement  ----
@@ -281,10 +266,7 @@ for(k in 1:20){
 HPDI.s1 <- apply(s1,2,FUN = function(x) hdi(x, .68))
 
 # add data
-
-# pdf("~/Dropbox/clarkiaSeedBanks/analysis/products/figures/optimalGerminationSensitivity-s1.pdf",
-#     height = 7, width = 7)
-pdf("~/Desktop/figures/optimalGerminationSensitivity-s1.pdf",
+pdf("products/figures/optimalGerminationSensitivity-s1.pdf",
     height = 7, width = 7)
 
 par(mfrow=c(4,5),mar=c(0,.25,.25,0),
@@ -344,7 +326,7 @@ for(k in 1:20){
   pop.index=k
   
   # - ++draw the 15 years of reproductive success estimates  ----
-  y_t = rs.hat[[pop.index]]
+  y_t = perCapitaRS.hat[[pop.index]]
   y_t = y_t[!is.na(y_t)]
   
   # - ++draw 10000 samples for reproductive success with replacement  ----
@@ -369,10 +351,7 @@ for(k in 1:20){
 HPDI.s3 <- apply(s3,2,FUN = function(x) hdi(x, .68))
 
 
-# pdf("~/Dropbox/clarkiaSeedBanks/analysis/products/figures/optimalGerminationSensitivity-s3.pdf",
-#     height = 7, width = 7)
-
-pdf("~/Desktop/figures/optimalGerminationSensitivity-s3.pdf",
+pdf("products/figures/optimalGerminationSensitivity-s3.pdf",
     height = 7, width = 7)
 
 par(mfrow=c(4,5),mar=c(0,.25,.25,0),

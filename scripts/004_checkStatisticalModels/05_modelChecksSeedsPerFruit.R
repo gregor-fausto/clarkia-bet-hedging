@@ -33,7 +33,7 @@ mcmcSampleDirectory <- paste0(mcmcDirectory,list.files(mcmcDirectory))
 mcmcSamples <- readRDS(mcmcSampleDirectory[[grep("seedsPerFruitPosteriorSamples.RDS",mcmcSampleDirectory)]])
 
 # - +Read in site names ----
-siteAbiotic <- read.csv("data/siteAbiotic.csv",header=TRUE)
+siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 # create variable that arranges populations by easting
 siteIndex <- order(siteAbiotic$easting,decreasing=FALSE)
 siteNames = unique(siteAbiotic$site)[siteIndex]

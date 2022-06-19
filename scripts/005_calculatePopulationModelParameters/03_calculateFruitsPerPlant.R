@@ -12,7 +12,10 @@ options(stringsAsFactors = FALSE)
 
 tmpDataDirectory = "outputs/001_prepareDataForModels/"
 mcmcDirectory = "outputs/005_calculatePopulationModelParameters/01_parameterPosteriorDistributions/"
-outputDirectory = "outputs/005_calculatePopulationModelParameters/"
+
+outputDirectoryPopulation = "outputs/005_calculatePopulationModelParameters/02_populationModelParameters/"
+outputDirectoryMatrix = "outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/"
+
 
 # - +load libraries ----
 library(MCMCvis)
@@ -45,6 +48,7 @@ dat.list <- list()
 years = 2006:2012
 for(i in 1:20){
   index.tmp <- ref.df.tfe[ref.df.tfe$site==index.site[i],]
+  # set a 15 column matrix to hold 15 years; the ones not here are appended below
   mat = matrix(NA,nrow = n.iter,ncol = 15)
   for(j in 1:length(years)){
     if((years[j] %in% index.tmp$year)){
@@ -56,7 +60,7 @@ for(i in 1:20){
   
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"tfe-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"tfe-population-year-level-mat.RDS"))
 
 
 # - ++Total and damaged fruits ----
@@ -70,7 +74,6 @@ p_dam=boot::inv.logit(MCMCchains(mcmcSamplesFruits, params=c("mu")))
 mu_dam = mu_tot*p_dam
 # product of total fruits per plant and 1- proportion damaged gives average number of undamaged fruits per plant
 mu_und = mu_tot*(1-p_dam)
-
 
 n.iter=dim(mu_und)[1]
 index.site<-unique(ref.df$site)
@@ -95,8 +98,8 @@ for(i in 1:20){
   
 }
 
-saveRDS(dat.list_tot,paste0(outputDirectory,"f_tot-population-year-level-mat.RDS"))
-saveRDS(dat.list_pdam,paste0(outputDirectory,"f_pdam-population-year-level-mat.RDS"))
+saveRDS(dat.list_tot,paste0(outputDirectoryMatrix,"f_tot-population-year-level-mat.RDS"))
+saveRDS(dat.list_pdam,paste0(outputDirectoryMatrix,"f_pdam-population-year-level-mat.RDS"))
 
 
 # - ++Seeds per undamaged and damaged fruits ----
@@ -110,7 +113,9 @@ mu_dam_seeds=mu_seeds[,as.numeric(ref.df$siteYearIndex_und)]*p_dam_seeds[,as.num
 
 # - +Calculate a composite to recreate TFE ----
 
-# calculate the ratio of seeds in damaged:undamaged fruits
+# - ++Proportion of seeds in damaged/undamaged fruits ----
+
+# calculate the proportion of seeds in damaged:undamaged fruits
 ratio.seeds=mu_dam_seeds/mu_seeds
 
 # convert to matrix
@@ -134,17 +139,22 @@ for(i in 1:20){
 
 }
 
-# now fill in any missing years
+# - ++Missing estimates  ----
+
+# now fill in any year where the ratio of seeds in damaged:undamaged fruits is missing
 
 df.test <- data.frame(ref.df,p=ratio.seeds[1,])
 df.test2 <- data.frame(ref.df.tot,p2 = mu_dam[1,])
 
-df.joined <- df.test2 %>% dplyr::left_join(df.test,by=c('site','year')) 
+df.joined <- df.test2 %>% 
+  dplyr::left_join(df.test,by=c('site','year')) 
 
-# missing undamaged
+# - ++Missing estimates for undamaged fruits  ----
+
+# LO in 2015 is missing seed counts for undamaged fruits
 df.joined[is.na(df.joined$siteYearIndex_und),]
 
-# calculate for LO
+# calculate seeds/undamaged fruit as the population-level mean across all years
 mu0_seeds=exp((MCMCchains(mcmcSamplesSeeds, params=c("nu_seeds")))[,13])
 
 # proportion of seeds that are eaten, on average
@@ -153,19 +163,17 @@ p0_dam_seeds=boot::inv.logit(MCMCchains(mcmcSamplesSeeds, params=c("mu0")))
 # number of seeds in a damaged fruit
 mu_lo_dam_seeds=mu0_seeds*p0_dam_seeds[,13]
 
-# - +Calculate a composite to recreate TFE ----
-
 # calculate the ratio of seeds in damaged:undamaged fruits
 ratio.seeds.lo=mu_lo_dam_seeds/mu0_seeds
 
 dat.list_prop[[13]][,3] = ratio.seeds.lo
 
-# fill in missing damaged with average numbers
+# - ++Missing estimates for damaged fruits  ----
 
-# missing undamaged
+# missing damaged fruits
 dam.missing<-df.joined[is.na(df.joined$siteYearIndex_dam),]
 
-# proportion of seeds that are eaten, on average
+# proportion of seeds that are eaten, on average at a site
 p0_dam_seeds=boot::inv.logit(MCMCchains(mcmcSamplesSeeds, params=c("mu0")))
 
 index.site<-unique(ref.df$site)
@@ -195,6 +203,7 @@ for(i in 1:dim(dam.missing)[1]){
 
 # use this ratio to adjust to create a composite estimate for years 2013-2020
 # that is comparable to the estimates of total fruit equivalents per plant
+# this fills in columns 8-15 of the matrix
 
 years = 2006:2020
 for(i in 1:20){
@@ -207,4 +216,4 @@ for(i in 1:20){
   
 }
 
-saveRDS(dat.list,paste0(outputDirectory,"combinedF-population-year-level-mat.RDS"))
+saveRDS(dat.list,paste0(outputDirectoryMatrix,"combinedF-population-year-level-mat.RDS"))

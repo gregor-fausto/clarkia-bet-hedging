@@ -10,7 +10,7 @@ rm(list=(ls())) # if using in source(script), include variables to keep
 options(stringsAsFactors = FALSE)
 
 mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
-modelDataDirectory = "outputs/002_fitStatisticalModels/data/"
+fullDataDirectory = "outputs/001_prepareDataForModels/"
 outputDirectory = "outputs/004_checkStatisticalModels/"
 
 # - Libraries ----
@@ -24,8 +24,8 @@ library(rethinking)
 # - Read in what's needed for plotting ----
 
 # - +Read in data ----
-modelDataDirectory <- paste0(modelDataDirectory,list.files(modelDataDirectory))
-data <- readRDS(modelDataDirectory[[grep("seedlingSurvivalData.RDS",modelDataDirectory)]])
+fullDataDirectory <- paste0(fullDataDirectory,list.files(fullDataDirectory))
+data <- readRDS(fullDataDirectory[[grep("seedlingFruitingPlantCountsPermanentPlots.RDS",fullDataDirectory)]])
 
 # - +Read in MCMC samples ----
 mcmcSampleDirectory <- paste0(mcmcDirectory,list.files(mcmcDirectory))
