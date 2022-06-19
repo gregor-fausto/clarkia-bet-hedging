@@ -186,6 +186,9 @@ segments(x0=optima.est[1,],x1=optima.est[3,],y0=g1.hat,pch=21,col='black',bg='wh
 points(x=optima.est[2,],y=g1.hat,pch=21,bg='white')
 abline(a=0,b=1,lty='dotted')
 
+# # - Calculate correlation and p-value ----
+
+cor.test(optima.est[2,],y=g1.hat)
 
 
 # # - Save manuscript data  ----
@@ -193,7 +196,8 @@ abline(a=0,b=1,lty='dotted')
 # optimalGerminationFractions = data.frame(site=siteNames,optima=optima,g1.hat=g1.hat)
 # 
 # outputDirectory <- "outputs/006_hypothesisTesting/"
-# write.csv(optimalGerminationFractions,paste0(outputDirectory,"optimalGerminationFractions.csv"),row.names=FALSE)
+# write.csv(optimalGerminationFractions,paste0(outputDirectory,"optimalGerminationFractions.csv"),row.names=FALSE)?cor
+
 
 # - PLOT  ----
 
