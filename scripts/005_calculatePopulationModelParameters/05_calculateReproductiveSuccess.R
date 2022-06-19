@@ -72,6 +72,19 @@ tmp.df=data.frame(site=rep(position$site,each=15),
 
 write.csv(tmp.df,paste0(outputDirectory,"reproductiveSuccess.csv"),row.names = FALSE)
 
+# - Calculate per-capita reproductive success as derived quantity, after adustments ----
+
+perCapitaRS.list <- list()
+for(i in 1:20){
+  perCapitaRS.mat = matrix(NA,nrow=dim(sigma[[1]])[1],ncol=15)
+  for(j in 1:15){
+    perCapitaRS.mat[,j] <- sigma[[i]][,j]*fruits[[i]][,j]*seeds[[i]][,j]
+  }
+  perCapitaRS.list[[i]] <- perCapitaRS.mat
+}
+
+saveRDS(perCapitaRS.list,paste0(outputDirectory,"reproductiveSuccess-populationYear-mat.RDS"))
+
 # - Handling missing data ----
 # I followed rules 1-4 below to deal with missing observations
 # if
@@ -160,7 +173,7 @@ tmp.df=data.frame(site=rep(position$site,each=15),
 
 tmp.df[,3:6] <- apply(tmp.df[,3:6],2,signif,4)
 
-write.csv(tmp.df,paste0(outputDirectory,"reproductiveSuccessWithCorrectionForMissingData.csv"),row.names = FALSE)
+write.csv(tmp.df,paste0(outputDirectory,"reproductiveSuccessWithCorrectionForMissingness.csv"),row.names = FALSE)
 
 # - Calculate per-capita reproductive success as derived quantity, after adustments ----
 
@@ -174,4 +187,4 @@ for(i in 1:20){
 }
 
 
-saveRDS(perCapitaRS.list,paste0(outputDirectory,"reproductiveSuccess-populationYear-mat.RDS"))
+saveRDS(perCapitaRS.list,paste0(outputDirectory,"reproductiveSuccessWithCorrectionForMissingness-populationYear-mat.RDS"))
