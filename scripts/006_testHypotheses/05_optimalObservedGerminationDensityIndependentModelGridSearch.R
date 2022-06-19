@@ -54,7 +54,7 @@ g1.hat  <- apply(g1,2,posterior.mode)
 s1.hat  <- apply(s1,2,posterior.mode)
 s2.hat  <- apply(s2,2,posterior.mode)
 s3.hat  <- apply(s3,2,posterior.mode)
-s0.hat  <- apply(s0,2,posterior.mode)
+s0.hat  <- apply(s0,2,posterior.mode) 
 perCapitaRS.hat <- lapply(perCapitaRS,apply,2,posterior.mode)
 
 # -------------------------------------------------------------------
@@ -119,11 +119,11 @@ for( k in 1:20){
   # - ++get the population index  ----
   # pop.index=index[,1]==k
   pop.index = k
-  
+
   # - ++draw the 15 years of reproductive success estimates  ----
   y_t = perCapitaRS.hat[[pop.index]]
   y_t = y_t[!is.na(y_t)]
-  
+
   # - ++draw 10000 samples for reproductive success with replacement  ----
   y_t.resample = sample(y_t,10000,replace=TRUE)
   

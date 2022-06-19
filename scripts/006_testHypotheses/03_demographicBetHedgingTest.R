@@ -30,6 +30,7 @@ yearIndex <- data.frame(year=2006:2020,yearIndex=1:15)
 index=expand.grid(1:20,1:15)
 
 # - Read in germination and survival estimates ----
+<<<<<<< HEAD:scripts/006_testHypotheses/03_demographicBetHedgingTest.R
 s0 <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/s0-population-level.RDS")
 g1 <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/g1-population-level.RDS")
 s1 <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/s1-population-level.RDS")
@@ -39,6 +40,32 @@ sigma <- readRDS("outputs/005_calculatePopulationModelParameters/03_populationMo
 fec <- readRDS("outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/combinedF-population-year-level-mat.RDS")
 phi <- readRDS("outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/phi-population-year-level-mat.RDS")
 perCapitaRS <- readRDS("outputs/005_calculatePopulationModelParameters/04_reproductiveSuccess/reproductiveSuccessWithCorrectionForMissingness-populationYear-mat.RDS")
+=======
+s0 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s0-population-level.RDS")
+g1 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/g1-population-level.RDS")
+s1 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s1-population-level.RDS")
+s2 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s2-population-level.RDS")
+s3 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/s3-population-level.RDS")
+sigma <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/sigma-population-year-level-mat.RDS")
+fec <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/combinedF-population-year-level-mat.RDS")
+phi <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/phi-population-year-level-mat.RDS")
+rs <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/reproductiveSuccess-population-year-level-mat.RDS")
+
+# get mode from full posterior and calculate var in RS based on modes
+g1.hat  <- apply(g1,2,posterior.mode)
+s1.hat  <- apply(s1,2,posterior.mode)
+s2.hat  <- apply(s2,2,posterior.mode)
+s3.hat  <- apply(s3,2,posterior.mode)
+s0.hat  <- apply(s0,2,posterior.mode)
+sigma.mode <- lapply(sigma,apply,2,posterior.mode)
+fec.mode <- lapply(fec,apply,2,posterior.mode)
+phi.mode <- lapply(phi,apply,2,posterior.mode)
+rs.mode <- lapply(rs,apply,2,posterior.mode)
+
+# ---
+# - Test of bet hedging with equal resampling; pooled estimates  ----
+# ---
+>>>>>>> 836ef308e908ce942d3b881c93c781b2dd8f3e98:scripts/006_testHypotheses/05_demographicBetHedgingTest.R
 
 # - +Estimate posterior mode for seed survival, germination, and reproductive success  ----
 g1.hat  <- apply(g1,2,posterior.mode)
@@ -87,7 +114,11 @@ for( k in 1:20){
   lambda.a[k] = mean(g1.hat[k]*y_t*s0.hat[k]*s1.hat[k]+(1-g1.hat[k])*s2.hat[k]*s3.hat[k])
   lambda.a.nosb[k] = mean(y_t*s0.hat[k]*s1.hat[k])
 
+<<<<<<< HEAD:scripts/006_testHypotheses/03_demographicBetHedgingTest.R
   # - ++draw 1000 samples for reproductive success with replacement  ----
+=======
+  # - ++draw 10000 samples for reproductive success with replacement  ----
+>>>>>>> 836ef308e908ce942d3b881c93c781b2dd8f3e98:scripts/006_testHypotheses/05_demographicBetHedgingTest.R
   y_t.resample = sample(y_t,1000,replace=TRUE)
 
   # - ++for each resample year, calculate the population growth rate with and without the seed bank  ----
@@ -204,7 +235,11 @@ abline(a=0,b=1,lty='dotted')
 mtext("A.", adj = 0, cex=pt10)
 
 # - +PANEL B  ----
+<<<<<<< HEAD:scripts/006_testHypotheses/03_demographicBetHedgingTest.R
 plot(var.lambda.mean,var.lambda.nosb.mean,
+=======
+plot(var.lambda,var.lambda.nosb,
+>>>>>>> 836ef308e908ce942d3b881c93c781b2dd8f3e98:scripts/006_testHypotheses/05_demographicBetHedgingTest.R
      pch=21, cex = .75, bg='white',
  #    xlim=c(0,60),ylim=c(0,3100),
      xlab = "", type='n',
@@ -237,7 +272,11 @@ abline(a=0,b=1,lty='dotted')
 mtext("B.", adj = 0, cex=pt10)
 
 # - +PANEL C  ----
+<<<<<<< HEAD:scripts/006_testHypotheses/03_demographicBetHedgingTest.R
 plot(lambda.mean,lambda.nosb.mean,
+=======
+plot(lambda,lambda.nosb,
+>>>>>>> 836ef308e908ce942d3b881c93c781b2dd8f3e98:scripts/006_testHypotheses/05_demographicBetHedgingTest.R
      type='n',
      xlim=c(0,4),ylim=c(0,19),
      xlab = "",
@@ -251,12 +290,19 @@ d.plot=data.frame(lambda=lambda.mean,
                   lambda.nosb=lambda.nosb.mean,
                   site=siteNames)
 
+<<<<<<< HEAD:scripts/006_testHypotheses/03_demographicBetHedgingTest.R
 points(lambda.mean,lambda.nosb.mean,
        pch=21,cex=1,
        bg=rgb(red = 1, green = 1, blue = 1, alpha = 1),lwd=0)
 points(lambda.mean,lambda.nosb.mean,
        pch=21,col='black',cex=1, lwd = 0.5,
        bg=rgb(red = 1, green = 1, blue = 1, alpha = 0.5))
+=======
+points(lambda,lambda.nosb,
+       pch=21,col='black',bg='white',cex=3,lwd=.75)
+points(lambda[c(5,17)],lambda.nosb[c(5,17)],
+       pch=21,col='black',bg='white',cex=3,lwd=.75)
+>>>>>>> 836ef308e908ce942d3b881c93c781b2dd8f3e98:scripts/006_testHypotheses/05_demographicBetHedgingTest.R
 
 axis(1, seq(0,4,by=1), padj = -.5,
      labels = seq(0,4,by=1), line = 0,

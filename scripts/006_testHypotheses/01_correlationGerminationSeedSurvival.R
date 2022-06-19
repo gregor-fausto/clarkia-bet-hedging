@@ -192,6 +192,7 @@ plot(x = NA,
 # d.plot[14,1:2] = c(.73,.07)
 # d.plot[10,1:2] = c(.68,.06)
 
+
 segments(x0=survivalPosteriorSummary$lo.surv,x1=survivalPosteriorSummary$hi.surv,
          y0=g1PosteriorSummary$mode.g1, lwd=1)
 segments(x0=survivalPosteriorSummary$mode.surv,
@@ -207,7 +208,6 @@ points(survivalPosteriorSummary$mode.surv,g1PosteriorSummary$mode.g1,
 
 # commented code would be to label points
 # text(d.plot[,1:2],siteNames,cex=4/12)
-
 
 
 axis(1, seq(0,1,by=.1), padj = -.5,

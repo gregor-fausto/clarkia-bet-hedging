@@ -1,6 +1,8 @@
 # -------------------------------------------------------------------
-# Density-independent model of germination
+# Density-independent model of germination + uncertainty
 # -------------------------------------------------------------------
+
+# - Environment ----
 rm(list=ls(all=TRUE)) # clear R environment
 options(stringsAsFactors = FALSE,max.print=100000)
 
