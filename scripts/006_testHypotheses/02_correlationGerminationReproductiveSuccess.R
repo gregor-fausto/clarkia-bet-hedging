@@ -193,6 +193,6 @@ legend("topleft",bty='n',inset=c(-.05,0),
               round(correlationPosteriorSummary[2],3),")"),
        cex=pt7)
 
-#mtext("A.", adj = 0, cex=pt10)
+mtext("B.", adj = 0, cex=pt10)
 
 dev.off()

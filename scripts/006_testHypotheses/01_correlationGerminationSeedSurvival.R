@@ -173,7 +173,7 @@ par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2.2,.7,0)+.1,mgp=c(3,.45,0))
 # plot mode of g1 vs. mode of s2*s3 with CIs
 plot(x = NA,
      y = NA,
-     xlim=c(.2,.8),ylim=c(0,.4),
+     xlim=c(.2,.8),ylim=c(0,.425),
      pch=16, cex = 0.5,
      xlab = "",
      ylab = "",
@@ -230,6 +230,9 @@ legend("topleft",bty='n',inset=c(-.05,0),
             " (",round(correlationPosteriorSummary[1],3),", ",
             round(correlationPosteriorSummary[2],3),")"),
      cex=pt7)
+
+mtext("A.", adj = 0, cex=pt10)
+
 
 dev.off()
 
