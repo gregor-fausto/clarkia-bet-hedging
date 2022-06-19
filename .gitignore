@@ -39,8 +39,9 @@ vignettes/*.pdf
 .Renviron
 
 # additional directories or scripts to ignore
-products/
 outputs/
+products/
+manuscript/
 .DS_Store
 scripts/.DS_Store
 scripts/004_checkStatisticalModels/.DS_Store
