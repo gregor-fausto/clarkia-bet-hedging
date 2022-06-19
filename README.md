@@ -42,32 +42,32 @@ The repository is organized so that the analysis in the paper can be replicated.
     + `viabilityData.csv`
     + `README.md`: README file for the data folder.
 - `models`: Contains the statistical models written in JAGS language.
-- `outputs`: Folders to save output from R scripts.
+- `outputs`: Folder to save output from R scripts.
+- `products`: Folder to save figures and diagrams for manuscript.
 - `scripts`: Contains R scripts to process data, fit models, and analyze output.
-    + `primaryScript.R`: script
-    + `001_processData`: scripts to prepare data for model fitting
+    + `001_prepareDataForModels`: scripts to prepare data for model fitting
     + `002_fitStatisticalModels`: scripts to fit statistical models
     + `003_runStatisticalModelDiagnostics`: scripts to run model diagnostics
     + `004_checkStatisticalModels`: scripts to perform model checks
-    + `005_calculatePopulationModelParameters`: scripts to calculate parameters for structured population model from statistical model output
+    + `005_calculatePopulationModelParameters`: scripts to calculate parameters for population model
     + `006_testHypotheses`: scripts to test hypotheses in the manuscript
-    + `007_createFiguresDiagrams`: scripts to create figures for paper
-    + `008_createTexDiagrams`: scripts to create diagrams for paper with LaTeX
+    + `007_createFiguresDiagrams`: scripts to create diagrams for paper
 
 Running `primaryScript.R` in the appropriate directory will create the folders `outputs` and `products` with the following file structure. Note that replicating the simulation and model fitting may be slow. We recommend testing the code in `003_statisticalModelFitting` on a smaller number of replicates than the default.
 
 - `outputs`: Folder for output of simulations and model fitting
-    + `001_simulateObservations`: simulated observations from seed bag burial  and seed addition experiments
-        * `01_identifiability`: simulated observations for showing effect of identifiability on parameter estimation.         
-        * `02_estimability`: simulated observations to compare statistical properties of estimates from seed bag burial vs. seed addition experiments
-        * `03_misspecification`: simulated observations to evaluate consequences of incorrect assumptions about seed mortality
-    + `002_statisticalModelFitting`: scripts to fit JAGS models to simulated observations
-        * `01_identifiability`: samples from posterior distribution of model fits         
-        * `02_estimability`: samples from posterior distribution of model fits
-        * `03_misspecification`: samples from posterior distribution of model fits
+    + `001_prepareDataForModels`: holds data in format ready for fitting models with JAGS
+    + `002_fitStatisticalModels`: holds (1) data used to fit models and (2) posterior samples obtained via MCMC
+    + `003_runStatisticalModelDiagnostics`: holds trace plots and histograms of R-hat
+    + `004_checkStatisticalModels`: holds PDFs of model checks
+    + `005_calculatePopulationModelParameters`: holds (1) posterior samples of the statistical model parameters and derived quantities including (2) parameters of the population model in lists, (3) parameters of the population model in matrices, and (4) computed annual values for per-capita reproductive success
+    + `006_hypothesisTesting`: holds files with optimal germination fractions and results of demographic bet hedging test
+    + `007_createFiguresDiagrams`: holds shapefiles for creating the map in Figure 1
 - `products`: Folder for figures
-    + `figures`: directory to hold figures produced by scripts     
+    + `figures`: directory to hold figures produced by scripts   
+    + `figuresForManuscript`: directory to hold figures composed with LaTeX   
     + `tables`: directory to hold tables produced by scripts    
+    + `texDiagrams`: directory to TeX diagrams in the manuscript
 
 ---
 
