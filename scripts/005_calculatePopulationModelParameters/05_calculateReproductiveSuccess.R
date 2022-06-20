@@ -160,6 +160,10 @@ for( i in 1:20 ){
     
 }
 
+saveRDS(sigma,paste0(outputDirectory,"sigmaWithCorrectionForMissingness-populationYear-mat.RDS"))
+saveRDS(fruits,paste0(outputDirectory,"fecWithCorrectionForMissingness-populationYear-mat.RDS"))
+saveRDS(seeds,paste0(outputDirectory,"phiWithCorrectionForMissingness-populationYear-mat.RDS"))
+
 # - write out estimates with adjustments for missing data ----
 
 sigma.mode <- unlist(lapply(sigma,apply,2,posterior.mode))
