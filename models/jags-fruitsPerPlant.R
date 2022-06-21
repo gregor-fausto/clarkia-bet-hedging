@@ -50,7 +50,6 @@ model {
     # draw the random year effects
     mu_tfe[i] ~ dlnorm(nu_tfe[site_tfe_observed[i]], tau0_tfe[site_tfe_observed[i]])
     mu_log_tfe[i] <- log(mu_tfe[i])
-  #  mu_tfe[i] ~ dnorm(nu_tfe[site_tfe_observed[i]], tau0_tfe[site_tfe_observed[i]])
 
   }
 
