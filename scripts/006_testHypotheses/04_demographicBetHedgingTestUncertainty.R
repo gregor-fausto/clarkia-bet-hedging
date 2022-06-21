@@ -88,7 +88,7 @@ var.lambda.nosb.point = apply(fit.nosb.point,2,var)
 # - Calculate quantities with parameter uncertainty  ----
 
 # - +Draw 1000 samples from posterior  ----
-sample.index = sample(1:45000,n.iter.sampled,replace=TRUE)
+sample.index = 1:45000 # sample(1:45000,n.iter.sampled,replace=TRUE)
 
 # - +Create vector to hold objects  ----
 lambda.a = lambda.a.nosb = matrix(NA,ncol=20,nrow=length(sample.index))
