@@ -145,7 +145,8 @@ dev.off()
 tiff(filename=paste0("products/figures/correlationGerminationVariabilityRS.tif"),
      height=3.2,width=3.2,units="in",res=800,compression="lzw",pointsize=12)
 
-par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2,.7,0)+.1,mgp=c(3,.45,0))
+#par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2,.7,0)+.1,mgp=c(3,.45,0))
+par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2.2,.7,0)+.1,mgp=c(3,.45,0))
 plot(x = NA,
      y = NA,
      xlim=c(0,10),ylim=c(0,.425),
@@ -182,9 +183,9 @@ axis(2, seq(0,1,by=.1),
 axis(2, seq(.05,1,by=.1),labels=FALSE)
 
 mtext("Germination probability",
-      side=2,line=1.5,adj=.5,col='black',cex=pt8)
-mtext("Geometric standard deviation of per-capita reproductive success",
-      side=1,line=1,adj=0,col='black',cex=pt8,at=-2)
+      side=2,line=1.5,adj=.5,col='black',cex=pt10)
+mtext("Geometric SD of per-capita reproductive success",
+      side=1,line=1,adj=-.025,col='black',cex=pt10,at=-2)
 
 box()
 legend("topleft",bty='n',inset=c(-.05,0),
