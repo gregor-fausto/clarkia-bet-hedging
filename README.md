@@ -11,10 +11,6 @@
 
   This repository contains the scripts for the project on bet hedging in <i>Clarkia xantiana</i>.
 
-### Contributions
-
-GS and MAG conceived of the ideas and analysis, using data collected by MAG, VME, and DAM. GS wrote the scripts, analyzed the data, and wrote the manuscript with input from MAG. All authors contributed critically to drafts of the manuscript.
-
 -----
 
 ### Abstract
@@ -23,9 +19,15 @@ Bet hedging consists of life history strategies that buffer against environmenta
 
 -----
 
+### Contributions
+
+GS and MAG conceived of the ideas and analysis, using data collected by MAG, VME, and DAM. GS wrote the scripts, analyzed the data, and wrote the manuscript with input from MAG. All authors contributed critically to drafts of the manuscript.
+
+-----
+
 ### Repository Directory
 
-The repository is organized so that the analysis in the paper can be replicated.
+The repository is organized so that the analyses in the paper can be replicated.
 
 - `data`: Contains data used in the study. Contents of data files are documented further down in the README.
     + `metadata`
@@ -72,6 +74,10 @@ Running `primaryScript.R` in the appropriate directory will create the folders `
 ---
 
 ### Data
+
+The manuscript associated with the data submitted to this Dryad repository provides a description of the methods.
+
+Briefly, we used field surveys and experiments to observe components of above- and below-ground demography for 20 populations across the range of <i>Clarkia xantiana</i> ssp. <i>xantiana</i>. To collect data on seedling survival, fruit production, and seed set, we used field surveys. In each population, these surveys included observations in both permanent plots as well as additional, haphazardly sampled plots arrayed across the population. To observe emergence of seedlings and seeds remaining intact in the soil seed bank, we conducted field experiments, which were complemented with lab experiments in order to assay viability of seeds. Brief details for each dataset are provided here, and the manuscript associated with these datasets describes the survey and experimental methods in further detail.
 
 #### countFruitsPerPlantAllPlants.csv
 
