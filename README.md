@@ -27,7 +27,7 @@ GS and MAG conceived of the ideas and analysis, using data collected by MAG, VME
 
 ### Repository Directory
 
-The repository is organized so that the analyses in the paper can be replicated.
+The repository is organized so that the analyses in the paper can be replicated. 
 
 - `data`: Contains data used in the study. Contents of data files are documented further down in the README.
     + `metadata`
