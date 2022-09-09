@@ -42,4 +42,24 @@ Each file is an R script to fit the statistical models (written in JAGS; found i
 
 | Raw data            | Script to prepare raw data for model fitting | JAGS model  | Script to fit JAGS model to data  |
 | --------------------------------- | ------------- | ------------- | ------------- |
-| `seedBagsData.csv`; `seedlingFruitingPlantCountsPermanentPlots.csv`; `countFruitsPerPlantFromPermanentPlots.csv`; `countSeedPerFruit.csv`; `countFruitsPerPlantAllPlants.csv`                        | `01_prepDataForSeedModel.R`              | `jags-seedBagExperiment.R`              | `01_modelScriptsSeedBagExperiment.R`
+| `seedBagsData.csv`; `seedlingFruitingPlantCountsPermanentPlots.csv`; `countFruitsPerPlantFromPermanentPlots.csv`; `countSeedPerFruit.csv`; `countFruitsPerPlantAllPlants.csv`                        | `01_prepDataForSeedModel.R`              | `jags-seedBagExperiment.R`              | `01_modelScriptsSeedBagExperiment.R` |
+| `viabilityData.csv`    | `02_prepDataForViabilityModel.R`              | `jags-viabilityTrials.R`              | `02_modelScriptsViabilityTrials.R` |
+| `seedlingFruitingPlantCountsPermanentPlots.csv`    | `03_prepDataForSeedlingSurvivalModel.R`              | `jags-seedlingSurvival.R`              | `03_modelScriptsSeedlingSurvival.R` |
+| `countFruitsPerPlantAllPlants.csv`; `countUndamagedDamagedFruitsPerPlantAllPlants.csv`    | `04_prepDataForFruitsPerPlantModel.R`              | `jags-fruitsPerPlant.R`              | `04_modelScriptsFruitsPerPlant.R` |
+| `countSeedPerFruit.csv`    | `05_prepDataForSeedsPerFruitModel.R`              | `jags-seedsPerFruit.R`              | `05_modelScriptsSeedsPerFruit.R` |
+
+#### `003_runStatisticalModelDiagnostics`: scripts to run model diagnostics
+
+The folder includes a file with a utility function, `00_tracePlotFunction.R`, to produce trace plots that is used in all other files in the folder. All other files run diagnostic checks on the MCMC samples and produce (1) trace plots and (2) calculate R-hat values and the Heidelberg-Welch diagnostic.
+
+#### `004_checkStatisticalModels`: scripts to perform model checks
+
+The folder includes files that conduct model checks for each model. Model checks vary depending on the nature of the data, and include graphical checks as well as posterior predictive checks.
+
+#### `005_calculatePopulationModelParameters`: scripts to calculate parameters for population model
+
+The folder includes files that use the posterior distribution of parameter estimates to calculate parameters for the population model. The script `00_extractParameters.R` extracts the posterior distributions for parameters used in subsequent scripts. All other scripts in the folder use these posteriors to calculate vital rates. These calculations are described in the section <b>Methods: Computing vital rates</b> in the main text of the manuscript, and in <b>Appendix S4: Computing vital rates</b> in the supplementary materials of the manuscript.
+
+#### `006_testHypotheses`: scripts to test hypotheses in the manuscript
+
+#### `007_createFiguresDiagrams`: scripts to create diagrams for paper
