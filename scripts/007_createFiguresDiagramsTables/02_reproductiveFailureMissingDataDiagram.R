@@ -1,6 +1,7 @@
 # --
 #  Script checks individual datasets to look for missing data values 
 #  and create figure summarizing reproductive failure
+# Produces Figure 1B
 # --
 
 # ---
@@ -254,41 +255,3 @@ legend(x=2004.5,y=24,
 
 
 dev.off()
-
-
-# 
-# missing.list = list()
-# for(i in 1:20){
-#   tmp.sigma=sigmaSummary[sigmaSummary$site==siteNames[i],]
-#   tmp.fec=fruitSummary[fruitSummary$site==siteNames[i],]
-#   tmp.seeds=seedsSummary[seedsSummary$site==siteNames[i],]
-#   tmp.seeds= tmp.seeds[ order( tmp.seeds$year),]
-#   na.obs=tmp.sigma$trueNA==1
-#   na.obs2=tmp.sigma$obsZero==1
-#   tmp=tmp.sigma[na.obs|na.obs2,1:2]
-#   missing.list[[i]] = tmp
-# }
-# lowFitnessYearsPlots=do.call(rbind,missing.list)
-# saveRDS(lowFitnessYearsPlots,"/Users/Gregor/Dropbox/clarkiaSeedBanks/scriptsAnalysis/output/lowFitnessYearsPlots.RDS")
-
-
-
-# ---
-# - Save data object with missing data/zero fitness years ----
-# ---
-# Write out data objects with missing data/zero fitness years
-# Specifically no plants 
-
-# missing.list = list()
-# for(i in 1:20){
-#   tmp.sigma=sigmaSummary[sigmaSummary$site==siteNames[i],]
-#   tmp.fec=fecSummary[fecSummary$site==siteNames[i],]
-#   tmp.seeds=seedsSummary[seedsSummary$site==siteNames[i],]
-#   tmp.seeds= tmp.seeds[ order( tmp.seeds$year),]
-#   na.obs=tmp.sigma$trueNA==1&tmp.fec$trueNA==1&tmp.seeds$trueNA==1
-#   na.obs2=tmp.sigma$obsZero==1&tmp.fec$trueNA==1&tmp.seeds$trueNA==1
-#   tmp=tmp.sigma[na.obs|na.obs2,1:2]
-#   missing.list[[i]] = tmp
-# }
-# lowFitnessYears=do.call(rbind,missing.list)
-# saveRDS(lowFitnessYears,"/Users/Gregor/Dropbox/clarkiaSeedBanks/analysis/outputs/007_hypothesisTesting/objects/lowFitnessYears.RDS")

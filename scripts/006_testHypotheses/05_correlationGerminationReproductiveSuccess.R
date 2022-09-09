@@ -1,5 +1,6 @@
 # -------------------------------------------------------------------
 # Analysis of correlation between germination and RS
+# Produces Figure 5B
 # -------------------------------------------------------------------
 rm(list=ls(all=TRUE)) # clear R environment
 options(stringsAsFactors = FALSE,max.print=100000)
@@ -15,9 +16,10 @@ library(HDInterval)
 library(bayesplot)
 library(rethinking)
 
-# ---
+# - +source scripts ----
+source("scripts/006_testHypotheses/00_utilityFunctions.R")
+
 # - Site names by position ----
-# ---
 siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 
 position<-siteAbiotic %>%
@@ -31,17 +33,17 @@ siteNames = unique(position$site)[siteIndex]
 # Read in samples from posterior distributions
 # -------------------------------------------------------------------
 
-g1 <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/g1-population-level.RDS")
-sigma <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/sigma-population-year-level-mat.RDS")
-fec <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/combinedF-population-year-level-mat.RDS")
-phi <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/phi-population-year-level-mat.RDS")
-rs <- readRDS("/Users/Gregor/Dropbox/clarkia-bet-hedging/outputs/005_calculatePopulationModelParameters/reproductiveSuccess-population-year-level-mat.RDS")
+g1 <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/g1-population-level.RDS")
+sigma <- readRDS("outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/sigma-population-year-level-mat.RDS")
+fec <- readRDS("outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/combinedF-population-year-level-mat.RDS")
+phi <- readRDS("outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/phi-population-year-level-mat.RDS")
+perCapitaRS <- readRDS("outputs/005_calculatePopulationModelParameters/04_reproductiveSuccess/reproductiveSuccessWithCorrectionForMissingness-populationYear-mat.RDS")
 
 # get mode from full posterior and calculate var in RS based on modes
 sigma.mode <- lapply(sigma,apply,2,posterior.mode)
 fec.mode <- lapply(fec,apply,2,posterior.mode)
 phi.mode <- lapply(phi,apply,2,posterior.mode)
-rs.mode <- lapply(rs,apply,2,posterior.mode)
+perCapitaRS.mode <- lapply(perCapitaRS,apply,2,posterior.mode)
 
 # -------------------------------------------------------------------
 # Compare calculation of geometric SD in reproductive success
@@ -49,14 +51,17 @@ rs.mode <- lapply(rs,apply,2,posterior.mode)
 par(mfrow = c(1,1),
     oma = c(5,4,0,0) + 0.1,
     mar = c(0,0,1,1) + 0.1)
+
 plot(NA,NA,xlim=c(0,10),ylim=c(0,10),pch=19);
 
+abline(a=0,b=1,col='black',lty='dotted')
+
 for(i in 1:20){
-  obj = sigma.mode
-  index=grep(paste0("\\[",i,","),names(obj))
-  text(gsd.am(sigma.mode[index]*fec.mode[index]*phi.mode[index]),gsd.am(rs.mode[index]),i);
-  abline(a=0,b=1,col='red')
+  text(gsd.am(sigma.mode[[i]]*fec.mode[[i]]*phi.mode[[i]]),gsd.am(perCapitaRS.mode[[i]]),i);
 }
+
+mtext(side=1,"GSD individual estimates",line=1.5)
+mtext(side=2,"GSD reproductive success",line=1.5)
 
 # -------------------------------------------------------------------
 # Calculate geometric SD in reproductive success
@@ -64,7 +69,7 @@ for(i in 1:20){
 
 df.list = list()
 for(i in 1:20){
-  obj = rs[[i]]
+  obj = perCapitaRS[[i]]
   tmp.df=apply(obj,1,gsd.am)
   df.list[[i]] = tmp.df
 }
@@ -141,19 +146,21 @@ dev.off()
 tiff(filename=paste0("products/figures/correlationGerminationVariabilityRS.tif"),
      height=3.2,width=3.2,units="in",res=800,compression="lzw",pointsize=12)
 
-par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2,.7,0)+.1,mgp=c(3,.45,0))
+#par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2,.7,0)+.1,mgp=c(3,.45,0))
+par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2.2,.7,0)+.1,mgp=c(3,.45,0))
 plot(x = NA,
      y = NA,
-     xlim=c(0,10),ylim=c(0,.4),
+     xlim=c(0,10),ylim=c(0,.425),
      pch=16, cex = 0.5,
      xlab = "",
      ylab = "",
      xaxt= "n", yaxt="n",
      cex.lab = pt10, cex.axis = pt8)
 
-d.plot=data.frame(s=rsPosteriorSummary$mode.rs,
-                  g=g1PosteriorSummary$mode.g1,
-                  site=siteNames)
+# for plotting site names
+# d.plot=data.frame(s=rsPosteriorSummary$mode.rs,
+#                   g=g1PosteriorSummary$mode.g1,
+#                   site=siteNames)
 
 segments(x0=rsPosteriorSummary$lo.rs,x1=rsPosteriorSummary$hi.rs,
          y0=g1PosteriorSummary$mode.g1, lwd=1)
@@ -161,9 +168,11 @@ segments(x0=rsPosteriorSummary$mode.rs,
          y0=g1PosteriorSummary$lo.g1, y1=g1PosteriorSummary$hi.g1,
          lwd=1)
 points(rsPosteriorSummary$mode.rs,g1PosteriorSummary$mode.g1,
-       pch=21,col='black',bg='white',cex=2.5)
-points(rsPosteriorSummary$mode.rs[15],g1PosteriorSummary$mode.g1[15],
-       pch=21,col='black',bg='white',cex=2.5)
+       pch=21,cex=1.5,
+       bg=rgb(red = 1, green = 1, blue = 1, alpha = 1),lwd=0)
+points(rsPosteriorSummary$mode.rs,g1PosteriorSummary$mode.g1,
+       pch=21,col='black',cex=1.5,
+       bg=rgb(red = 1, green = 1, blue = 1, alpha = 0.5))
 
 axis(1, seq(0,10,by=2), padj = -.5,
      labels = seq(0,10,by=2), line = 0,
@@ -175,15 +184,17 @@ axis(2, seq(0,1,by=.1),
 axis(2, seq(.05,1,by=.1),labels=FALSE)
 
 mtext("Germination probability",
-      side=2,line=1.5,adj=.5,col='black',cex=pt8)
-mtext("Geometric standard deviation of per-capita reproductive success",
-      side=1,line=1,adj=0,col='black',cex=pt8,at=-2)
+      side=2,line=1.5,adj=.5,col='black',cex=pt10)
+mtext("Geometric SD of per-capita reproductive success",
+      side=1,line=1,adj=-.025,col='black',cex=pt10,at=-2)
 
 box()
-text(x=2.8,y=.4,
-     paste0("Pearson's r=",round(mode.correlation,3)),
-     cex=pt8)
+legend("topleft",bty='n',inset=c(-.05,0),
+       paste0("Pearson's r=",round(correlationPosteriorSummary[3],3),
+              " (",round(correlationPosteriorSummary[1],3),", ",
+              round(correlationPosteriorSummary[2],3),")"),
+       cex=pt7)
 
-mtext("A.", adj = 0, cex=pt10)
+mtext("B.", adj = 0, cex=pt10)
 
 dev.off()

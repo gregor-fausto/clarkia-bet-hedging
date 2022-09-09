@@ -1,6 +1,7 @@
 ####
 ####
-## Code for conceptual figure describing seed bank data
+# Code for conceptual figure describing seed bank data
+# Produces graphs in Figure 2B focused on belowground parts of demography
 ####
 ####
 

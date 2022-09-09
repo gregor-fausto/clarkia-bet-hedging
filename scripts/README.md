@@ -10,7 +10,8 @@
     + `004_checkStatisticalModels`: scripts to perform model checks
     + `005_calculatePopulationModelParameters`: scripts to calculate parameters for population model
     + `006_testHypotheses`: scripts to test hypotheses in the manuscript
-    + `007_createFiguresDiagrams`: scripts to create diagrams for paper
+    + `007_createFiguresDiagramsTables`: scripts to create figures, diagrams, and some tables for paper
+    + `primaryScript.R`: run this script FIRST so that the scripts in this directory populate the appropriate directories.
 
 Running `primaryScript.R` in the appropriate directory will create the folders `outputs` and `products` with the following file structure. Note that replicating the simulation and model fitting may be slow. We recommend testing the code in `003_statisticalModelFitting` on a smaller number of replicates than the default.
 
@@ -62,4 +63,24 @@ The folder includes files that use the posterior distribution of parameter estim
 
 #### `006_testHypotheses`: scripts to test hypotheses in the manuscript
 
-#### `007_createFiguresDiagrams`: scripts to create diagrams for paper
+The folder contains scripts to test the hypotheses in the manuscript, and produce results figures in the main text and supplement.
+
+- `00_utilityFunctions.R`: Functions used in other scripts in this folder.
+- `01_demographicBetHedgingTest.R`: Script to conduct the demographic test of bet hedging, described in <b>Methods: Analysis: Demographic test of bet hedging</b> in the main text. The script produces panels A-C in Figure 3.
+- `02_optimalObservedGerminationDensityIndependentModelGridSearch.R`: Script to calculate the optimal germination fractions using a density-independent model for bet hedging. The script uses a grid search to find the optimal germination fractions. NOTE: the output from this script is used to verify the results from the 1D optimization method in (`03_optimalObservedGerminationDensityIndependentModelOptimization.R`) and IS NOT USED to create figures in the main text.
+- `03_optimalObservedGerminationDensityIndependentModelOptimization.R`: Script to calculate the optimal germination fractions using a density-independent model for bet hedging, as described in <b>Methods: Analysis: Density-independent model for germination fractions</b> in the main text. The script uses a 1-dimensional optimization routine to find the optimal germination fraction. NOTE: the output from this script IS USED to create Figure 4.
+- `04_correlationGerminationSeedSurvival.R`: Script to calculate the correlation between germination fractions and seed survival, described in <b>Methods: Analysis: Correlation between germination and seed survival</b> in the main text. The script produces panel A in Figure 5.
+- `05_correlationGerminationReproductiveSuccess.R`: Script to calculate the correlation between germination fractions and variability in per-capita reproductive success, described in <b>Methods: Analysis: Correlation between germination and variability in per-capita reproductive success</b> in the main text. The script produces panel B in Figure 5.
+- `06_demographicBetHedgingTestUncertainty.R`: Script to calculate uncertainty in the demographic test of bet hedging, described in <b>S5.1 Accounting for parameter uncertainty in demographic test of bet hedging</b> in the supplementary materials. The script produces panel A-C in Figure S7.
+- `07_optimalObservedGerminationDensityIndependentModelUncertainty.R`: Script to calculate uncertainty in the estimates for optimal germination fractions, described in <b>S5.2 Accounting for parameter uncertainty in optimal germination fractions</b> in the supplementary materials. The script produces Figure S8.
+- `08_optimalGerminationSensitivity.R`: Script to calculate sensitivity of optimal germination fractions to seed mortality, described in <b>S5.3 Seed mortality before and after germination have opposing effects on
+optimal germination</b> in the supplementary materials. The script produces Figures S9 and S10.
+
+#### `007_createFiguresDiagramsTables`: scripts to create additional figures and diagrams for paper
+
+- `00_utilityFunctions.R`: Modifies `ggsn::scalebar` for the map of populations.
+- `01_populationMap.R`: Script to produce map of study populations. Produces Figure 1A in the main text.
+- `02_reproductiveFailureMissingDataDiagram.R`: Script to create visual summary of years in which populations have observations for per-capita reproductive success, in which no seedlings survived in permanent plots, and in which there is missing data. Produces Figure 1B in the main text.
+- `03_abovegroundModelDiagram.R`: Script to produce parts of Figure 2A. Specifically, this script produces the graphs that describe models for aboveground components of demography.
+- `04_belowgroundModelDiagram.R`: Script to produce parts of Figure 2B. Specifically, this script produces the graphs that describe models for belowground components of demography.
+- `05_summarizeSampleSizes.R`: Script to summarize sample sizes of datasets used in the study. Used to produce Tables S2-S9.

@@ -4,6 +4,7 @@
 # the structure of the models for aboveground observations
 # using seedling survival to fruiting as the example dataset
 # the figures link observations -> estimated parameters
+# Produces graphs in Figure 2A focused on aboveground parts of demography
 ####
 ####
 

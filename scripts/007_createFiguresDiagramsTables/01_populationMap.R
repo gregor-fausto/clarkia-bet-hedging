@@ -1,6 +1,8 @@
 ####
 ####
 # Script to create map of study populations
+# Produces Figure 1A
+#
 # Plots follow tutorial at
 # http://zevross.com/blog/2016/03/15/using-the-new-r-package-feddata-to-access-federal-open-datasets-including-interactive-graphics/
 # projections obtained at

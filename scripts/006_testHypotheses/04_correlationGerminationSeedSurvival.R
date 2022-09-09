@@ -1,5 +1,6 @@
 # --
 #  Script to analyze correlation between g1 and s2s3
+# Produces Figure 5A
 # --
 
 # ---

@@ -27,7 +27,7 @@ GS and MAG conceived of the ideas and analysis, using data collected by MAG, VME
 
 ### Repository Directory
 
-The repository is organized so that the analyses in the paper can be replicated. 
+The repository is organized so that the analyses in the paper can be replicated.
 
 - `data`: Contains data used in the study. Contents of data files are documented further down in the README.
     + `metadata`
@@ -53,7 +53,7 @@ The repository is organized so that the analyses in the paper can be replicated.
     + `004_checkStatisticalModels`: scripts to perform model checks
     + `005_calculatePopulationModelParameters`: scripts to calculate parameters for population model
     + `006_testHypotheses`: scripts to test hypotheses in the manuscript
-    + `007_createFiguresDiagrams`: scripts to create diagrams for paper
+    + `007_createFiguresDiagramsTables`: scripts to create figures, diagrams, and some tables for paper
 
 Running `primaryScript.R` in the appropriate directory will create the folders `outputs` and `products` with the following file structure. Note that replicating the simulation and model fitting may be slow. We recommend testing the code in `003_statisticalModelFitting` on a smaller number of replicates than the default.
 

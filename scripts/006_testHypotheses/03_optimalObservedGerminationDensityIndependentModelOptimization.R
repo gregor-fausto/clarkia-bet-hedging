@@ -1,5 +1,6 @@
 # -------------------------------------------------------------------
 # Density-independent model of germination + uncertainty
+# Produces Figure 4
 # -------------------------------------------------------------------
 
 # - Environment ----

@@ -1,6 +1,7 @@
 ####
 ####
 # Script to summarize sample sizes of data used for analysis
+# Produces txt files that are used to produce tables in the supplement
 ####
 ####
 
