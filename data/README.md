@@ -22,6 +22,10 @@
 
 ### Data
 
+The manuscript associated with the data submitted to this Dryad repository provides a description of the methods.
+
+Briefly, we used field surveys and experiments to observe components of above- and below-ground demography for 20 populations across the range of <i>Clarkia xantiana</i> ssp. <i>xantiana</i>. To collect data on seedling survival, fruit production, and seed set, we used field surveys. In each population, these surveys included observations in both permanent plots as well as additional, haphazardly sampled plots arrayed across the population. To observe emergence of seedlings and seeds remaining intact in the soil seed bank, we conducted field experiments, which were complemented with lab experiments in order to assay viability of seeds. Brief details for each dataset are provided here, and the manuscript associated with these datasets describes the survey and experimental methods in further detail.
+
 #### countFruitsPerPlantAllPlants.csv
 
 Observations of total fruit equivalents per plant from field surveys in 2006-2012. Data come from up to 15 plants per permanent plot, plus plants found across the site. The counts are of “undamaged fruit equivalents” per plant, and were made by counting the number of undamaged fruits, and then counting the damaged fruits and estimating how many undamaged fruits these damaged fruits amounted to.
@@ -36,7 +40,7 @@ Observations of total fruit equivalents per plant from field surveys in 2006-201
 
 #### countFruitsPerPlantFromPermanentPlots.csv
 
-Observations of total fruit equivalents per plant from field surveys in 2006-2012. Data come from up to 15 plants per permanent plot. The counts are of “undamaged fruit equivalents” per plant, and were made by counting the number of undamaged fruits, and then counting the damaged fruits and estimating how many undamaged fruits these damaged fruits amounted to.
+Observations of total fruit equivalents per plant from field surveys in 2007-2012. Data come from up to 15 plants per permanent plot. The counts are of “undamaged fruit equivalents” per plant, and were made by counting the number of undamaged fruits, and then counting the damaged fruits and estimating how many undamaged fruits these damaged fruits amounted to.
 
 | variableName          | description |
 | ------------          | ----------- |
@@ -49,7 +53,7 @@ Observations of total fruit equivalents per plant from field surveys in 2006-201
 
 #### countSeedPerFruit.csv
 
-Observations of seeds per fruit from seeds collected in the field in 2006-2021. From 2006-2021, data are for counts of seeds per undamaged fruit for up to roughly 30 fruits per site. From 2013-2021, the data also include the counts of seeds per damaged fruit.
+Observations of seeds per fruit from seeds collected in the field in 2006-2020. From 2006-2020, data are for counts of seeds per undamaged fruit for up to roughly 30 fruits per site. From 2013-2020, the data also include the counts of seeds per damaged fruit.
 
 | variableName                      | description   |
 | --------------------------------- | ------------- |
@@ -60,7 +64,7 @@ Observations of seeds per fruit from seeds collected in the field in 2006-2021. 
 
 #### countUndamagedDamagedFruitsPerPlantAllPlants.csv
 
-Observations of undamaged and damaged fruits per plant from field surveys in 2013-2021. Data come from up to 15 plants per permanent plot, plus plants found across the site. The counts are of “undamaged fruits” and "damaged fruits" on each plant.
+Observations of undamaged and damaged fruits per plant from field surveys in 2013-2020. Data come from up to 15 plants per permanent plot, plus plants found across the site. The counts are of “undamaged fruits” and "damaged fruits" on each plant.
 
 | variableName                      | description  |
 | --------------------------------- | ------------ |
@@ -72,7 +76,7 @@ Observations of undamaged and damaged fruits per plant from field surveys in 201
 
 #### countUndamagedDamagedFruitsPerPlantFromPermanentPlots.csv
 
-Observations of undamaged and damaged fruits per plant from field surveys in 2013-2021. Data come from up to 15 plants per permanent plot. The counts are of “undamaged fruits” and "damaged fruits" on each plant.
+Observations of undamaged and damaged fruits per plant from field surveys in 2013-2020. Data come from up to 15 plants per permanent plot. The counts are of “undamaged fruits” and "damaged fruits" on each plant.
 
 | variableName                 | description  |
 | ---------------------------- | ------------ |
@@ -105,7 +109,7 @@ Observations of intact seeds and germinants from the seed bag burial experiment,
 
 #### seedlingFruitingPlantCountsPermanentPlots.csv
 
-Observations of seedlings and fruiting plants in permanent plots from 2006-2021. Data are counts of seedlings in permanent plots in January/February censuses, and counts of fruiting plants in permanent plots in June/Jly censuses.
+Observations of seedlings and fruiting plants in permanent plots from 2006-2020. Data are counts of seedlings in permanent plots in January/February censuses, and counts of fruiting plants in permanent plots in June/Jly censuses.
 
 | variableName   | description                                                                             |
 | -------------- | --------------------------------------------------------------------------------------- |
