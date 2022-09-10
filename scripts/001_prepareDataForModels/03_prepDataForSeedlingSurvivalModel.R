@@ -27,11 +27,6 @@ seedlingFruitingPlantCountsPermanentPlots <- read.csv(paste0(dataDirectory,"seed
 
 seedlingFruitingPlantCountsPermanentPlots$year <- as.character(seedlingFruitingPlantCountsPermanentPlots$year)
 
-# filter dataset to 2006-2020
-
-seedlingFruitingPlantCountsPermanentPlots <- seedlingFruitingPlantCountsPermanentPlots %>%
-  dplyr::filter(year<=2020)
-
 # if more fruiting plants than seedlings, set seedling number equal to fruiting plant number
 seedlingFruitingPlantCountsPermanentPlots <- seedlingFruitingPlantCountsPermanentPlots %>%
   # more fruiting plants than seedlings
