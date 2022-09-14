@@ -43,6 +43,7 @@ vignettes/*.pdf
 # all .csv data files in the /data directory
 # these are available on Dryad
 data/*.csv
+data/countSeedPerFruit.csv
 
 # intermediate outputs of the analysis including
 # (1) data formatted for analysis
