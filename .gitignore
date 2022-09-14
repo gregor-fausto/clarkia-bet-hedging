@@ -38,10 +38,23 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# additional directories or scripts to ignore
+## additional directories or scripts to ignore
+# intermediate outputs of the analysis including
+# (1) data formatted for analysis
+# (2) samples from the posterior distribution
+# (3) model convergence diagnostics
+# (4) model checks
+# (5) calculated population model parameters
 outputs/
+
+# pdf and tiff files for figures produces by R and tex scripts
+# tables and diagrams produced by tex scripts
 products/
+
+# contains the manuscript
 manuscript/
+
+# these were generated when syncing across computers and can be ignored
 .DS_Store
 scripts/.DS_Store
 scripts/004_checkStatisticalModels/.DS_Store
