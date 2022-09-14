@@ -67,9 +67,6 @@ Running `primaryScript.R` in the appropriate directory will create the folders `
     + `007_createFiguresDiagrams`: holds shapefiles for creating the map in Figure 1
 - `products`: Folder for figures
     + `figures`: directory to hold figures produced by scripts   
-    + `figuresForManuscript`: directory to hold figures composed with LaTeX   
-    + `tables`: directory to hold tables produced by scripts    
-    + `texDiagrams`: directory to TeX diagrams in the manuscript
 
 ---
 

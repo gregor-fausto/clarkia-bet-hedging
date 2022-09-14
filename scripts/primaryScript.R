@@ -1,6 +1,6 @@
 ####
 ####
-# Primary script to create output directories 
+# Primary script to create output directories
 ####
 ####
 
@@ -59,3 +59,11 @@ dir.create("../outputs/007_createFiguresDiagrams")
 # - +Create directory to hold text files with sample size summaries
 
 dir.create("../outputs/008_sampleSizeSummaries")
+
+# - Create product directories ----
+
+dir.create("../products")
+
+# - +Create directory to hold figures produced in R scripts
+
+dir.create("../products/figures")
