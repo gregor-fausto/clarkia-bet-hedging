@@ -39,6 +39,11 @@ vignettes/*.pdf
 .Renviron
 
 ## additional directories or scripts to ignore
+
+# all .csv data files in the /data directory
+# these are available on Dryad
+data/*.csv
+
 # intermediate outputs of the analysis including
 # (1) data formatted for analysis
 # (2) samples from the posterior distribution

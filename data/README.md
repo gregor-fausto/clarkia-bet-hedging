@@ -3,7 +3,7 @@
 
 ### Repository Directory
 
-- `data`: Contains data used in the study. Contents of data files are documented further down in the README.
+- `data`: Contains data used in the study. Data files are found in this Dryad repository: [link]. Contents of data files are documented further down in the README.
     + `metadata`
       * `attributes.csv`: Describes the variables for all data files.
       * `creators.csv`: Documents the creators of the data files.
@@ -22,7 +22,7 @@
 
 ### Data
 
-The manuscript associated with the data submitted to this Dryad repository provides a description of the methods.
+The data associated with the scripts in this Github folder are archived in the following Dryad repository: [link]. Once the data files from the Dryad repository are downloaded, they can be added to the `data` folder. The contents of the data files are documented here.
 
 Briefly, we used field surveys and experiments to observe components of above- and below-ground demography for 20 populations across the range of <i>Clarkia xantiana</i> ssp. <i>xantiana</i>. To collect data on seedling survival, fruit production, and seed set, we used field surveys. In each population, these surveys included observations in both permanent plots as well as additional, haphazardly sampled plots arrayed across the population. To observe emergence of seedlings and seeds remaining intact in the soil seed bank, we conducted field experiments, which were complemented with lab experiments in order to assay viability of seeds. Brief details for each dataset are provided here, and the manuscript associated with these datasets describes the survey and experimental methods in further detail.
 
