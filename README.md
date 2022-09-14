@@ -9,7 +9,7 @@
   - David A. Moeller, University of Minnesota
   - Monica A. Geber, Cornell University
 
-  This repository contains the scripts for the project on bet hedging in <i>Clarkia xantiana</i>.
+  This repository contains the scripts for the project on bet hedging in <i>Clarkia xantiana</i> ssp. <i>xantiana</i>.
 
 -----
 
@@ -29,7 +29,7 @@ GS and MAG conceived of the ideas and analysis, using data collected by MAG, VME
 
 The repository is organized so that the analyses in the paper can be replicated.
 
-- `data`: Contains data used in the study. Data files are found in this Dryad repository: [link]. Contents of data files are documented further down in the README.
+- `data`: Contains data used in the study. The data files listed below are found in this Dryad repository: [link]. Contents of data files are documented further down in the README, as well as a README in the data repository.
     + `metadata`
       * `attributes.csv`: Describes the variables for all data files.
       * `creators.csv`: Documents the creators of the data files.
