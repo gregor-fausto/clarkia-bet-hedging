@@ -9,7 +9,7 @@ model {
 
     # population-level intercept for each population
     nu_tfe[i] ~ dgamma(1, 1)
-  #  nu_tfe[i] ~ dnorm(0, 1)
+    # nu_tfe[i] ~ dnorm(0, 1)
     # place prior on standard deviation on random year effects
     # page 76 https://nwfsc-timeseries.github.io/atsa-2017/Labs/Week%203%20intro%20to%20jags/intro-to-jags.pdf
     sigma0_tfe[i] ~ dnorm(0, 1) T(0,)
@@ -76,7 +76,7 @@ model {
     log(z_tfe[i]) <- mu_log_tfe[siteYearIndex_tfe[i]] + eps_tfe_overdisp[i]
     y_tfe[i] ~ dpois(z_tfe[i])
 
-    # Posterior predictive and chi-squared
+    # Posterior predictive and chi-squared - do this in model checking script instead to speed up fitting
     # y_tfe.sim[i] ~ dpois(z_tfe[i])
     # chi2.tfe.obs[i] <- pow((y_tfe[i] - z_tfe[i]),2) / (z_tfe[i])
     # chi2.tfe.sim[i] <- pow((y_tfe.sim[i]- z_tfe[i]),2) / (z_tfe[i])
@@ -94,7 +94,7 @@ model {
     log(z_tot[i]) <- mu_log_tot[siteYearIndex_tot[i]] + eps_tot_overdisp[i]
     y_tot[i] ~ dpois(z_tot[i])
 
-    # Posterior predictive and chi-squared
+    # Posterior predictive and chi-squared - do this in model checking script instead to speed up fitting
     # y_tot.sim[i] ~ dpois(z_tot[i])
     # chi2.tot.obs[i] <- pow((y_tot[i] - z_tot[i]),2) / (z_tot[i])
     # chi2.tot.sim[i] <- pow((y_tot.sim[i]- z_tot[i]),2) / (z_tot[i])
@@ -109,7 +109,7 @@ model {
     # get number of seeds per damaged fruit
     y_dam[i] ~ dbinom(prop_dam[i],y_tot[i])
 
-    # Posterior predictive and chi-squared
+    # Posterior predictive and chi-squared - do this in model checking script instead to speed up fitting
     # y_dam.sim[i] ~ dbinom(prop_dam[i],y_tot[i])
     # chi2.dam.obs[i] <- pow((y_dam[i] - prop_dam[i]*y_tot[i]),2) / (prop_dam[i]*y_tot[i]+0.001)
     # chi2.dam.sim[i] <- pow((y_dam.sim[i] - prop_dam[i]*y_tot[i]),2) / (prop_dam[i]*y_tot[i]+0.001)

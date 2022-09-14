@@ -1,19 +1,7 @@
 model {
 
-  # https://github.com/kionaogle/EcoApps_Random_Effects/blob/v1.0/Code%20A3.R
-  # https://github.com/CCheCastaldo/CheCastaldo_etal_2019_EcolMongr/blob/master/ModelBuild/GlobalModel/i-009f9c75a9206a0ac/Implementation.R
-  # https://github.com/colemonnahan/gradmcmc/tree/v1.0/models/wildflower
   # Priors --------------------------------------------------------------
   for(i in 1:n_siteSurvival){
-
-    # Smits 2015 PNAS: assume the shape is the same but that
-    # the scale varies by year
-    # saying that a population has a characteristic pattern through time
-    # but that the magnitude at which that pattern proceeds varies
-
-    # shape parameter: population parameter
-    # controls rate of change of age-specific mortality rate
-    # change prior to be half-cauchy
 
     # seed survival ---------------------------------------------------------------
     for(k in 1:4){
@@ -76,8 +64,7 @@ model {
     for(k in 1:2){
       mu0_g[i,k] ~ dnorm(0, 1)
 
-      # Weakly informative prior (Rosenbaum et al. 2019)
-      # slightly more informative prior because few groups https://statmodeling.stat.columbia.edu/2015/12/08/hierarchical-modeling-when-you-have-only-2-groups-i-still-think-its-a-good-idea-you-just-need-an-informative-prior-on-the-group-level-variation/
+      # WEAKLY INFORMATIVE
       sigma0_g[i,k] ~ dnorm(0,1) T(0,)
       tau0_g[i,k] <- 1/(sigma0_g[i,k]*sigma0_g[i,k])
     }
@@ -107,7 +94,6 @@ model {
     mu0_s0[i] ~ dnorm(0,1)
 
     # WEAKLY INFORMATIVE
-    # slightly more informative prior because few groups https://statmodeling.stat.columbia.edu/2015/12/08/hierarchical-modeling-when-you-have-only-2-groups-i-still-think-its-a-good-idea-you-just-need-an-informative-prior-on-the-group-level-variation/
     sigma0_s0[i] ~ dnorm(0,1) T(0,)
     tau0_s0[i] <- 1/(sigma0_s0[i]*sigma0_s0[i])
 
