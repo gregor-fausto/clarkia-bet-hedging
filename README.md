@@ -29,7 +29,7 @@ GS and MAG conceived of the ideas and analysis, using data collected by MAG, VME
 
 The repository is organized so that the analyses in the paper can be replicated.
 
-- `data`: Contains data used in the study. The data files listed below are found in this Dryad repository: [link]. Contents of data files are documented further down in the README, as well as a README in the data repository.
+- `data`: Contains data used in the study. The data files listed below are found in a Dryad repository: [link to be added upon publication of manuscript]. Contents of data files are documented further down in the README, as well as a README in the data repository.
     + `metadata`
       * `attributes.csv`: Describes the variables for all data files.
       * `creators.csv`: Documents the creators of the data files.
@@ -72,7 +72,7 @@ Running `primaryScript.R` in the appropriate directory will create the folders `
 
 ### Data
 
-The data associated with the scripts in this Github folder are archived in the following Dryad repository: [link]. Once the data files from the Dryad repository are downloaded, they can be added to the `data` folder. The contents of the data files are documented here.
+The data associated with the scripts in this Github folder are archived in the following Dryad repository: [link to be added upon publication of manuscript]. Once the data files from the Dryad repository are downloaded, they can be added to the `data` folder. The contents of the data files are documented here.
 
 Briefly, we used field surveys and experiments to observe components of above- and below-ground demography for 20 populations across the range of <i>Clarkia xantiana</i> ssp. <i>xantiana</i>. To collect data on seedling survival, fruit production, and seed set, we used field surveys. In each population, these surveys included observations in both permanent plots as well as additional, haphazardly sampled plots arrayed across the population. To observe emergence of seedlings and seeds remaining intact in the soil seed bank, we conducted field experiments, which were complemented with lab experiments in order to assay viability of seeds. Brief details for each dataset are provided here, and the manuscript associated with these datasets describes the survey and experimental methods in further detail.
 
@@ -159,7 +159,7 @@ Observations of intact seeds and germinants from the seed bag burial experiment,
 
 #### seedlingFruitingPlantCountsPermanentPlots.csv
 
-Observations of seedlings and fruiting plants in permanent plots from 2006-2020. Data are counts of seedlings in permanent plots in January/February censuses, and counts of fruiting plants in permanent plots in June/Jly censuses.
+Observations of seedlings and fruiting plants in permanent plots from 2006-2020. Data are counts of seedlings in permanent plots in January/February censuses, and counts of fruiting plants in permanent plots in June/July censuses.
 
 | variableName   | description                                                                             |
 | -------------- | --------------------------------------------------------------------------------------- |
