@@ -11,7 +11,7 @@
 
   This repository contains the scripts for the project on bet hedging in <i>Clarkia xantiana</i> ssp. <i>xantiana</i>.
 
-[![DOI](https://zenodo.org/badge/7082021.svg)](https://zenodo.org/badge/latestdoi/7082021)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7082021.svg)](https://doi.org/10.5281/zenodo.7082021)
 
 -----
 
