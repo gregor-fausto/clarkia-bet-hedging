@@ -11,6 +11,8 @@
 
   This repository contains the scripts for the project on bet hedging in <i>Clarkia xantiana</i> ssp. <i>xantiana</i>.
 
+[![DOI](https://data.caltech.edu/badge/7082021.svg)](https://data.caltech.edu/badge/latestdoi/7082021)
+
 -----
 
 ### Abstract
