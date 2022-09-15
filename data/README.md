@@ -122,7 +122,7 @@ Observations of seedlings and fruiting plants in permanent plots from 2006-2020.
 
 #### siteAbioticData.csv
 
-Summary of abiotic variables associated with each study site in the long-term study of Clarkia xantiana ssp. xantiana demography.  
+Summary of abiotic variables associated with each study site in the long-term study of <i>Clarkia xantiana</i> ssp. <i>xantiana</i> demography.  
 
 | variableName | description                                                                             |
 | ------------ | --------------------------------------------------------------------------------------- |
@@ -131,7 +131,7 @@ Summary of abiotic variables associated with each study site in the long-term st
 | easting      | Geographic position reported as eastward measured distance, reported for UTM zone 11, NAD 1927 (units of 100 meters)                                         |
 | northing          | Geographic position reported as northward measured distance, reported for UTM zone 11, NAD 1927 (units of 100 meters) |
 | elevation        | Height above sea level (meters)                           |
-| area    | Size of the Clarkia xantiana ssp. xantiana population at the study site (hectares)                                          |
+| area    | Size of the <i>Clarkia xantiana</i> ssp. <i>xantiana</i> population at the study site (hectares)                                          |
 | surfaceRock    | Dominant soil parent material                    |
 
 
