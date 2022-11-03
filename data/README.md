@@ -7,7 +7,7 @@ Briefly, we used field surveys and experiments to observe components of above- a
 
 ### Repository Directory
 
-- `data`: Contains data used in the study. Data files are found in this Dryad repository: [link]. Contents of data files are documented further down in the README.
+- `data`: Contains data used in the study. Data files are found in this Dryad repository: [link to be added upon publication of manuscript]. Contents of data files are documented further down in the README.
     + `metadata`
       * `attributes.csv`: Describes the variables for all data files.
       * `creators.csv`: Documents the creators of the data files.
