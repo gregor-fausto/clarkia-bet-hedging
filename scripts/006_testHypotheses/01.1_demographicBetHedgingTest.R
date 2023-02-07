@@ -167,8 +167,8 @@ demographicBetHedgingTestData = data.frame(site=siteNames,
 
 # - Plot Figure 3  ----
 
-# tiff(filename=paste0("products/figures/betHedgingTest.tif"),
-#      height=2.5,width=6.5,units="in",res=800,compression="lzw",pointsize=12)
+tiff(filename=paste0("products/figures/rev-betHedgingTestQuasiGerm.tif"),
+     height=2.5,width=6.5,units="in",res=800,compression="lzw",pointsize=12)
 
 par(mfrow=c(1,3),mar=c(0,3,0,0)+.1,oma=c(2.5,0,.8,0)+.1,mgp=c(3,.45,0))
 
@@ -276,4 +276,6 @@ mtext(expression(lambda[s] ~ 'with seedbank'),
 
 mtext("C.", adj = 0, cex=pt10)
 
-# dev.off()
+dev.off()
+
+

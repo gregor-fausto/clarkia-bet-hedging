@@ -286,7 +286,7 @@ dev.off()
 tiff(filename=paste0("products/figures/rev-betHedgingTestB.tif"),
      height=2.5,width=4.5,units="in",res=800,compression="lzw",pointsize=12)
 
-par(mfrow=c(1,2))
+par(mfrow=c(1,2),mar=c(0,3,0,0)+.1,oma=c(2.5,0,.8,0)+.1,mgp=c(3,.45,0))
 # - +original PANEL B plus gray highlight ----
 plot(var.lambda.mean,var.lambda.nosb.mean,
      pch=21, cex = .75, bg='white',
