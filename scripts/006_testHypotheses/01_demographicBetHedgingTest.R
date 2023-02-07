@@ -276,3 +276,90 @@ mtext(expression(lambda[s] ~ 'with seedbank'),
 mtext("C.", adj = 0, cex=pt10)
 
 dev.off()
+
+# - Revision/response to reviewers  ----
+# a reviewer asked us about the range of points observed in panel B
+# to respond to this question, we produced a figure that zoomed into 
+# a section of panel B and better reveals the range of the data
+# we include this figure in our response to reviewers
+
+tiff(filename=paste0("products/figures/rev-betHedgingTestB.tif"),
+     height=2.5,width=4.5,units="in",res=800,compression="lzw",pointsize=12)
+
+par(mfrow=c(1,2))
+# - +original PANEL B plus gray highlight ----
+plot(var.lambda.mean,var.lambda.nosb.mean,
+     pch=21, cex = .75, bg='white',
+     #xlim=c(0,10),ylim=c(0,250),
+     xlab = "", type='n',
+     ylab = "",
+     xaxt= "n", yaxt="n",
+     cex.lab = pt10, cex.axis = pt8,lwd=.75)
+
+rect(-10,-1000,10,600,col='gray90',border=0)
+
+points(var.lambda.mean,var.lambda.nosb.mean,
+       pch=21,cex=1,
+       bg=rgb(red = 1, green = 1, blue = 1, alpha = 1),lwd=0)
+points(var.lambda.mean,var.lambda.nosb.mean,
+       pch=21,col='black',cex=1,lwd = 0.5,
+       bg=rgb(red = 1, green = 1, blue = 1, alpha = 0.5))
+
+axis(1, seq(0,60,by=10), padj = -.5,
+     labels = seq(0,60,by=10), line = 0,
+     col = NA, col.ticks = 1, cex.axis = pt8)
+axis(1, seq(5,55,by=10),labels=FALSE)
+axis(2, seq(0,3000,by=500),
+     labels = seq(0,3000,by=500), las = 1, line = 0, hadj= 1.2,
+     col = NA, col.ticks = 1, cex.axis = pt8)
+axis(2, seq(250,2750,500),labels=FALSE)
+
+mtext(expression(Var(lambda) ~ 'without seedbank'),
+      side=2,line=1.75,adj=.5,col='black',cex=pt8)
+mtext(expression(Var(lambda) ~ 'with seedbank'),
+      side=1,line=1.5,col='black',cex=pt8,adj=.5)
+
+box()
+
+abline(a=0,b=1,lty='dotted')
+mtext("Figure 3B: full plot", adj = 0, cex=pt10)
+
+
+# - +zoomed PANEL B plus gray highlight ----
+plot(var.lambda.mean,var.lambda.nosb.mean,
+     pch=21, cex = .75, bg='white',
+     xlim=c(0,10),ylim=c(0,600),
+     xlab = "", type='n',
+     ylab = "",
+     xaxt= "n", yaxt="n",
+     cex.lab = pt10, cex.axis = pt8,lwd=.75)
+
+rect(-10,-1000,20,700,col='gray90',border=0)
+
+points(var.lambda.mean,var.lambda.nosb.mean,
+       pch=21,cex=1,
+       bg=rgb(red = 1, green = 1, blue = 1, alpha = 1),lwd=0)
+points(var.lambda.mean,var.lambda.nosb.mean,
+       pch=21,col='black',cex=1,lwd = 0.5,
+       bg=rgb(red = 1, green = 1, blue = 1, alpha = 0.5))
+
+axis(1, seq(0,10,by=2), padj = -.5,
+     labels = seq(0,10,by=2), line = 0,
+     col = NA, col.ticks = 1, cex.axis = pt8)
+axis(1, seq(1,9,by=2),labels=FALSE)
+axis(2, seq(0,600,by=200),
+     labels = seq(0,600,by=200), las = 1, line = 0, hadj= 1.2,
+     col = NA, col.ticks = 1, cex.axis = pt8)
+axis(2, seq(100,500,100),labels=FALSE)
+
+mtext(expression(Var(lambda) ~ 'without seedbank'),
+      side=2,line=1.75,adj=.5,col='black',cex=pt8)
+mtext(expression(Var(lambda) ~ 'with seedbank'),
+      side=1,line=1.5,col='black',cex=pt8,adj=.5)
+
+box()
+
+abline(a=0,b=1,lty='dotted')
+mtext("Figure 3B: zoomed in plot", adj = 0, cex=pt10)
+
+dev.off()
