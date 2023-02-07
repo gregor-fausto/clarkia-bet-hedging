@@ -87,14 +87,14 @@ for( k in 1:20){
 
   # - ++calculate the arithmetic mean population growth rate with and without the seed bank  ----
   lambda.a[k] = mean(g1.hat[k]*y_t*s0.hat[k]*s1.hat[k]+(1-g1.hat[k])*s2.hat[k]*s3.hat[k])
-  lambda.a.nosb[k] = mean(y_t*s0.hat[k]*s1.hat[k])
+  lambda.a.nosb[k] = mean(y_t*s0.hat[k]*s1.hat[k]+(1-.99)*s2.hat[k]*s3.hat[k])
 
   # - ++draw 1000 samples for reproductive success with replacement  ----
   y_t.resample = sample(y_t,1000,replace=TRUE)
 
   # - ++for each resample year, calculate the population growth rate with and without the seed bank  ----
   fit[,k] = g1.hat[k]*y_t.resample*s0.hat[k]*s1.hat[k]+(1-g1.hat[k])*s2.hat[k]*s3.hat[k]
-  fit.nosb[,k] = y_t.resample*s0.hat[k]*s1.hat[k]
+  fit.nosb[,k] = y_t.resample*s0.hat[k]*s1.hat[k]+(1-.99)*s2.hat[k]*s3.hat[k]
 
   # - ++calculate the stochastic population growth rate by approximation, with and without the seed bank  ----
   lambda[k] = exp(sum(log(fit[,k]))/1000)
@@ -122,7 +122,7 @@ for(j in 1:1000){
     
     # - ++for each resample year, calculate the population growth rate with and without the seed bank  ----
     fit[,k] = g1.hat[k]*y_t.resample*s0.hat[k]*s1.hat[k]+(1-g1.hat[k])*s2.hat[k]*s3.hat[k]
-    fit.nosb[,k] = y_t.resample*s0.hat[k]*s1.hat[k]
+    fit.nosb[,k] = y_t.resample*s0.hat[k]*s1.hat[k]+(1-.99)*s2.hat[k]*s3.hat[k]
     
     # - ++calculate the stochastic population growth rate by approximation, with and without the seed bank  ----
     lambda[k] = exp(sum(log(fit[,k]))/1000)
@@ -162,13 +162,13 @@ demographicBetHedgingTestData = data.frame(site=siteNames,
                                            var.lambda=var.lambda.mean,var.lambda.nosb=var.lambda.nosb.mean,
                                            lambda=lambda.mean,lambda.nosb=lambda.nosb.mean)
 
-outputDirectory <- "outputs/006_hypothesisTesting/"
-saveRDS(demographicBetHedgingTestData,paste0(outputDirectory,"demographicBetHedgingTest.RDS"))
+# outputDirectory <- "outputs/006_hypothesisTesting/"
+# saveRDS(demographicBetHedgingTestData,paste0(outputDirectory,"demographicBetHedgingTest.RDS"))
 
 # - Plot Figure 3  ----
 
-tiff(filename=paste0("products/figures/betHedgingTest.tif"),
-     height=2.5,width=6.5,units="in",res=800,compression="lzw",pointsize=12)
+# tiff(filename=paste0("products/figures/betHedgingTest.tif"),
+#      height=2.5,width=6.5,units="in",res=800,compression="lzw",pointsize=12)
 
 par(mfrow=c(1,3),mar=c(0,3,0,0)+.1,oma=c(2.5,0,.8,0)+.1,mgp=c(3,.45,0))
 
@@ -276,4 +276,4 @@ mtext(expression(lambda[s] ~ 'with seedbank'),
 
 mtext("C.", adj = 0, cex=pt10)
 
-dev.off()
+# dev.off()
