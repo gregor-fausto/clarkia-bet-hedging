@@ -412,7 +412,7 @@ seedlings.sd.mat<-f.convert(seedlings.sd)
 colfunc <- colorRampPalette(c("white", "black"))
 col.vec=colfunc(15)
 
-pdf(file=paste0(outputDirectory,"ppc-seedlingSurvivalFruiting-pvals.pdf"),height=6,width=6)
+pdf(file=paste0(outputDirectory,"pvals-seedlingSurvivalFruiting.pdf"),height=6,width=6)
 
 par(mfrow=c(1,1))
 time.sample = 1:length(years)
