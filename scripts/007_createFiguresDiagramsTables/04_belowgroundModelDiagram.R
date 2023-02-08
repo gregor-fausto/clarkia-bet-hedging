@@ -420,6 +420,10 @@ legend("topright",
 
 mtext("Time (months)",side=1,line=.5,cex=pt9)
 
+rect(c(0,4,12,16,24,28,36),0,c(4,12,16,24,28,36,40),.025,
+     col=c('gray50','gray90'),lwd=0,border=0)
+text(c(0,4,12,16,24,28,36,40),.06,
+     c("O","J"),cex=pt7)
 
 dev.off()
 
