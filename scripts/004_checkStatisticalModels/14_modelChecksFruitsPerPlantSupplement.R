@@ -38,75 +38,14 @@ siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 siteIndex <- order(siteAbiotic$easting,decreasing=FALSE)
 siteNames = unique(siteAbiotic$site)[siteIndex]
 
-# --
-# --
-# - Graphical Posterior Predictive Checks ----
-# --
-# --
-
-mu_tfe = (MCMCchains(mcmcSamples,params="mu_tfe"))
-mu_tfe.sum = apply(mu_tfe,2,quantile,c(.025,.5,.975))
-mu_tfe.mean = apply(mu_tfe,2,mean)
-
-y_tfe.list <- list()
-for(i in 1:length(data$siteYearIndex_tfe_observed)){
-  y_tfe.list[[i]] <-data$y_tfe[data$siteYearIndex_tfe==i]
-}
-
-par(mfrow=c(1,1))
-mle.mean = unlist(lapply(y_tfe.list,median))
-plot(NA,xlim=c(0,40),ylim=c(0,max(unlist(y_tfe.list))))
-abline(a=0,b=1)
-for(i in 1:length(data$siteYearIndex_tfe_observed)){
-  points(rep(mle.mean[i],length(y_tfe.list[[i]]))+
-           rnorm(length(y_tfe.list[[i]]),0,.025), y_tfe.list[[i]],pch=1,col='gray',cex=.5)
-}
-points(mle.mean,mu_tfe.sum[2,],pch=21,col='black',bg='white')
-segments(mle.mean,y0=mu_tfe.sum[1,],y1=mu_tfe.sum[3,])
-
-
-mu_tot = MCMCchains(mcmcSamples,params="mu_tot")
-mu_tot.sum = apply(mu_tot,2,quantile,c(.025,.5,.975))
-
-y_tot.list <- list()
-for(i in 1:length(data$siteYearIndex_tot_observed)){
-  y_tot.list[[i]] <- y_tfe.tmp <-data$y_tot[data$siteYearIndex_tot==i]
-}
-
-par(mfrow=c(1,1))
-mle.mean = unlist(lapply(y_tot.list,mean))
-plot(NA,xlim=c(0,50),ylim=c(0,max(unlist(y_tot.list))))
-abline(a=0,b=1)
-for(i in 1:length(data$siteYearIndex_tot_observed)){
-  points(rep(mle.mean[i],length(y_tot.list[[i]]))+
-           rnorm(length(y_tot.list[[i]]),0,.025), y_tot.list[[i]],pch=1,col='gray',cex=.5)
-}
-points(mle.mean,mu_tot.sum[2,],pch=21,col='black',bg='white')
-segments(mle.mean,y0=mu_tot.sum[1,],y1=mu_tot.sum[3,])
-
-
-plot(unlist(lapply(y_tot.list,mean)),mu_tot.sum[2,],xlim=c(0,50),ylim=c(0,max(mu_tot.sum)))
-segments(unlist(lapply(y_tot.list,mean)),y0=mu_tot.sum[1,],y1=mu_tot.sum[3,])
-abline(a=0,b=1)
-
-mu = MCMCchains(mcmcSamples,params="mu")
-prop_dam.sum =boot::inv.logit (apply(mu,2,quantile,c(.025,.5,.975)))
-prop_dam.list <- list()
-for(i in 1:length(data$siteYearIndex_tot_observed)){
-  prop_dam.list[[i]] <- y_tfe.tmp <-data$y_dam[data$siteYearIndex_tot==i]/data$y_tot[data$siteYearIndex_tot==i]
-}
-
-plot(unlist(lapply(prop_dam.list,mean)),prop_dam.sum[2,],xlim=c(0,1),ylim=c(0,1))
-segments(unlist(lapply(prop_dam.list,mean)),y0=prop_dam.sum[1,],y1=prop_dam.sum[3,])
-abline(a=0,b=1)
-
 # ---
-# Simulate observations ----
+# - Total fruit equivalents ----
+# - +Simulate observations ----
 # ---
 
 z_tfe=MCMCchains(mcmcSamples, params = "z_tfe")
 
-n.sim = 1000
+n.sim = 5000
 draws.iter=sample(1:dim(z_tfe)[1],n.sim)
 z_tfe.sub = z_tfe[draws.iter,]
 n.obs = dim(z_tfe.sub)[2]
@@ -118,79 +57,9 @@ for(i in 1:n.sim){
 }
 y.sim = y_tfe.sim
 
-# ---
-# Graphical checks: Total fruit equivalents per plant ----
-# ---
-
-y.obs=data$y_tfe
-n.samples = 25
-
-years=2006:2012
-
-pdf(file=paste0(outputDirectory,"ppc-totalFruitEquivalentsPerPlant.pdf"),height=6,width=6)
-
-for(i in 1:length(years)){
-  par(mfrow = c(4,5),
-      oma = c(4,5,0,0) + 0.1,
-      mar = c(1,0,1,1) + 0.1)
-  
-  #n.samples = 25
-  iter.ind = sample(1:n.sim,n.samples)
-  
-  for(j in 1:20){
-    
-    index=data$site==j&data$year==i
-    
-    p.obs=y.obs[index]
-    p.sim=as.matrix(y.sim[,index])
-    p.sim=as.matrix(p.sim[iter.ind,])
-    
-    if (dim(p.sim)[2]<2) {NA} else {
-      
-      list.dens=apply(p.sim,1,density,na.rm=TRUE)
-      all.max.y=max(unlist(lapply(list.dens, "[", "y")))
-      all.max.x=max(unlist(lapply(list.dens, "[", "x")))
-      
-      m.max=max(p.obs,na.rm=TRUE)
-      m.min=min(p.obs,na.rm=TRUE)
-      dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)
-      
-      all.max.y = max(all.max.y,max(dens.obs$y))
-      all.max.x = max(all.max.x,max(dens.obs$x))
-      
-      plot(NA,NA,
-           ylim=c(0,all.max.y),xlim=c(0,all.max.x),
-           xaxt='n',xlab='',ylab='',yaxt='n')
-      for(h in 1:n.samples){
-        m.max=max(p.sim[h,],na.rm=TRUE)
-        m.min=min(p.sim[h,],na.rm=TRUE)
-        
-        dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
-        lines(x=dens.x$x,y=dens.x$y,lwd=0.25,col='orange')
-      }
-      
-      
-      lines(x=dens.obs$x,y=dens.obs$y)
-      
-      ifelse(i%in%c(1),axis(2L),NA)
-      
-      axis(2,cex=.25,tick=FALSE,line=-1)
-      axis(1,cex=.25,tick=FALSE,line=-1)
-      
-      text(x=all.max.x*.7,y=all.max.y*.9,siteNames[j],pos=4)
-    }
-  }
-  
-  mtext(paste0("Counts of total fruit equivalents per plant (",years[i],")"), side = 1, outer = TRUE, line = 1.5)
-  mtext("Density", side = 2, outer = TRUE, line = 2.2)
-}
-dev.off()
-
 
 # --
-# --
-# Posterior Predictive Checks  ----
-# --
+# - Posterior Predictive Checks  ----
 # --
 
 # ---
@@ -353,6 +222,75 @@ axis(2, seq(0,1,by=.2),
 
 dev.off()
 
+
+
+# ---
+# Graphical checks: Total fruit equivalents per plant ----
+# ---
+
+y.obs=data$y_tfe
+n.samples = 25
+
+years=2006:2012
+
+pdf(file=paste0(outputDirectory,"ppc-totalFruitEquivalentsPerPlant.pdf"),height=6,width=6)
+
+for(i in 1:length(years)){
+  par(mfrow = c(4,5),
+      oma = c(4,5,0,0) + 0.1,
+      mar = c(1,0,1,1) + 0.1)
+  
+  #n.samples = 25
+  iter.ind = sample(1:n.sim,n.samples)
+  
+  for(j in 1:20){
+    
+    index=data$site==j&data$year==i
+    
+    p.obs=y.obs[index]
+    p.sim=as.matrix(y.sim[,index])
+    p.sim=as.matrix(p.sim[iter.ind,])
+    
+    if (dim(p.sim)[2]<2) {NA} else {
+      
+      list.dens=apply(p.sim,1,density,na.rm=TRUE)
+      all.max.y=max(unlist(lapply(list.dens, "[", "y")))
+      all.max.x=max(unlist(lapply(list.dens, "[", "x")))
+      
+      m.max=max(p.obs,na.rm=TRUE)
+      m.min=min(p.obs,na.rm=TRUE)
+      dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)
+      
+      all.max.y = max(all.max.y,max(dens.obs$y))
+      all.max.x = max(all.max.x,max(dens.obs$x))
+      
+      plot(NA,NA,
+           ylim=c(0,all.max.y),xlim=c(0,all.max.x),
+           xaxt='n',xlab='',ylab='',yaxt='n')
+      for(h in 1:n.samples){
+        m.max=max(p.sim[h,],na.rm=TRUE)
+        m.min=min(p.sim[h,],na.rm=TRUE)
+        
+        dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
+        lines(x=dens.x$x,y=dens.x$y,lwd=0.25,col='orange')
+      }
+      
+      
+      lines(x=dens.obs$x,y=dens.obs$y)
+      
+      ifelse(i%in%c(1),axis(2L),NA)
+      
+      axis(2,cex=.25,tick=FALSE,line=-1)
+      axis(1,cex=.25,tick=FALSE,line=-1)
+      
+      text(x=all.max.x*.7,y=all.max.y*.9,siteNames[j],pos=4)
+    }
+  }
+  
+  mtext(paste0("Counts of total fruit equivalents per plant (",years[i],")"), side = 1, outer = TRUE, line = 1.5)
+  mtext("Density", side = 2, outer = TRUE, line = 2.2)
+}
+dev.off()
 
 
 # ---
