@@ -59,8 +59,10 @@ par(mfrow = c(1, 1))
 jpeg(filename = paste0(outputDirectory, "rhat-hw-viabilityTrials", ".jpeg"), quality = 75)
 # plot distribution of Rhat values
 hist(rhat, col = "black", border = "white", breaks = 25, 
-     main = "Distribution of R-hat; viability",
+     main = NULL,
      xlab ="R-hat values")
+title(main = "D. Distribution of R-hat for seed viability",adj=0)
+
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 

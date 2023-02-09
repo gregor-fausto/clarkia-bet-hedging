@@ -65,8 +65,9 @@ outputDirectory = "outputs/003_runStatisticalModelDiagnostics/02_rhatDistributio
 jpeg(filename = paste0(outputDirectory, "rhat-heidelberg-seedsUndamaged", ".jpeg"), 
   quality = 75)
 hist(rhat, col = "black", border = "white", breaks = 25, 
-     main = "Distribution of R-hat; undamaged seeds",
+     main = NULL,
      xlab ="R-hat values")
+title(main = "E. Distribution of R-hat for seeds/undamaged fruit",adj=0)
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 
@@ -108,8 +109,10 @@ jpeg(filename = paste0(outputDirectory, "rhat-heidelberg-seedsPropDamaged", ".jp
      quality = 75)
 # plot distribution of Rhat values
 hist(rhat, col = "black", border = "white", breaks = 25, 
-     main = "Distribution of R-hat; damaged seeds",
+     main = NULL,
      xlab ="R-hat values")
+title(main = "F. Distribution of R-hat for proportion damaged seeds",adj=0)
+
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 

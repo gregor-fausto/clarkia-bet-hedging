@@ -70,8 +70,10 @@ jpeg(filename = paste0(outputDirectory, "rhat-hw-seedBagExperiment-seedSurvival"
      quality = 75)
 # plot distribution of Rhat values
 hist(rhat, col = "black", border = "white", breaks = 25,
-     main = "Distribution of R-hat; seed survival",
+     main = NULL,
      xlab ="R-hat values")
+title(main = "A. Distribution of R-hat for seed survival in seed bank",adj=0)
+
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 
@@ -113,8 +115,10 @@ jpeg(filename = paste0(outputDirectory, "rhat-hw-seedBagExperiment-germination",
 
 # plot distribution of Rhat values
 hist(rhat, col = "black", border = "white", breaks = 25, 
-     main = "Distribution of R-hat; germination",
+     main = NULL,
      xlab ="R-hat values")
+title(main = "B. Distribution of R-hat for seed germination",adj=0)
+
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 
@@ -157,8 +161,10 @@ par(mfrow = c(1, 1))
 jpeg(filename = paste0(outputDirectory, "rhat-hw-seedBagExperiment-s0", ".jpeg"), quality = 75)
 # plot distribution of Rhat values
 hist(rhat, col = "black", border = "white", breaks = 25, 
-     main = "Distribution of R-hat; s0",
+     main = NULL,
      xlab ="R-hat values")
+title(main = "C. Distribution of R-hat for seed survival, s0",adj=0)
+
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 

@@ -58,33 +58,34 @@ for (i in 1:3) {
 }
 p = signif(p, 2)
 dt = hist(coda::gelman.diag(all.chains, confidence = 0.95)$psrf[, 1], breaks = 25, 
-  plot = FALSE)
+          plot = FALSE)
 
 # - +Plot Rhat and HW ----
 outputDirectory = "outputs/003_runStatisticalModelDiagnostics/02_rhatDistribution/"
 
 par(mfrow = c(1, 1))
 jpeg(filename = paste0(outputDirectory, "rhat-heidelberg-fruitsTFE", ".jpeg"), 
-  quality = 75)
+     quality = 75)
 # plot distribution of Rhat values
 hist(rhat, col = "black", border = "white", breaks = 25, 
-     main = "Distribution of R-hat; fruits TFE",
+     main=NULL,
      xlab ="R-hat values")
+title(main = "B. Distribution of R-hat for TFE",adj=0)
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 
      paste0("Summary of R-hat diagnostic"), pos = 2)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.9, paste0("Percent of R-hat < 1.05: ", 
-  signif(prob, 2)), pos = 2)
+                                                              signif(prob, 2)), pos = 2)
 # add portion of each chain that passes stationarity test
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.8, 
      paste0("Heidelberg-Welch diagnostic"), pos = 2)
 text(1 * max(dt$mids), 0.75 * max(dt$counts), paste0("% passing (chain 1): ", 
-  p[1]), pos = 2)
+                                                     p[1]), pos = 2)
 text(1 * max(dt$mids), 0.7 * max(dt$counts), paste0("% passing (chain 2): ", 
-  p[2]), pos = 2)
+                                                    p[2]), pos = 2)
 text(1 * max(dt$mids), 0.65 * max(dt$counts), paste0("% passing (chain 3): ", 
-  p[3]), pos = 2)
+                                                     p[3]), pos = 2)
 dev.off()
 
 
@@ -111,8 +112,9 @@ jpeg(filename = paste0(outputDirectory, "rhat-heidelberg-fruitsTotal", ".jpeg"),
      quality = 75)
 # plot distribution of Rhat values
 hist(rhat, col = "black", border = "white", breaks = 25, 
-     main = "Distribution of R-hat; fruits undamaged",
+     main=NULL,
      xlab ="R-hat values")
+title(main = "C. Distribution of R-hat for total fruits",adj=0)
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 
@@ -123,11 +125,11 @@ text(max(plot.hist$mids), max(plot.hist$counts) * 0.9, paste0("Percent of R-hat 
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.8, 
      paste0("Heidelberg-Welch diagnostic"), pos = 2)
 text(1 * max(dt$mids), 0.75 * max(dt$counts), paste0("% passing (chain 1): ", 
-                                                         p[1]), pos = 2)
+                                                     p[1]), pos = 2)
 text(1 * max(dt$mids), 0.7 * max(dt$counts), paste0("% passing (chain 2): ", 
-                                                        p[2]), pos = 2)
+                                                    p[2]), pos = 2)
 text(1 * max(dt$mids), 0.65 * max(dt$counts), paste0("% passing (chain 3): ", 
-                                                         p[3]), pos = 2)
+                                                     p[3]), pos = 2)
 dev.off()
 
 
@@ -154,8 +156,9 @@ jpeg(filename = paste0(outputDirectory, "rhat-heidelberg-fruitsPropDamaged", ".j
      quality = 75)
 # plot distribution of Rhat values
 hist(rhat, col = "black", border = "white", breaks = 25, 
-     main = "Distribution of R-hat; fruits damaged",
+     main=NULL,
      xlab ="R-hat values")
+title(main = "D. Distribution of R-hat for fraction fruits damaged",adj=0)
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 
@@ -166,9 +169,9 @@ text(max(plot.hist$mids), max(plot.hist$counts) * 0.9, paste0("Percent of R-hat 
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.8, 
      paste0("Heidelberg-Welch diagnostic"), pos = 2)
 text(1 * max(dt$mids), 0.75 * max(dt$counts), paste0("% passing (chain 1): ", 
-                                                         p[1]), pos = 2)
+                                                     p[1]), pos = 2)
 text(1 * max(dt$mids), 0.7 * max(dt$counts), paste0("% passing (chain 2): ", 
-                                                        p[2]), pos = 2)
+                                                    p[2]), pos = 2)
 text(1 * max(dt$mids), 0.65 * max(dt$counts), paste0("% passing (chain 3): ", 
-                                                         p[3]), pos = 2)
+                                                     p[3]), pos = 2)
 dev.off()
