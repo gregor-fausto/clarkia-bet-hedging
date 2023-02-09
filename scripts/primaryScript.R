@@ -35,6 +35,11 @@ dir.create(paste0(tmp,"/02_rhatDistribution"))
 # - +Create directory to hold PDFs of model checks
 
 dir.create("../outputs/004_checkStatisticalModels")
+tmp <- "../outputs/004_runStatisticalModelDiagnostics"
+
+# - ++Create directories to hold model checks to include in revised supplement
+
+dir.create(paste0(tmp,"/01_modelChecksSupplement"))
 
 # - +Create directory to hold population model parameters
 
