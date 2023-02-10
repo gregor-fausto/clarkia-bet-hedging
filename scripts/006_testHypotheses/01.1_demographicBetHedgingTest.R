@@ -87,14 +87,14 @@ for( k in 1:20){
 
   # - ++calculate the arithmetic mean population growth rate with and without the seed bank  ----
   lambda.a[k] = mean(g1.hat[k]*y_t*s0.hat[k]*s1.hat[k]+(1-g1.hat[k])*s2.hat[k]*s3.hat[k])
-  lambda.a.nosb[k] = mean(y_t*s0.hat[k]*s1.hat[k]+(1-.99)*s2.hat[k]*s3.hat[k])
+  lambda.a.nosb[k] = mean(.99*y_t*s0.hat[k]*s1.hat[k]+(1-.99)*s2.hat[k]*s3.hat[k])
 
   # - ++draw 1000 samples for reproductive success with replacement  ----
   y_t.resample = sample(y_t,1000,replace=TRUE)
 
   # - ++for each resample year, calculate the population growth rate with and without the seed bank  ----
   fit[,k] = g1.hat[k]*y_t.resample*s0.hat[k]*s1.hat[k]+(1-g1.hat[k])*s2.hat[k]*s3.hat[k]
-  fit.nosb[,k] = y_t.resample*s0.hat[k]*s1.hat[k]+(1-.99)*s2.hat[k]*s3.hat[k]
+  fit.nosb[,k] = .99*y_t.resample*s0.hat[k]*s1.hat[k]+(1-.99)*s2.hat[k]*s3.hat[k]
 
   # - ++calculate the stochastic population growth rate by approximation, with and without the seed bank  ----
   lambda[k] = exp(sum(log(fit[,k]))/1000)
@@ -122,7 +122,7 @@ for(j in 1:1000){
     
     # - ++for each resample year, calculate the population growth rate with and without the seed bank  ----
     fit[,k] = g1.hat[k]*y_t.resample*s0.hat[k]*s1.hat[k]+(1-g1.hat[k])*s2.hat[k]*s3.hat[k]
-    fit.nosb[,k] = y_t.resample*s0.hat[k]*s1.hat[k]+(1-.99)*s2.hat[k]*s3.hat[k]
+    fit.nosb[,k] = .99*y_t.resample*s0.hat[k]*s1.hat[k]+(1-.99)*s2.hat[k]*s3.hat[k]
     
     # - ++calculate the stochastic population growth rate by approximation, with and without the seed bank  ----
     lambda[k] = exp(sum(log(fit[,k]))/1000)
