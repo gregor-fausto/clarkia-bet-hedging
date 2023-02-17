@@ -387,8 +387,8 @@ mu_s0 = boot::inv.logit(mu_s0)
 
 # - +s0:convert to matrix ----
 
-mu_s0.2006 = boot::inv.logit(mu_s[,grep(",1]",colnames(mu_s0))])
-mu_s0.2007 = boot::inv.logit(mu_s[,grep(",2]",colnames(mu_s0))])
+mu_s0.2006 = mu_s0[,grep(",1]",colnames(mu_s0))]
+mu_s0.2007 = mu_s0[,grep(",2]",colnames(mu_s0))]
 
 n.iter=dim(mu_s0.2006)[1]
 dat.list <- list()
