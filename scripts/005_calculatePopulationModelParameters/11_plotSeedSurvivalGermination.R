@@ -129,7 +129,7 @@ df.list <- list()
 for(i in 1:20){
   tmp<-vr.popYear[[i]][,2:3]
   df.list[[i]]<-data.frame(site=unique(position$site)[i],
-                           year = c(2007, 2008),
+                           year = c(2006, 2007),
                            median=apply(tmp,2,median),
                            mode = apply(tmp,2,posterior.mode),
                            mean = apply(tmp,2,mean),
