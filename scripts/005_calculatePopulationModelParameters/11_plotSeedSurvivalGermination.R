@@ -122,7 +122,6 @@ ggsave(filename=paste0("outputs/005_calculatePopulationModelParameters/05_graphi
 s0 <- readRDS("outputs/005_calculatePopulationModelParameters/03_populationModelParametersMatrix/s0-ex1-population-year-level-mat.RDS")
 s0.pop <- readRDS("outputs/005_calculatePopulationModelParameters/02_populationModelParameters/s0-population-level.RDS")
 
-s0 <- dat.list
 vr.popYear <- s0
 vr.pop <- s0.pop
 
