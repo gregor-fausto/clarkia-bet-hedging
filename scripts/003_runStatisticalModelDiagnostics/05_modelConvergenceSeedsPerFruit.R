@@ -66,23 +66,23 @@ jpeg(filename = paste0(outputDirectory, "rhat-heidelberg-seedsUndamaged", ".jpeg
   quality = 75)
 hist(rhat, col = "black", border = "white", breaks = 25, 
      main = NULL,
-     xlab ="R-hat values")
-title(main = "E. Distribution of R-hat for seeds/undamaged fruit",adj=0)
+     xlab ="R-hat values",cex.axis=1.2,cex.lab=1.4)
+title(main = "E. Distribution of R-hat for seeds/undamaged fruit",adj=0,cex.main=1.4)
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 
-     paste0("Summary of R-hat diagnostic"), pos = 2)
+     paste0("Summary of R-hat diagnostic"), pos = 2,cex=1.4)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.9, paste0("Percent of R-hat < 1.05: ", 
-  signif(prob, 2)), pos = 2)
+  signif(prob, 2)), pos = 2,cex=1.4)
 # add portion of each chain that passes stationarity test
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.8, 
-     paste0("Heidelberg-Welch diagnostic"), pos = 2)
+     paste0("Heidelberg-Welch diagnostic"), pos = 2,cex=1.4)
 text(1 * max(dt$mids), 0.75 * max(dt$counts), paste0("% passing (chain 1): ", 
-  p[1]), pos = 2)
+  p[1]), pos = 2,cex=1.4)
 text(1 * max(dt$mids), 0.7 * max(dt$counts), paste0("% passing (chain 2): ", 
-  p[2]), pos = 2)
+  p[2]), pos = 2,cex=1.4)
 text(1 * max(dt$mids), 0.65 * max(dt$counts), paste0("% passing (chain 3): ", 
-  p[3]), pos = 2)
+  p[3]), pos = 2,cex=1.4)
 dev.off()
 
 
@@ -110,22 +110,22 @@ jpeg(filename = paste0(outputDirectory, "rhat-heidelberg-seedsPropDamaged", ".jp
 # plot distribution of Rhat values
 hist(rhat, col = "black", border = "white", breaks = 25, 
      main = NULL,
-     xlab ="R-hat values")
-title(main = "F. Distribution of R-hat for proportion damaged seeds",adj=0)
+     xlab ="R-hat values",cex.axis=1.2,cex.lab=1.4)
+title(main = "F. Distribution of R-hat for proportion\ndamaged seeds",adj=0,cex.main=1.4)
 
 plot.hist = hist(rhat, breaks = 25, plot = FALSE)
 prob = sum(rhat < 1.05)/length(rhat)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.95, 
-     paste0("Summary of R-hat diagnostic"), pos = 2)
+     paste0("Summary of R-hat diagnostic"), pos = 2, cex = 1.4)
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.9, paste0("Percent of R-hat < 1.05: ", 
-                                                              signif(prob, 2)), pos = 2)
+                                                              signif(prob, 2)), pos = 2, cex = 1.4)
 # add portion of each chain that passes stationarity test
 text(max(plot.hist$mids), max(plot.hist$counts) * 0.8, 
-     paste0("Heidelberg-Welch diagnostic"), pos = 2)
+     paste0("Heidelberg-Welch diagnostic"), pos = 2, cex = 1.4)
 text(1 * max(dt$mids), 0.75 * max(dt$counts), paste0("% passing (chain 1): ", 
-                                                         p[1]), pos = 2)
+                                                         p[1]), pos = 2, cex = 1.4)
 text(1 * max(dt$mids), 0.7 * max(dt$counts), paste0("% passing (chain 2): ", 
-                                                        p[2]), pos = 2)
+                                                        p[2]), pos = 2, cex = 1.4)
 text(1 * max(dt$mids), 0.65 * max(dt$counts), paste0("% passing (chain 3): ", 
-                                                         p[3]), pos = 2)
+                                                         p[3]), pos = 2, cex = 1.4)
 dev.off()
