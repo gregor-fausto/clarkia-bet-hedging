@@ -1,6 +1,9 @@
 #################################################################################
 # Script to conduct exploratory analysis of density-dependence in seed to seedling transition
-#
+# we conducted the analysis in this script after the first round of peer review
+# a reviewer suggested we consider whether there was density-dependence in seedling establishment
+# we followed methods from:
+# Detto, M., M. D. Visser, S. J. Wright, and S. W. Pacala. 2019. Bias in the detection of negative density dependence in plant communities. Ecology Letters 22:1923–1939.
 #################################################################################
 
 # - Environment ----
@@ -184,6 +187,8 @@ print(xtable::xtable(lrt.df,digits=c(0,0,2,2,2,4),row.names=FALSE),
             file="~/Dropbox/clarkia-bet-hedging/manuscript/02_supplement/model-checks/seedSeedlingDensityDependenceLRT.txt",
             )
 
+# - Plots to examine density-dependence ----
+
 par(mfrow=c(4,5),mar=c(2,2,1,1))
 for(j in 1:20){
   df.tmp<-seedlingFruitingPlantCountsPermanentPlots %>%
@@ -201,33 +206,22 @@ for(j in 1:20){
     
     if(length(1:max(df.tmp2$seedlingNumber))>1){
       lines(1:max(df.tmp2$seedlingNumber),
-            boot::inv.logit(predict(model.list[[j]],data.frame(z=seq(1,max(df.tmp2$seedlingNumber),by=1)^c.max,year=(obsYear)[i]))),
-            col=ifelse(out.mat[j,4]>(.05/20),'gray','black'))
+            boot::inv.logit(predict(m1.list[[j]],data.frame(seedlingNumber=seq(1,max(df.tmp2$seedlingNumber),by=1),year=(obsYear)[i]))),
+            col=ifelse(lrt.mat[j,4]>(.05/20),'gray','black'))
     } else {
       points(1:max(df.tmp2$seedlingNumber),
-             boot::inv.logit(predict(model.list[[j]],data.frame(z=seq(1,max(df.tmp2$seedlingNumber),by=1)^c.max,year=(obsYear)[i]))),
+             boot::inv.logit(predict(m1.list[[j]],data.frame(seedlingNumber=seq(1,max(df.tmp2$seedlingNumber),by=1),year=(obsYear)[i]))),
              pch=16,
-             col=ifelse(out.mat[j,4]>(.05/20),'gray','black'))
+             col=ifelse(lrt.mat[j,4]>(.05/20),'gray','black'))
     }
   }
 }
-
-for(i in 1:20){
-  d=fixef(model.list2[[i]])+ranef(model.list2[[i]])$year
-  boot::inv.logit(d$`(Intercept)`)
-}
-
-plot(1:20,do.call(rbind,lapply(model.list,fixef))[,2],
-     ylim=c(-.2,0),
-     col=ifelse(out.mat[,4]>(.05/20),'gray','black'),
-     pch=16)
 
 for(j in 1:20){
   par(mfrow=c(3,5),mar=c(2,2,1,1))
   
   df.tmp<-seedlingFruitingPlantCountsPermanentPlots %>%
     dplyr::filter(site==siteNames[j]) %>%
-    dplyr::mutate(z = seedlingNumber^c.max)%>%
     dplyr::filter(year%in%as.character(2006:2020))
   obsYear = unique(df.tmp$year)
   
@@ -246,13 +240,13 @@ for(j in 1:20){
     
     if(length(1:max(df.tmp2$seedlingNumber))>1){
       lines(1:max(df.tmp2$seedlingNumber),
-            boot::inv.logit(predict(model.list[[j]],data.frame(z=seq(1,max(df.tmp2$seedlingNumber),by=1)^c.max,year=(obsYear)[i]))))
-      lines(0:max(df.tmp2$seedlingNumber),boot::inv.logit(predict(model.list2[[j]],data.frame(z=seq(0,max(df.tmp2$seedlingNumber),by=1)^c.max,year=(obsYear)[i]))),
+            boot::inv.logit(predict(m1.list[[j]],data.frame(seedlingNumber=seq(1,max(df.tmp2$seedlingNumber),by=1),year=(obsYear)[i]))))
+      lines(0:max(df.tmp2$seedlingNumber),boot::inv.logit(predict(m0.list[[j]],data.frame(seedlingNumber=seq(0,max(df.tmp2$seedlingNumber),by=1),year=(obsYear)[i]))),
             col='red',lty='dotted')
       abline(v=mean(df.tmp2$seedlingNumber),col='red',lty='dotted')
     } else {
       points(1:max(df.tmp2$seedlingNumber),
-             boot::inv.logit(predict(model.list[[j]],data.frame(z=seq(1,max(df.tmp2$seedlingNumber),by=1)^c.max,year=(obsYear)[i]))))
+             boot::inv.logit(predict(m1.list[[j]],data.frame(seedlingNumber=seq(1,max(df.tmp2$seedlingNumber),by=1),year=(obsYear)[i]))))
     }
   }
 }
