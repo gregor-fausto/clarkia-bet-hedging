@@ -1,9 +1,11 @@
-####
-####
-# Script to prepare data on fruits per plant
-# for fitting in JAGS
-####
-####
+#################################################################################
+# Script to conduct exploratory analysis of density-dependence in seedling survival to fruiting
+# we conducted the analysis in this script after the first round of peer review
+# a reviewer suggested we consider whether there was density-dependence in seedling establishment
+# we followed methods from:
+# Detto, M., M. D. Visser, S. J. Wright, and S. W. Pacala. 2019. Bias in the detection of negative density dependence in plant communities. Ecology Letters 22:1923–1939.
+# and use code provided with the paper to conduct the analysis 
+#################################################################################
 
 # - Environment ----
 # clear environment but keep directories for data, models, and output files
@@ -17,6 +19,7 @@ tmpDataDirectory = "outputs/001_prepareDataForModels/"
 library(tidybayes)
 library(tidyverse)
 library(stringr)
+library(khroma)
 
 # - Read in data ----
 
@@ -317,7 +320,7 @@ for(i in 1:20){
 out.mat<-do.call(rbind,out.list)
 
 pdf(file=paste0("products/figures/densityDependence-seedSeedling.pdf"),
-     height=6,width=6,pointsize=12)
+    height=6,width=6,pointsize=12)
 
 par(mar = c(6.1, 4.6, 4.1, 4.1), # change the margins
     lwd = 1, # increase the line thickness
@@ -325,13 +328,18 @@ par(mar = c(6.1, 4.6, 4.1, 4.1), # change the margins
     xpd=F# increase default axis label size
 )
 index=order(siteAbiotic$easting)
-plot(1:20-.1,out.mat[index,1]-1,ylim=c(-1.2,0),pch=16,
+plot(1:20-.1,out.mat[index,1]-1,ylim=c(-1.2,0),pch=NA,
      xaxt="n",xlab="",ylab=expression(italic(hat(b)) - italic(b)['NULL']))
+
+rect(xleft=c(1,3,5,7,9,11,13,15,17,19)+c(.5),xright=c(1,3,5,7,9,11,13,15,17,19)+1.5,ybottom=-100,ytop=100,col='gray99',border='gray99')
+
+points(1:20-.1,out.mat[index,1]-1,ylim=c(-1.2,0),pch=16)
 abline(h=0,lty='dotted')
 segments(x0=1:20-.1,y0=out.mat[index,2]-1,y1=out.mat[index,3]-1)
 points(x=1:20+.1,y=out.mat[index,1]-H1$b1[index],pch=16,cex=1,col='red')
 segments(y0=out.mat[index,1]-H1$ub1[index],x0=1:20+.1,y1=out.mat[index,1]-H1$lb1[index],col='red')
 axis(1,at=1:20,labels=siteNames[index],las=2)
+box()
 ## Draw the x-axis labels.
 par(xpd=T)
 legend(0.05, 0.25,
