@@ -322,7 +322,7 @@ mtext(expression(Var(lambda) ~ 'with seedbank'),
 box()
 
 abline(a=0,b=1,lty='dotted')
-mtext("Figure 3B: full plot", adj = 0, cex=pt10)
+mtext("A. Figure 3B: full plot", adj = 0, cex=pt9)
 
 
 # - +zoomed PANEL B plus gray highlight ----
@@ -360,6 +360,6 @@ mtext(expression(Var(lambda) ~ 'with seedbank'),
 box()
 
 abline(a=0,b=1,lty='dotted')
-mtext("Figure 3B: zoomed in plot", adj = 0, cex=pt10)
+mtext("B. Figure 3B: zoomed in plot", adj = 0, cex=pt9)
 
 dev.off()
