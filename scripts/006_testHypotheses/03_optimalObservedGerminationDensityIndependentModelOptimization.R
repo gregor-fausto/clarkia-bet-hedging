@@ -140,14 +140,15 @@ text(optima+.05,vec,1:20)
 dev.off()
 
 # - Calculate optimal g + resample years ----
+# this was the method I originally used in the submission
 # repeat the optimization 1000 times and calculate
 # the mean and variance of optimal germination fractions
 # for each repetition, we resample the sequence y_t
 
-vec=c()
 iterations = 1000
 optima.mat = matrix(NA,nrow=20,ncol=iterations)
 for(j in 1:iterations){
+  vec=c()
   for(k in 1:20){
     # - ++get the population index  ----
     pop.index = k
@@ -165,6 +166,7 @@ for(j in 1:iterations){
   }
   optima.mat[,j] = vec
 }
+
 
 # - + summarize optimal g ----
 
@@ -191,6 +193,52 @@ abline(a=0,b=1,lty='dotted')
 
 cor.test(optima.est[2,],y=g1.hat)
 
+# - Compare the original method with the method suggested by reviewer 2 ----
+# ": I can't see why the authors use 50 independent optimisations of 1000-year runs 
+# to calculate the optimal germination fraction.
+# Why not use a single run that is long enough to calculate the 
+# stochastic growth rate to the required precision? 
+# Similarly, what is the reason for calculating a 95% interval for those 50 runs? 
+# This is a measure of numerical error, which you can squeeze down by using 
+# longer simulations.
+# 
+# use a single iteration instead of 1000
+# and instead of 1000 years of reproductive success, draw 100000
+
+iterations = 1
+optima.mat.method2 = matrix(NA,nrow=20,ncol=iterations)
+for(j in 1:iterations){
+  vec=c()
+  for(k in 1:20){
+    # - ++get the population index  ----
+    pop.index = k
+    
+    # - ++draw the 15 years of reproductive success estimates  ----
+    y_t = perCapitaRS.hat[[pop.index]]
+    y_t = y_t[!is.na(y_t)]
+    
+    # - ++draw 1000 samples for reproductive success with replacement  ----
+    y_t.resample = sample(y_t,100000,replace=TRUE)
+    
+    tmp = optim(c(.5),fr1,method='Brent',lower=0,upper=1)
+    vec[k]=tmp$par
+    
+  }
+  optima.mat.method2[,j] = vec
+}
+
+# the methods produce results that are highly correlated
+plot(optima.mean,optima.mat.method2,
+     xlab="G from multiple optimizations (several 1000 year runs)",
+     ylab="G from one optimization (single 100,000 year run)");abline(a=0,b=1)
+cor(optima.mean,optima.mat.method2)
+
+# optimal germination fractions
+# the optimal germination fractions that are now plotted are these
+optima.g <- as.vector(optima.mat.method2)
+
+plot(x=optima.g,y=g1.hat,pch=21,col='black',bg='white',cex=2.5,xlim=c(0,1),ylim=c(0,1))
+abline(a=0,b=1,lty='dotted')
 
 # # - Save manuscript data  ----
 # 
@@ -210,7 +258,7 @@ pt7 = 7/12
 pt6 = 6/12
 pt5 = 5/12
 
-tiff(filename=paste0("products/figures/optimalGerminationFractionPlusYearResampling.tif"),
+tiff(filename=paste0("products/figures/optimalGerminationFractionPlusYearResampling-revised.tif"),
      height=3.75,width=3.5,units="in",res=300,compression="lzw",pointsize=12)
 
 par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2.2,.7,1)+.1,mgp=c(3,.45,0))
@@ -221,25 +269,25 @@ plot(NA,NA,xlim=c(.4,1.04),ylim=c(0,.4),
      xaxt= "n", yaxt="n",)
 
 
-segments(x0=optima.est[1,],x1=optima.est[3,],y0=g1.hat,pch=21,col='black',bg='white',cex=2.5,xlim=c(0,1),ylim=c(0,1))
+# segments(x0=optima.est[1,],x1=optima.est[3,],y0=g1.hat,pch=21,col='black',bg='white',cex=2.5,xlim=c(0,1),ylim=c(0,1))
 
-points(x=optima.est[2,],y=g1.hat,
+points(x=optima.g,y=g1.hat,
        pch=21,cex=2.5,
        bg=rgb(red = 1, green = 1, blue = 1, alpha = 1),lwd=0)
-points(x=optima.est[2,],y=g1.hat,lwd = 0.5,
+points(x=optima.g,y=g1.hat,lwd = 0.5,
        pch=21,col='black',cex=2.5,
        bg=rgb(red = 1, green = 1, blue = 1, alpha = 0.5))
 
 
 # Now, define a custom axis
-d.plot=data.frame(optima.est[2,],
+d.plot=data.frame(optima.g,
                   g1.hat,site=siteNames)
 
 
 # # Now, define a custom axis
 
 d.plot[c(4,5,6),1]=c(1.04,.9575,1.04)
-d.plot[c(3,5,12,13),2]=c(.1665,.155,.14,0.12)
+d.plot[c(3,5,12,13),2]=c(.1665,.16,.14,0.12)
 d.plot[18,c(1:2)]=d.plot[18,c(1:2)]*c(.995,1.01)
 
 text(d.plot[,1:2],siteNames,cex=4/12)
@@ -266,6 +314,7 @@ mtext("Predicted germination fraction",
 # mtext("A.", adj = 0, cex=pt10)
 
 dev.off()
+
 
 
 
