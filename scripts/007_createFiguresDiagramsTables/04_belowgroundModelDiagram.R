@@ -69,19 +69,19 @@ points(x=c(4,4,12,16,16,24,28,28,36),
        col=c("#0077bb","#e7298a","#0077bb","#0077bb","#e7298a","#0077bb","#0077bb","#e7298a","#0077bb"))
 
 # observations of age 0 seeds
-text(x=4,34-adj.y*2-.5,expression(paste(y)[11]),cex=pt7)
-text(x=12,34-adj.y*2-.5,expression(paste(y)[12]),cex=pt7)
-text(x=6.5,39-adj.y*2,expression(paste(y["g,1"])),cex=pt7)
+text(x=4,34-adj.y*2-.5,expression(paste(y)[1]),cex=pt7)
+text(x=12,34-adj.y*2-.5,expression(paste(y)[2]),cex=pt7)
+text(x=6.8,39-adj.y*2,expression(paste(y["1"]^"germ")),cex=pt7)
 
 # observations of age 1 seeds
-text(x=(16),21.5-adj.y-.5,expression(paste(y)[13]),cex=pt7)
-text(x=(24),21.5-adj.y-.5,expression(paste(y)[14]),cex=pt7)
-text(x=18.5,26.5-adj.y,expression(paste(y["g,2"])),cex=pt7)
+text(x=(16),21.5-adj.y-.5,expression(paste(y)[3]),cex=pt7)
+text(x=(24),21.5-adj.y-.5,expression(paste(y)[4]),cex=pt7)
+text(x=18.8,26.5-adj.y,expression(paste(y["2"]^"germ")),cex=pt7)
 
 # observations of age 2 seeds
-text(x=(28),9-.5,expression(paste(y)[15]),cex=pt7)
-text(x=(36),9-.5,expression(paste(y)[16]),cex=pt7)
-text(x=30.5,14,expression(paste(y["g,3"])),cex=pt7)
+text(x=(28),9-.5,expression(paste(y)[5]),cex=pt7)
+text(x=(36),9-.5,expression(paste(y)[6]),cex=pt7)
+text(x=30.8,14,expression(paste(y["3"]^"germ")),cex=pt7)
 
 # legend
 legend("topright",
