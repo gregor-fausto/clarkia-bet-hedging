@@ -68,6 +68,8 @@ Running `primaryScript.R` in the appropriate directory will create the folders `
     + `005_calculatePopulationModelParameters`: holds (1) posterior samples of the statistical model parameters and derived quantities including (2) parameters of the population model in lists, (3) parameters of the population model in matrices, and (4) computed annual values for per-capita reproductive success
     + `006_hypothesisTesting`: holds files with optimal germination fractions and results of demographic bet hedging test
     + `007_createFiguresDiagrams`: holds shapefiles for creating the map in Figure 1
+    + `008_sampleSizeSummaries`: holds text files summarizing sample sizes of datasets
+    + `009_exploratoryAnalysis`: holds text files related to the exploratory analyses conducted during peer review
 - `products`: Folder for figures
     + `figures`: directory to hold figures produced by scripts   
 
