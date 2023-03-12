@@ -515,6 +515,13 @@ dev.off()
 y.sim=MCMCchains(mcmcSamples, params = "viabStain_sim")
 n.iter=dim(y.sim)[1]
 
+f = function(x){
+  x.max=max(x)
+  x.min=min(x)
+  dres <- density(x, from= x.min, to = x.max)
+  return(dres)
+}
+
 pdf(file=paste0(outputDirectory,"ppc-viabilityTrialsViability.pdf"),height=6,width=6)
 
 par(mfrow = c(4,5),
