@@ -33,18 +33,12 @@ siteNames <- unique(position$site)
 perCapitaRS <- readRDS("outputs/005_calculatePopulationModelParameters/04_reproductiveSuccess/reproductiveSuccessWithCorrectionForMissingness-populationYear-mat.RDS")
 
 # - Read in climate data ----
-# # climate <- readRDS("/Users/Gregor/Dropbox/clarkiaSeedBanks/scriptsAnalysis/climateData-2021.RDS")
-# climate <- climate[climate$site%in%siteNames,] %>%
-#   # specifically the data on spring precipitation
-#   dplyr::filter(season=="spring"&variable=='p') %>%
-#   dplyr::select(site,year,value) %>%
-#   dplyr::rename(springPrecipitation=value)
-climate<-read.csv(file="data/springPrecipitationData.csv",header=TRUE)
+climate <- read.csv(file="data/springPrecipitationData.csv",header=TRUE)
   
 # - Create climate+RS data frames ----
 
 # empty list
-df.list=list()
+df.list <- list()
 
 # for each population
 for(i in 1:20){
@@ -86,7 +80,7 @@ for(i in 1:20){
 
 # - Plot figure  ----
 
-pdf("~/Dropbox/clarkia-bet-hedging/products/figures/rs-climate-sensitivity.pdf", height = 8, width = 8)
+pdf("products/figures/rs-climate-sensitivity.pdf", height = 8, width = 8)
 
 index=order(position$easting)
 par(mfrow=c(4,5),mar=c(0,.5,.5,0),
