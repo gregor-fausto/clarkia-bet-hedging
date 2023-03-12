@@ -22,7 +22,7 @@ library(bayesplot)
 source("scripts/006_testHypotheses/00_utilityFunctions.R")
 
 # - Site names ----
-position<-read.csv(file="~/Dropbox/clarkia-demography-projects/data/siteAbioticData.csv",header=TRUE) %>%
+position<-read.csv(file="data/siteAbioticData.csv",header=TRUE) %>%
   dplyr::select(site,easting) %>%
   dplyr::mutate(easting=easting/1000)
 
@@ -33,13 +33,14 @@ siteNames <- unique(position$site)
 perCapitaRS <- readRDS("outputs/005_calculatePopulationModelParameters/04_reproductiveSuccess/reproductiveSuccessWithCorrectionForMissingness-populationYear-mat.RDS")
 
 # - Read in climate data ----
-climate <- readRDS("/Users/Gregor/Dropbox/clarkiaSeedBanks/scriptsAnalysis/climateData-2021.RDS")
-climate <- climate[climate$site%in%siteNames,] %>%
-  # specifically the data on spring precipitation
-  dplyr::filter(season=="spring"&variable=='p') %>%
-  dplyr::select(site,year,value) %>%
-  dplyr::rename(springPrecipitation=value)
-write.csv(climate,file="~/Downloads/springPrecipitationData.csv")
+# # climate <- readRDS("/Users/Gregor/Dropbox/clarkiaSeedBanks/scriptsAnalysis/climateData-2021.RDS")
+# climate <- climate[climate$site%in%siteNames,] %>%
+#   # specifically the data on spring precipitation
+#   dplyr::filter(season=="spring"&variable=='p') %>%
+#   dplyr::select(site,year,value) %>%
+#   dplyr::rename(springPrecipitation=value)
+climate<-read.csv(file="data/springPrecipitationData.csv",header=TRUE)
+  
 # - Create climate+RS data frames ----
 
 # empty list
