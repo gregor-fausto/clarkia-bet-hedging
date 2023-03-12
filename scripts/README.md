@@ -11,6 +11,7 @@
     + `005_calculatePopulationModelParameters`: scripts to calculate parameters for population model
     + `006_testHypotheses`: scripts to test hypotheses in the manuscript
     + `007_createFiguresDiagramsTables`: scripts to create figures, diagrams, and some tables for paper
+    + `008_exploratoryAnalysis`: scripts to run exploratory analyses conducted during peer review
     + `primaryScript.R`: run this script FIRST so that the scripts in this directory populate the appropriate directories.
 
 Running `primaryScript.R` in the appropriate directory will create the folders `outputs` and `products` with the following file structure. Note that replicating the simulation and model fitting may be slow. We recommend testing the code in `003_statisticalModelFitting` on a smaller number of replicates than the default.
@@ -81,3 +82,9 @@ optimal germination</b> in the supplementary materials. The script produces Figu
 - `03_abovegroundModelDiagram.R`: Script to produce parts of Figure 2A. Specifically, this script produces the graphs that describe models for aboveground components of demography.
 - `04_belowgroundModelDiagram.R`: Script to produce parts of Figure 2B. Specifically, this script produces the graphs that describe models for belowground components of demography.
 - `05_summarizeSampleSizes.R`: Script to summarize sample sizes of datasets used in the study. Used to produce Tables S2-S9.
+
+#### `007_createFiguresDiagramsTables`: scripts to create additional figures and diagrams for paper
+
+- `01_precipitationReproductiveSuccessAnalysis.R`: Script to analyze the relationship between spring precipitation and per-capita reproductive success.
+- `02_seedSeedlingDensityDependenceAnalysis.R`: Script to assess evidence for density-dependence in the transition from seed to seedling.
+- `03_seedlingFruitingPlantDensityDependenceAnalysis.R`: Script to assess evidence for density-dependence in the transition from seedling to fruiting plant.

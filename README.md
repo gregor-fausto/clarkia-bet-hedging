@@ -1,6 +1,6 @@
 # clarkia-bet-hedging
 
-### Bet hedging is not sufficient to explain intraspecific variation in germination patterns of a winter annual plant
+### Bet hedging is not sufficient to explain germination patterns of a winter annual plant.
 
 ### Authors
 
@@ -56,6 +56,7 @@ The repository is organized so that the analyses in the paper can be replicated.
     + `005_calculatePopulationModelParameters`: scripts to calculate parameters for population model
     + `006_testHypotheses`: scripts to test hypotheses in the manuscript
     + `007_createFiguresDiagramsTables`: scripts to create figures, diagrams, and some tables for paper
+    + `008_exploratoryAnalysis`: scripts to run exploratory analyses conducted during peer review
 
 Running `primaryScript.R` in the appropriate directory will create the folders `outputs` and `products` with the following file structure. Note that replicating the simulation and model fitting may be slow. We recommend testing the code in `003_statisticalModelFitting` on a smaller number of replicates than the default.
 
