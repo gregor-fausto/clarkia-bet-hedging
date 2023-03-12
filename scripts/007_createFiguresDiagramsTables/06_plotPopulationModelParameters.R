@@ -1,3 +1,10 @@
+####
+####
+# Script to plot summaries of the parameters in the population model
+####
+####
+
+
 # ---
 # - Set up environment ----
 # ---
@@ -18,7 +25,7 @@ library(bayesplot)
 # ---
 # - Site names by position ----
 # ---
-siteAbiotic <- read.csv("~/Dropbox/clarkia-demography-projects/data/siteAbioticData.csv",header=TRUE)
+siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 
 position<-siteAbiotic %>%
   dplyr::select(site,easting) %>%
