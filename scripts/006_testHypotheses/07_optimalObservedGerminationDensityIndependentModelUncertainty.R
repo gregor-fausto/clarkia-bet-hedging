@@ -26,7 +26,7 @@ fitness <- function(g=g1,s0=s0,s1=s1,s2=s2,s3=s3,rs=rs){
 }
 
 # - Site names ----
-position<-read.csv(file="~/Dropbox/clarkia-demography-projects/data/siteAbioticData.csv",header=TRUE) %>%
+position<-read.csv(file="data/siteAbioticData.csv",header=TRUE) %>%
   dplyr::select(site,easting) %>%
   dplyr::mutate(easting=easting/1000)
 
