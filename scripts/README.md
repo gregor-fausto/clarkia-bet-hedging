@@ -82,6 +82,7 @@ optimal germination</b> in the supplementary materials. The script produces Figu
 - `03_abovegroundModelDiagram.R`: Script to produce parts of Figure 2A. Specifically, this script produces the graphs that describe models for aboveground components of demography.
 - `04_belowgroundModelDiagram.R`: Script to produce parts of Figure 2B. Specifically, this script produces the graphs that describe models for belowground components of demography.
 - `05_summarizeSampleSizes.R`: Script to summarize sample sizes of datasets used in the study. Used to produce Tables S2-S9.
+- `06_plotPopulationModelParameters.R`: Script to plot population model parameters (i.e., graphical summary of vital rate parameters).
 
 #### `007_createFiguresDiagramsTables`: scripts to create additional figures and diagrams for paper
 

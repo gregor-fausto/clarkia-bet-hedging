@@ -1,6 +1,8 @@
 ####
 ####
 # Script to plot summaries of the parameters in the population model
+# i.e., graphical summary of vital rate parameters
+# script added during peer review, per reviewer request
 ####
 ####
 
