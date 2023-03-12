@@ -65,6 +65,10 @@ dir.create("../outputs/007_createFiguresDiagrams")
 
 dir.create("../outputs/008_sampleSizeSummaries")
 
+# - +Create directory to hold text files with output from exploratory analysis
+
+dir.create("../outputs/009_exploratoryAnalysis")
+
 # - Create product directories ----
 
 dir.create("../products")
