@@ -89,14 +89,14 @@ saveRDS(perCapitaRS.list,paste0(outputDirectory,"reproductiveSuccess-populationY
 # I followed rules 1-4 below to deal with missing observations
 # if
 # 1. if there are no seedlings or fruiting plants at all (n=3 population-years)
-# 2. if there are seedlings but no fruiting plants at all (n=8 population-years)
+# 2. if there are seedlings but no fruiting plants at all (n=9 population-years)
 # I assumed sigma (seedlings survival) was the population mean from all years with observations
 # I assumed fruits per plant (F) and seeds per fruit (phi) were 0
 # if
 # 3. in 1 year at 1 population (LO, 2015) there was 1 plant with 1 fruit and the fruit was not collected
 # in this case I substituted the population average seeds/fruit
 # if
-# 4. if there are no seedlings in permanent plots but plants elsewhere in the populaton (n=11 population-years)
+# 4. if there are no seedlings in permanent plots but plants elsewhere in the populaton (n=13 population-years)
 # I estimated seedling survival to fruiting as the population average from all years with observations
 
 # - Adjust missing data ----
