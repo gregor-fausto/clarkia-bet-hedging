@@ -85,7 +85,7 @@ optimal germination</b> in the supplementary materials. The script produces Figu
 - `05_summarizeSampleSizes.R`: Script to summarize sample sizes of datasets used in the study. Used to produce Tables S2-S9.
 - `06_plotPopulationModelParameters.R`: Script to plot population model parameters (i.e., graphical summary of vital rate parameters).
 
-#### `007_createFiguresDiagramsTables`: scripts to create additional figures and diagrams for paper
+#### `008_exploratoryAnalysis`: scripts to run exploratory analyses motivated by questions during peer review
 
 - `01_precipitationReproductiveSuccessAnalysis.R`: Script to analyze the relationship between spring precipitation and per-capita reproductive success.
 - `02_seedSeedlingDensityDependenceAnalysis.R`: Script to assess evidence for density-dependence in the transition from seed to seedling.
