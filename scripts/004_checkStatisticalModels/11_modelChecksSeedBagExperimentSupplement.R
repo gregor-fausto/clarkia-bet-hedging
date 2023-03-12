@@ -597,7 +597,7 @@ for(i in 1:20){
   ifelse(i%in%c(1,6,11,16),axis(2L),NA)
 }
 
-mtext("Seeds emerging in permanent plots in January 2008, from seeds produced in year t-1 and t-2", side = 1, outer = TRUE, line = 2.2)
+mtext("Seeds emerging in permanent plots in January 2008, \n from seeds produced in year t-1 and t-2", side = 1, outer = TRUE, line = 3.5)
 mtext("Density", side = 2, outer = TRUE, line = 2.2)
 dev.off()
 
