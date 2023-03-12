@@ -25,6 +25,8 @@ Running `primaryScript.R` in the appropriate directory will create the folders `
     + `006_hypothesisTesting`: holds files with optimal germination fractions and results of demographic bet hedging test
     + `007_createFiguresDiagrams`: holds shapefiles for creating the map in Figure 1
 - `products`: Folder for figures
+    + `008_sampleSizeSummaries`: holds text files summarizing sample sizes of datasets
+    + `009_exploratoryAnalysis`: holds text files related to the exploratory analyses conducted
     + `figures`: directory to hold figures produced by scripts   
 
 ---
