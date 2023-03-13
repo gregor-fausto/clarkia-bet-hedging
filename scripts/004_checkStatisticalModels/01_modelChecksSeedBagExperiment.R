@@ -11,7 +11,7 @@ options(stringsAsFactors = FALSE)
 
 mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
 modelDataDirectory = "outputs/002_fitStatisticalModels/data/"
-outputDirectory = "outputs/004_checkStatisticalModels/01_modelChecksSupplement/"
+outputDirectory = "outputs/004_checkStatisticalModels/"
 
 # - Libraries ----
 library(MCMCvis)
