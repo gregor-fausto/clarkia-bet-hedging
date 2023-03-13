@@ -19,6 +19,7 @@ Briefly, we used field surveys and experiments to observe components of above- a
     + `seedBagsData.csv`
     + `seedlingFruitingPlantCountsPermanentPlots.csv`
     + `siteAbioticData.csv`
+    + `springPrecipitationData.csv`
     + `viabilityData.csv`
     + `README.md`: README file for the data folder.
 
@@ -134,6 +135,15 @@ Summary of abiotic variables associated with each study site in the long-term st
 | area    | Size of the <i>Clarkia xantiana</i> ssp. <i>xantiana</i> population at the study site (hectares)                                          |
 | surfaceRock    | Dominant soil parent material                    |
 
+#### springPrecipitationData.csv
+
+Cumulative spring precipitation at each of the study sites and years in the long-term study of <i>Clarkia xantiana</i> ssp. <i>xantiana</i> demography. A full description of the methods used to estimate cumulative precipitation at the study sites is given in the following publication: (Eckhart et al. 2011; https://doi.org/10.1086/661782).
+
+| variableName | description                                                                             |
+| ------------ | --------------------------------------------------------------------------------------- |
+| site         | Site acronym                                                                            |
+| year           | Year in which observations were made                                                    |
+| springPrecipitation      | Cumulative precipitation from February to June, estimated from daily rainfall measurements at weather stations in the field and interpolated to the location of study populations (units of millimeters)    
 
 #### viabilityData.csv
 
