@@ -12,7 +12,7 @@ options(stringsAsFactors = FALSE)
 fullDataDirectory = "outputs/001_prepareDataForModels/"
 mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
 modelDataDirectory = "outputs/002_fitStatisticalModels/data/"
-outputDirectory = "outputs/004_checkStatisticalModels/"
+outputDirectory = "outputs/004_checkStatisticalModels/01_modelChecksSupplement/"
 
 # - Libraries ----
 library(MCMCvis)
@@ -38,75 +38,50 @@ siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 siteIndex <- order(siteAbiotic$easting,decreasing=FALSE)
 siteNames = unique(siteAbiotic$site)[siteIndex]
 
-# --
-# --
-# - Graphical Posterior Predictive Checks ----
-# --
-# --
+# - Function to plot p-vals ----
 
-mu_tfe = (MCMCchains(mcmcSamples,params="mu_tfe"))
-mu_tfe.sum = apply(mu_tfe,2,quantile,c(.025,.5,.975))
-mu_tfe.mean = apply(mu_tfe,2,mean)
-
-y_tfe.list <- list()
-for(i in 1:length(data$siteYearIndex_tfe_observed)){
-  y_tfe.list[[i]] <-data$y_tfe[data$siteYearIndex_tfe==i]
+f.plot = function(diagnostic.test.mat,years){
+  
+  plot(NA,NA,
+       ylim=c(0,1),pch=16,xlim=c(min(years),max(years)),
+       xlab="",ylab="",
+       main=NULL,type='n',
+       xaxt='n',yaxt='n',frame=FALSE)
+  
+  start = years[1]
+  offset = seq(0,length(years),by=1)
+  
+  for(j in 1:length(years)){
+    
+    points(x=rep(start+offset[j],20)+rnorm(20,0,.05),
+           pch=21,cex=.8,
+           bg=ifelse(diagnostic.test.mat[,j]>0.95|
+                       diagnostic.test.mat[,j]<0.05,'orange','gray95'),
+           y=diagnostic.test.mat[,j])
+    
+  }
+  
+  abline(h=.05,lty='dotted')
+  abline(h=.95,lty='dotted')
+  box(which="plot",bty="l",col='black')
+  
+  axis(1, seq(min(years),max(years),by=2),
+       labels = seq(min(years),max(years),by=2), 
+       las = 1,
+       col = NA, col.ticks = 1, cex.axis = 1)
+  axis(2, seq(0,1,by=.2),
+       seq(0,1,by=.2), las = 1,
+       col = NA, col.ticks = 1, cex.axis = 1)
 }
-
-par(mfrow=c(1,1))
-mle.mean = unlist(lapply(y_tfe.list,median))
-plot(NA,xlim=c(0,40),ylim=c(0,max(unlist(y_tfe.list))))
-abline(a=0,b=1)
-for(i in 1:length(data$siteYearIndex_tfe_observed)){
-  points(rep(mle.mean[i],length(y_tfe.list[[i]]))+
-           rnorm(length(y_tfe.list[[i]]),0,.025), y_tfe.list[[i]],pch=1,col='gray',cex=.5)
-}
-points(mle.mean,mu_tfe.sum[2,],pch=21,col='black',bg='white')
-segments(mle.mean,y0=mu_tfe.sum[1,],y1=mu_tfe.sum[3,])
-
-
-mu_tot = MCMCchains(mcmcSamples,params="mu_tot")
-mu_tot.sum = apply(mu_tot,2,quantile,c(.025,.5,.975))
-
-y_tot.list <- list()
-for(i in 1:length(data$siteYearIndex_tot_observed)){
-  y_tot.list[[i]] <- y_tfe.tmp <-data$y_tot[data$siteYearIndex_tot==i]
-}
-
-par(mfrow=c(1,1))
-mle.mean = unlist(lapply(y_tot.list,mean))
-plot(NA,xlim=c(0,50),ylim=c(0,max(unlist(y_tot.list))))
-abline(a=0,b=1)
-for(i in 1:length(data$siteYearIndex_tot_observed)){
-  points(rep(mle.mean[i],length(y_tot.list[[i]]))+
-           rnorm(length(y_tot.list[[i]]),0,.025), y_tot.list[[i]],pch=1,col='gray',cex=.5)
-}
-points(mle.mean,mu_tot.sum[2,],pch=21,col='black',bg='white')
-segments(mle.mean,y0=mu_tot.sum[1,],y1=mu_tot.sum[3,])
-
-
-plot(unlist(lapply(y_tot.list,mean)),mu_tot.sum[2,],xlim=c(0,50),ylim=c(0,max(mu_tot.sum)))
-segments(unlist(lapply(y_tot.list,mean)),y0=mu_tot.sum[1,],y1=mu_tot.sum[3,])
-abline(a=0,b=1)
-
-mu = MCMCchains(mcmcSamples,params="mu")
-prop_dam.sum =boot::inv.logit (apply(mu,2,quantile,c(.025,.5,.975)))
-prop_dam.list <- list()
-for(i in 1:length(data$siteYearIndex_tot_observed)){
-  prop_dam.list[[i]] <- y_tfe.tmp <-data$y_dam[data$siteYearIndex_tot==i]/data$y_tot[data$siteYearIndex_tot==i]
-}
-
-plot(unlist(lapply(prop_dam.list,mean)),prop_dam.sum[2,],xlim=c(0,1),ylim=c(0,1))
-segments(unlist(lapply(prop_dam.list,mean)),y0=prop_dam.sum[1,],y1=prop_dam.sum[3,])
-abline(a=0,b=1)
 
 # ---
-# Simulate observations ----
+# - Total fruit equivalents ----
+# - +Simulate observations ----
 # ---
 
 z_tfe=MCMCchains(mcmcSamples, params = "z_tfe")
 
-n.sim = 1000
+n.sim = 5000
 draws.iter=sample(1:dim(z_tfe)[1],n.sim)
 z_tfe.sub = z_tfe[draws.iter,]
 n.obs = dim(z_tfe.sub)[2]
@@ -118,84 +93,16 @@ for(i in 1:n.sim){
 }
 y.sim = y_tfe.sim
 
-# ---
-# Graphical checks: Total fruit equivalents per plant ----
-# ---
-
-y.obs=data$y_tfe
-n.samples = 25
-
-years=2006:2012
-
-pdf(file=paste0(outputDirectory,"ppc-totalFruitEquivalentsPerPlant.pdf"),height=6,width=6)
-
-for(i in 1:length(years)){
-  par(mfrow = c(4,5),
-      oma = c(4,5,0,0) + 0.1,
-      mar = c(1,0,1,1) + 0.1)
-  
-  #n.samples = 25
-  iter.ind = sample(1:n.sim,n.samples)
-  
-  for(j in 1:20){
-    
-    index=data$site==j&data$year==i
-    
-    p.obs=y.obs[index]
-    p.sim=as.matrix(y.sim[,index])
-    p.sim=as.matrix(p.sim[iter.ind,])
-    
-    if (dim(p.sim)[2]<2) {NA} else {
-      
-      list.dens=apply(p.sim,1,density,na.rm=TRUE)
-      all.max.y=max(unlist(lapply(list.dens, "[", "y")))
-      all.max.x=max(unlist(lapply(list.dens, "[", "x")))
-      
-      m.max=max(p.obs,na.rm=TRUE)
-      m.min=min(p.obs,na.rm=TRUE)
-      dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)
-      
-      all.max.y = max(all.max.y,max(dens.obs$y))
-      all.max.x = max(all.max.x,max(dens.obs$x))
-      
-      plot(NA,NA,
-           ylim=c(0,all.max.y),xlim=c(0,all.max.x),
-           xaxt='n',xlab='',ylab='',yaxt='n')
-      for(h in 1:n.samples){
-        m.max=max(p.sim[h,],na.rm=TRUE)
-        m.min=min(p.sim[h,],na.rm=TRUE)
-        
-        dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
-        lines(x=dens.x$x,y=dens.x$y,lwd=0.25,col='orange')
-      }
-      
-      
-      lines(x=dens.obs$x,y=dens.obs$y)
-      
-      ifelse(i%in%c(1),axis(2L),NA)
-      
-      axis(2,cex=.25,tick=FALSE,line=-1)
-      axis(1,cex=.25,tick=FALSE,line=-1)
-      
-      text(x=all.max.x*.7,y=all.max.y*.9,siteNames[j],pos=4)
-    }
-  }
-  
-  mtext(paste0("Counts of total fruit equivalents per plant (",years[i],")"), side = 1, outer = TRUE, line = 1.5)
-  mtext("Density", side = 2, outer = TRUE, line = 2.2)
-}
-dev.off()
-
-
 # --
-# --
-# Posterior Predictive Checks  ----
-# --
+# - Posterior Predictive Checks  ----
 # --
 
 # ---
 # +Test statistics: Total fruit equivalents per plant ----
 # ---
+
+y.obs=data$y_tfe
+years=2006:2012
 
 chi2.obs=(sweep(z_tfe.sub, 2, y.obs, FUN = '-')^2)/z_tfe.sub
 chi2.sim=((y_tfe.sim-z_tfe.sub)^2)/z_tfe.sub
@@ -274,10 +181,10 @@ f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
 sims=y.sim
 df=data$y_tfe
 
-tfe.min=f(y.sim=sims,y.obs=df,model.fun=min)
-tfe.max=f(y.sim=sims,y.obs=df,model.fun=max)
+# tfe.min=f(y.sim=sims,y.obs=df,model.fun=min)
+# tfe.max=f(y.sim=sims,y.obs=df,model.fun=max)
 tfe.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
-tfe.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
+# tfe.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
 
 # convert lists to matrix
 f.convert = function(test.list){
@@ -294,74 +201,122 @@ f.convert = function(test.list){
 
 # return matrix objects
 p.chi.mat<-f.convert(p.chi.list)
-tfe.min.mat<-f.convert(tfe.min)
-tfe.max.mat<-f.convert(tfe.max)
+# tfe.min.mat<-f.convert(tfe.min)
+# tfe.max.mat<-f.convert(tfe.max)
 tfe.mean.mat<-f.convert(tfe.mean)
-tfe.sd.mat<-f.convert(tfe.sd)
+# tfe.sd.mat<-f.convert(tfe.sd)
 
 colfunc <- colorRampPalette(c("white", "black"))
 col.vec=colfunc(7)
 
-pdf(file=paste0(outputDirectory,"pvals-totalFruitEquivalentsPerPlant.pdf"),height=6,width=6)
+pdf(file=paste0(outputDirectory,"pvals-totalFruitEquivalentsPerPlant.pdf"),height=3,width=6)
+
+par(mfrow = c(1,2),
+    oma = c(2,2.5,0,0) + 0.1,
+    mar = c(0,.5,1,1) + 0.1,
+    mgp=c(3,.5,0))
+
+f.plot(diagnostic.test.mat = tfe.mean.mat,years=2006:2012)
+mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
+title("A. Mean", adj=0)
+
+f.plot(diagnostic.test.mat = p.chi.mat,years=2006:2012)
+box(which="plot",bty="l",col='black')
+title("B. Chi-squared",adj=0)
+
+dev.off()
+
+# ---
+# Graphical checks: Total fruit equivalents per plant ----
+# use 2009 as the example
+# ---
+
+y.obs=data$y_tfe
+n.samples = 50
 
 years=2006:2012
-par(mfrow=c(1,1))
-time.sample = 1:length(years)
-plot(NA,NA,
-     ylim=c(0,1),pch=16,xlim=c(-.5,24.5),
-     xlab="",ylab="",
-     main="Total fruit equivalents per plant",type='n',
-     xaxt='n',yaxt='n',frame=FALSE)
+plot.yr = 2009
 
-start = c(0,5,10,15,20)
-offset = seq(0,4,length.out=length(years))#c(-.125,.125)
-polygon(x=c(4.5,4.5,9.5,9.5),y=c(-1,2,2,-1),col='gray90',border=0)
-polygon(x=c(14.5,14.5,19.5,19.5),y=c(-1,2,2,-1),col='gray90',border=0)
-box(which="plot",bty="l",col='black')
-abline(h=0.5,lty='dotted')
+pdf(file=paste0(outputDirectory,"ppc-totalFruitEquivalentsPerPlant.pdf"),height=4,width=6)
 
-f.box=function(x,y,width=.2){
-  d=boxplot(y,plot=FALSE)
-  segments(x0=x,y0=d$stats[1],y1=d$stats[5],lty='solid')
-  rect(xleft=x-width/2,xright=x+width/2,
-       ybottom=d$stats[2],ytop=d$stats[4],col='white')
-  segments(x0=x-width/2,x1=x+width/2,
-           y0=d$stats[3],lwd=2)
-  
+par(mfrow = c(2,3),
+    oma = c(2,2.5,0,0) + 0.1,
+    mar = c(0,.5,1,1) + 0.1,
+    mgp=c(2,1,0))
+
+for(i in (1:length(years))[ years %in% plot.yr]){
+  if(colSums(p.chi.mat>.95,na.rm=TRUE)[i]==0){
+    
+  } else {
+    
+    iter.ind = sample(1:n.sim,n.samples)
+    
+    # get the sites with poor fit
+    site.index<-(1:20)[(p.chi.mat>.95&!is.na(p.chi.mat))[,i]]
+    # add two random sites
+    add.index <- c(sample((1:20)[!(1:20%in%site.index)],3))
+    for(j in c(site.index,add.index)){
+      
+      index=data$site==j&data$year==i
+      
+      p.obs=y.obs[index]
+      p.sim=as.matrix(y.sim[,index])
+      p.sim=as.matrix(p.sim[iter.ind,])
+      
+      if (dim(p.sim)[2]<2) {NA} else {
+        
+        list.dens=apply(p.sim,1,density,na.rm=TRUE)
+        all.max.y=max(unlist(lapply(list.dens, "[", "y")))
+        all.max.x=max(unlist(lapply(list.dens, "[", "x")))
+        
+        m.max=max(p.obs,na.rm=TRUE)
+        m.min=min(p.obs,na.rm=TRUE)
+        dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)
+        
+        all.max.y = max(all.max.y,max(dens.obs$y))
+        all.max.x = max(all.max.x,max(dens.obs$x))
+        
+        plot(NA,NA,
+             ylim=c(0,all.max.y),xlim=c(0,all.max.x),
+             xaxt='n',xlab='',ylab='',yaxt='n')
+        for(h in 1:n.samples){
+          m.max=max(p.sim[h,],na.rm=TRUE)
+          m.min=min(p.sim[h,],na.rm=TRUE)
+          
+          dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
+          lines(x=dens.x$x,y=dens.x$y,lwd=0.25,
+                col=ifelse(j %in% site.index,'orange','gray75'))
+        }
+        
+        
+        lines(x=dens.obs$x,y=dens.obs$y)
+        
+        ifelse(i%in%c(1),axis(2L),NA)
+        
+        axis(2,cex=.25,tick=FALSE,line=-1)
+        axis(1,cex=.25,tick=FALSE,line=-1)
+        
+        legend("topright",paste0(siteNames[j],': ',years[i],"\n n=",length(p)),bty='n')
+        
+      }
+    }
+    
+    mtext(paste0("Counts of total fruit equivalents per plant"), side = 1, 
+          outer = TRUE, line = .75)
+    mtext("Density", side = 2, outer = TRUE, line = 1.2)
+  }
 }
-
-for(j in 1:length(years)){
-  
-  f.box(x=start[1]+offset[j],y=tfe.min.mat[,j],width=.2)
-  
-  f.box(x=start[2]+offset[j],y=tfe.max.mat[,j],width=.2)
-  
-  f.box(x=start[3]+offset[j],y=tfe.mean.mat[,j],width=.2)
-  
-  f.box(x=start[4]+offset[j],y=tfe.sd.mat[,j],width=.2)
-  
-  f.box(x=start[5]+offset[j],y=p.chi.mat[,j],width=.2)
-  
-}
-
-axis(1, c(2,7,12,17,22),
-     labels = c("min","max","mean","sd","Chi-2"), las = 1, 
-     col = NA, col.ticks = 1, cex.axis = 1)
-axis(2, seq(0,1,by=.2),
-     seq(0,1,by=.2), las = 1, 
-     col = NA, col.ticks = 1, cex.axis = 1)
 
 dev.off()
 
 
-
 # ---
-# Simulate observations: Undamaged fruits per plant ----
+# Simulate observations: Total fruits per plant ----
 # ---
 
 z_tot=MCMCchains(mcmcSamples, params = "z_tot")
 
-n.sim = 1000
+n.sim = 5000
 draws.iter=sample(1:dim(z_tot)[1],n.sim)
 z_tot.sub = z_tot[draws.iter,]
 n.obs = dim(z_tot.sub)[2]
@@ -374,79 +329,11 @@ for(i in 1:n.sim){
 y_tot.sim = y_tot.sim
 
 # ---
-# Graphical checks: Undamaged fruits per plant ----
-# ---
-
-
-y.obs=data$y_tot
-n.samples = 25
-
-years=2013:2020
-
-pdf(file=paste0(outputDirectory,"ppc-totalFruitsPerPlant.pdf"),height=6,width=6)
-
-for(i in 1:length(years)){
-  par(mfrow = c(4,5),
-      oma = c(4,5,0,0) + 0.1,
-      mar = c(1,0,1,1) + 0.1)
-  
-  iter.ind = sample(1:n.iter,n.samples)
-  
-  for(j in 1:20){
-    
-    index=data$site2==j&data$year2==i
-    
-    p.obs=y.obs[index]
-    p.sim=as.matrix(y_tot.sim[,index])
-    p.sim=as.matrix(p.sim[iter.ind,])
-    
-    if (dim(p.sim)[2]<2) {NA} else {
-      
-      list.dens=apply(p.sim,1,density,na.rm=TRUE)
-      all.max.y=max(unlist(lapply(list.dens, "[", "y")))
-      all.max.x=max(unlist(lapply(list.dens, "[", "x")))
-      
-      m.max=max(p.obs,na.rm=TRUE)
-      m.min=min(p.obs,na.rm=TRUE)
-      if(sum(is.na(p.obs))!=length(p.obs)) {dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)} else {NA}
-      
-      all.max.y = max(all.max.y,max(dens.obs$y))
-      all.max.x = max(all.max.x,max(dens.obs$x))
-      
-      plot(NA,NA,
-           ylim=c(0,all.max.y),xlim=c(0,all.max.x),
-           xaxt='n',xlab='',ylab='',yaxt='n')
-      for(h in 1:n.samples){
-        m.max=max(p.sim[h,],na.rm=TRUE)
-        m.min=min(p.sim[h,],na.rm=TRUE)
-        
-        dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
-        lines(x=dens.x$x,y=dens.x$y,lwd=0.25,col='orange')
-      }
-      
-      
-      lines(x=dens.obs$x,y=dens.obs$y)
-      
-      ifelse(i%in%c(1),axis(2L),NA)
-      
-      axis(2,cex=.25,tick=FALSE,line=-1)
-      axis(1,cex=.25,tick=FALSE,line=-1)
-      
-      text(x=all.max.x*.7,y=all.max.y*.9,siteNames[j],pos=4)
-    }
-  }
-  
-  mtext(paste0("Counts of undamaged fruits per plant (",years[i],")"), side = 1, outer = TRUE, line = 1.5)
-  mtext("Density", side = 2, outer = TRUE, line = 2.2)
-}
-dev.off()
-
-
-# ---
 # Test statistics: Total fruits ----
 # ---
 
 y.obs=data$y_tot
+years=2013:2020
 
 chi2.obs=(sweep(z_tot.sub, 2, y.obs, FUN = '-')^2)/z_tot.sub
 chi2.sim=((y_tot.sim-z_tot.sub)^2)/z_tot.sub
@@ -540,59 +427,141 @@ f.convert = function(test.list){
 sims=y_tot.sim
 df=data$y_tot
 
-und.min=f(y.sim=sims,y.obs=df,model.fun=min)
-und.max=f(y.sim=sims,y.obs=df,model.fun=max)
-und.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
-und.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
+# tot.min=f(y.sim=sims,y.obs=df,model.fun=min)
+# tot.max=f(y.sim=sims,y.obs=df,model.fun=max)
+tot.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
+# tot.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
 
-chi.mat<-f.convert(p.chi.list)
-und.min.mat<-f.convert(und.min)
-und.max.mat<-f.convert(und.max)
-und.mean.mat<-f.convert(und.mean)
-und.sd.mat<-f.convert(und.sd)
+p.chi.mat<-f.convert(p.chi.list)
+# tot.min.mat<-f.convert(tot.min)
+# tot.max.mat<-f.convert(tot.max)
+tot.mean.mat<-f.convert(tot.mean)
+# tot.sd.mat<-f.convert(tot.sd)
 
 colfunc <- colorRampPalette(c("white", "black"))
 col.vec=colfunc(length(years))
 
-pdf(file=paste0(outputDirectory,"pvals-totalFruitsPerPlant.pdf"),height=6,width=6)
+pdf(file=paste0(outputDirectory,"pvals-totalFruitsPerPlant.pdf"),height=3,width=6)
 
-par(mfrow=c(1,1))
-time.sample = 1:length(years)
-plot(NA,NA,
-     ylim=c(0,1),pch=16,xlim=c(-.5,24.5),
-     xlab="",ylab="",
-     main="Undamaged fruits per plant",type='n',
-     xaxt='n',yaxt='n',frame=FALSE)
+par(mfrow = c(1,2),
+    oma = c(2,2.5,0,0) + 0.1,
+    mar = c(0,.5,1,1) + 0.1,
+    mgp=c(3,.5,0))
 
-start = c(0,5,10,15,20)
-offset = seq(0,4,length.out=length(years))#c(-.125,.125)
-polygon(x=c(4.5,4.5,9.5,9.5),y=c(-1,2,2,-1),col='gray90',border=0)
-polygon(x=c(14.5,14.5,19.5,19.5),y=c(-1,2,2,-1),col='gray90',border=0)
+f.plot(diagnostic.test.mat = tot.mean.mat,years=2013:2020)
+mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
+title("A. Mean", adj=0)
+
+f.plot(diagnostic.test.mat = p.chi.mat,years=2013:2020)
 box(which="plot",bty="l",col='black')
-abline(h=0.5,lty='dotted')
+title("B. Chi-squared",adj=0)
+
+dev.off()
 
 
-for(j in 1:length(years)){
-  
-  f.box(x=start[1]+offset[j],y=und.min.mat[,j],width=.2)
-  
-  f.box(x=start[2]+offset[j],y=und.max.mat[,j],width=.2)
-  
-  f.box(x=start[3]+offset[j],y=und.mean.mat[,j],width=.2)
-  
-  f.box(x=start[4]+offset[j],y=und.sd.mat[,j],width=.2)
-  
-  f.box(x=start[5]+offset[j],y=chi.mat[,j],width=.2)
-  
+# ---
+# Graphical checks: Total fruits per plant ----
+# ---
+
+
+y.obs=data$y_tot
+n.samples = 50
+
+years=2013:2020
+plot.yr = 2013
+
+pdf(file=paste0(outputDirectory,"ppc-totalFruitsPerPlant.pdf"),height=2,width=4)
+
+par(mfrow = c(1,2),
+    oma = c(2,2.5,0,0) + 0.1,
+    mar = c(0,.5,1,1) + 0.1,
+    mgp=c(2,1,0))
+
+for(i in (1:length(years))[ years %in% plot.yr]){
+  if(colSums(p.chi.mat>.95,na.rm=TRUE)[i]==0){
+    
+  } else {
+    
+    iter.ind = sample(1:n.iter,n.samples)
+    
+    # get the sites with poor fit
+    site.index<-(1:20)[(p.chi.mat>.95&!is.na(p.chi.mat))[,i]]
+    # add two random sites
+    add.index <- c(sample((1:20)[!(1:20%in%site.index)],1))
+    for(j in c(site.index,add.index)){
+      
+      index=data$site2==j&data$year2==i
+      
+      p.obs=y.obs[index]
+      p.sim=as.matrix(y_tot.sim[,index])
+      p.sim=as.matrix(p.sim[iter.ind,])
+      
+      if(is.matrix(p.sim)&dim(p.sim)[2]>1){
+        
+        list.dens=apply(p.sim,1,density,na.rm=TRUE)
+        all.max.y=max(unlist(lapply(list.dens, "[", "y")))
+        all.max.x=max(unlist(lapply(list.dens, "[", "x")))
+        
+        m.max=max(p.obs,na.rm=TRUE)
+        m.min=min(p.obs,na.rm=TRUE)
+        dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)
+        
+        all.max.y = max(all.max.y,max(dens.obs$y))
+        all.max.x = max(all.max.x,max(dens.obs$x))
+        
+        plot(NA,NA,
+             ylim=c(0,all.max.y),xlim=c(0,all.max.x),
+             xaxt='n',xlab='',ylab='',yaxt='n')
+        for(h in 1:n.samples){
+          m.max=max(p.sim[h,],na.rm=TRUE)
+          m.min=min(p.sim[h,],na.rm=TRUE)
+          
+          dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
+          lines(x=dens.x$x,y=dens.x$y,lwd=0.25,
+                col=ifelse(j %in% site.index,'orange','gray75'))
+        }
+        
+        p = data$y_tot[index]
+        
+        lines(x=dens.obs$x,y=dens.obs$y)
+        
+        if(length(unique(p))==1){ abline(v=unique(p),lty='dotted',col='black')}
+        
+      } else if(is.matrix(p.sim)&dim(p.sim)[2]==1){
+        # lines below are for the case where there is only 1 observation
+        
+        p.sim = p.sim
+        all.max.x= max(density(p.sim,na.rm=TRUE)$x)
+        all.max.y= max(density(p.sim,na.rm=TRUE)$y)
+        
+        plot(NA,NA,
+             ylim=c(0,all.max.y),xlim=c(0,all.max.x),
+             xaxt='n',xlab='',ylab='',yaxt='n')
+        
+        # plot observed value
+        p = data$y_tot[index]
+        abline(v=p,lty='dotted',col='black')
+        
+        # overlay simulated values
+        tb = table(p.sim)
+        tb.x = as.numeric(names(tb))
+        segments(x0=tb.x,y0=0,y1=tb/sum(tb),
+                 col=ifelse(j %in% site.index,'orange','gray75'))
+        
+      }
+      
+      axis(2,cex=.25,tick=FALSE,line=-1)
+      axis(1,cex=.25,tick=FALSE,line=-1)
+      
+      legend("topright",paste0(siteNames[j],': ',years[i],"\n n=",length(p)),bty='n')
+      
+    }
+    
+    mtext(paste0("Counts of total fruits per plant"), side = 1,           
+          outer = TRUE, line = .75)
+    mtext("Density", side = 2, outer = TRUE, line = 1.2)
+  }
 }
-
-axis(1, c(2,7,12,17,22),
-     labels = c("min","max","mean","sd","Chi-2"), las = 1, 
-     col = NA, col.ticks = 1, cex.axis = 1)
-axis(2, seq(0,1,by=.2),
-     seq(0,1,by=.2), las = 1, 
-     col = NA, col.ticks = 1, cex.axis = 1)
-
 dev.off()
 
 
@@ -603,7 +572,7 @@ dev.off()
 
 p_dam=MCMCchains(mcmcSamples, params = "prop_dam")
 
-n.sim = 1000
+n.sim = 5000
 draws.iter=sample(1:dim(p_dam)[1],n.sim)
 p_dam.sub = p_dam[draws.iter,]
 n.obs = dim(p_dam.sub)[2]
@@ -615,83 +584,13 @@ for(i in 1:n.obs){
 }
 y_dam.sim = y_dam.sim
 
-# ---
-# Graphical checks: Damaged fruits per plant ----
-# ---
-
-y.obs=data$y_dam
-n.iter=dim(y_dam.sim)[1]
-years=2013:2020
-n.samples = 25
-
-pdf(file=paste0(outputDirectory,"ppc-damagedFruitsPerPlant.pdf"),height=6,width=6)
-
-for(i in 1:length(years)){
-  par(mfrow = c(4,5),
-      oma = c(4,5,0,0) + 0.1,
-      mar = c(1,0,1,1) + 0.1)
-  
-  iter.ind = sample(1:n.iter,n.samples)
-  
-  for(j in 1:20){
-    
-    index=data$site2==j&data$year2==i
-    
-    p.obs=y.obs[index]
-    p.sim=as.matrix(y_dam.sim[,index])
-    p.sim=as.matrix(p.sim[iter.ind,])
-    
-    if (dim(p.sim)[2]<2) {NA} else {
-      
-      list.dens=apply(p.sim,1,density,na.rm=TRUE)
-      all.max.y=max(unlist(lapply(list.dens, "[", "y")))
-      all.max.x=max(unlist(lapply(list.dens, "[", "x")))
-      
-      m.max=max(p.obs,na.rm=TRUE)
-      m.min=min(p.obs,na.rm=TRUE)
-      if(sum(is.na(p.obs))!=length(p.obs)) {dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)} else {NA}
-      
-      all.max.y = max(all.max.y,max(dens.obs$y))
-      all.max.x = max(all.max.x,max(dens.obs$x))
-      
-      plot(NA,NA,
-           ylim=c(0,all.max.y),xlim=c(0,all.max.x),
-           xaxt='n',xlab='',ylab='',yaxt='n')
-      for(h in 1:n.samples){
-        m.max=max(p.sim[h,],na.rm=TRUE)
-        m.min=min(p.sim[h,],na.rm=TRUE)
-        
-        dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
-        lines(x=dens.x$x,y=dens.x$y,lwd=0.25,col='orange')
-      }
-      
-      
-      lines(x=dens.obs$x,y=dens.obs$y)
-      
-      ifelse(i%in%c(1),axis(2L),NA)
-      
-      axis(2,cex=.25,tick=FALSE,line=-1)
-      axis(1,cex=.25,tick=FALSE,line=-1)
-      
-      text(x=all.max.x*.7,y=all.max.y*.9,siteNames[j],pos=4)
-    }
-  }
-  
-  mtext(paste0("Counts of damaged fruits per plant (",years[i],")"), side = 1, outer = TRUE, line = 1.5)
-  mtext("Density", side = 2, outer = TRUE, line = 2.2)
-}
-
-dev.off()
-
-
-
-
 
 # ---
 # Test statistics: Damaged fruits ----
 # ---
 
 y.obs=data$y_dam
+years = 2013:2020
 
 chi2.obs=(sweep(data$y_tot*p_dam.sub, 2, y.obs, FUN = '-')^2)/data$y_tot*p_dam.sub
 chi2.sim=((y_dam.sim-data$y_tot*p_dam.sub)^2)/data$y_tot*p_dam.sub
@@ -772,67 +671,144 @@ f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
 sims=y_dam.sim
 df=data$y_dam
 
-dam.min=f(y.sim=sims,y.obs=df,model.fun=min)
-dam.max=f(y.sim=sims,y.obs=df,model.fun=max)
+# dam.min=f(y.sim=sims,y.obs=df,model.fun=min)
+# dam.max=f(y.sim=sims,y.obs=df,model.fun=max)
 dam.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
-dam.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
+# dam.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
 
 p.chi.mat <- f.convert(p.chi.list)
-dam.min.mat<-f.convert(dam.min)
-dam.max.mat<-f.convert(dam.max)
+# dam.min.mat<-f.convert(dam.min)
+# dam.max.mat<-f.convert(dam.max)
 dam.mean.mat<-f.convert(dam.mean)
-dam.sd.mat<-f.convert(dam.sd)
+# dam.sd.mat<-f.convert(dam.sd)
 
 colfunc <- colorRampPalette(c("white", "black"))
 col.vec=colfunc(length(years))
 
-pdf(file=paste0(outputDirectory,"pvals-damagedFruitsPerPlant.pdf"),height=6,width=6)
+pdf(file=paste0(outputDirectory,"pvals-damagedFruitsPerPlant.pdf"),height=3,width=6)
 
-par(mfrow=c(1,1))
-time.sample = 1:length(years)
-plot(NA,NA,
-     ylim=c(0,1),pch=16,xlim=c(-.5,24.5),
-     xlab="",ylab="",
-     main="Damaged fruits per plant",type='n',
-     xaxt='n',yaxt='n',frame=FALSE)
+par(mfrow = c(1,2),
+    oma = c(2,2.5,0,0) + 0.1,
+    mar = c(0,.5,1,1) + 0.1,
+    mgp=c(3,.5,0))
 
-start = c(0,5,10,15,20)
-offset = seq(0,4,length.out=length(years))#c(-.125,.125)
-polygon(x=c(4.5,4.5,9.5,9.5),y=c(-1,2,2,-1),col='gray90',border=0)
-polygon(x=c(14.5,14.5,19.5,19.5),y=c(-1,2,2,-1),col='gray90',border=0)
+f.plot(diagnostic.test.mat = dam.mean.mat,years=2013:2020)
+mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
+title("A. Mean", adj=0)
+
+f.plot(diagnostic.test.mat = p.chi.mat,years=2013:2020)
 box(which="plot",bty="l",col='black')
-abline(h=0.5,lty='dotted')
-
-f.box=function(x,y,width=.2){
-  d=boxplot(y,plot=FALSE)
-  segments(x0=x,y0=d$stats[1],y1=d$stats[5],lty='solid')
-  rect(xleft=x-width/2,xright=x+width/2,
-       ybottom=d$stats[2],ytop=d$stats[4],col='white')
-  segments(x0=x-width/2,x1=x+width/2,
-           y0=d$stats[3],lwd=2)
-  
-}
-
-for(j in 1:length(years)){
-  
-  f.box(x=start[1]+offset[j],y=dam.min.mat[,j],width=.2)
-  
-  f.box(x=start[2]+offset[j],y=dam.max.mat[,j],width=.2)
-  
-  f.box(x=start[3]+offset[j],y=dam.mean.mat[,j],width=.2)
-  
-  f.box(x=start[4]+offset[j],y=dam.sd.mat[,j],width=.2)
-  
- f.box(x=start[5]+offset[j],y=p.chi.mat[,j],width=.2)
-  
-}
-
-axis(1, c(2,7,12,17,22),
-     labels = c("min","max","mean","sd","Chi-2"), las = 1, 
-     col = NA, col.ticks = 1, cex.axis = 1)
-axis(2, seq(0,1,by=.2),
-     seq(0,1,by=.2), las = 1, 
-     col = NA, col.ticks = 1, cex.axis = 1)
+title("B. Chi-squared",adj=0)
 
 dev.off()
+
+
+# ---
+# Graphical checks: Damaged fruits per plant ----
+# ---
+
+y.obs=data$y_dam
+n.iter=dim(y_dam.sim)[1]
+years=2013:2020
+n.samples = 50
+plot.yr = 2013
+
+pdf(file=paste0(outputDirectory,"ppc-damagedFruitsPerPlant.pdf"),height=4,width=6)
+
+par(mfrow = c(2,4),
+    oma = c(2,2.5,0,0) + 0.1,
+    mar = c(0,.5,1,1) + 0.1,
+    mgp=c(2,1,0))
+
+for(i in (1:length(years))[ years %in% plot.yr]){
+  if(colSums(dam.mean.mat>.95,na.rm=TRUE)[i]==0){
+    
+  } else {
+    
+    iter.ind = sample(1:n.iter,n.samples)
+    
+    # get the sites with poor fit
+    site.index<-(1:20)[(dam.mean.mat>.95&!is.na(dam.mean.mat))[,i]]
+    # add two random sites
+    add.index <- c(sample((1:20)[!(1:20%in%site.index)],4))
+    
+    for(j in c(site.index,add.index)){
+      
+      index=data$site2==j&data$year2==i
+      
+      p.obs=y.obs[index]
+      if(length(p.obs)>0){
+      p.sim=as.matrix(y_dam.sim[,index])
+      p.sim=as.matrix(p.sim[iter.ind,])
+      
+      if(is.matrix(p.sim)&dim(p.sim)[2]>1){
+        
+        list.dens=apply(p.sim,1,density,na.rm=TRUE)
+        all.max.y=max(unlist(lapply(list.dens, "[", "y")))
+        all.max.x=max(unlist(lapply(list.dens, "[", "x")))
+        
+        m.max=max(p.obs,na.rm=TRUE)
+        m.min=min(p.obs,na.rm=TRUE)
+        dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)
+        
+        all.max.y = max(all.max.y,max(dens.obs$y))
+        all.max.x = max(all.max.x,max(dens.obs$x))
+        
+        plot(NA,NA,
+             ylim=c(0,all.max.y),xlim=c(0,all.max.x),
+             xaxt='n',xlab='',ylab='',yaxt='n')
+        for(h in 1:n.samples){
+          m.max=max(p.sim[h,],na.rm=TRUE)
+          m.min=min(p.sim[h,],na.rm=TRUE)
+          
+          dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
+          lines(x=dens.x$x,y=dens.x$y,lwd=0.25,
+                col=ifelse(j %in% site.index,'orange','gray75'))
+        }
+        
+        p = data$y_dam[index]
+        
+        lines(x=dens.obs$x,y=dens.obs$y)
+        
+        if(length(unique(p))==1){ abline(v=unique(p),lty='dotted',col='black')}
+        
+      } else if(is.matrix(p.sim)&dim(p.sim)[2]==1){
+        # lines below are for the case where there is only 1 observation
+        
+        p.sim = p.sim
+        all.max.x= max(density(p.sim,na.rm=TRUE)$x)
+        all.max.y= max(density(p.sim,na.rm=TRUE)$y)
+        
+        plot(NA,NA,
+             ylim=c(0,all.max.y),xlim=c(0,all.max.x),
+             xaxt='n',xlab='',ylab='',yaxt='n')
+        
+        # plot observed value
+        p = data$y_dam[index]
+        abline(v=p,lty='dotted',col='black')
+        
+        # overlay simulated values
+        tb = table(p.sim)
+        tb.x = as.numeric(names(tb))
+        segments(x0=tb.x,y0=0,y1=tb/sum(tb),
+                 col=ifelse(j %in% site.index,'orange','gray75'))
+        
+      }
+      
+      axis(2,cex=.25,tick=FALSE,line=-1)
+      axis(1,cex=.25,tick=FALSE,line=-1)
+      
+      legend("topright",paste0(siteNames[j],': ',years[i],"\n n=",length(p)),bty='n')
+      
+    }
+    }
+    mtext(paste0("Counts of damaged fruits per plant"), side = 1,           
+          outer = TRUE, line = .75)
+    mtext("Density", side = 2, outer = TRUE, line = 1.2)
+  }
+}
+dev.off()
+
+
+
 
