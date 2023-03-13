@@ -51,10 +51,9 @@ siteIndex <- order(siteAbiotic$easting,decreasing=FALSE)
 chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.obs"))
 
 n.iter=dim(chi2.obs)[1]
-subsample = sample(n.iter,5000)
 
-chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.obs"))[subsample,]
-chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.sim"))[subsample,]
+chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.obs"))
+chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.sim"))
 
 p.pop = matrix(NA,nrow=n.iter,ncol=data$n_siteYearIndex)
 for(j in 1:20){
@@ -126,7 +125,7 @@ f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
   return(p.test.list)
 }
 
-sims=MCMCchains(mcmcSamples,params=c("fruitplNumber_sim"))[subsample,]
+sims=MCMCchains(mcmcSamples,params=c("fruitplNumber_sim"))
 df=data$fruitplNumber
 df2=data$seedlingNumber
 
@@ -239,7 +238,7 @@ for(i in 1:length(years)){
       mar = c(1,0,1,1) + 0.1)
   
   n.samples = 50
-  iter.ind = sample(1:length(subsample),n.samples)
+  iter.ind = sample(1:n.iter,n.samples)
   
   tmpSite = data$site_observed[data$year_observed==i]
   
@@ -267,8 +266,9 @@ for(i in 1:length(years)){
           
           dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
           lines(x=dens.x$x,y=dens.x$y,lwd=0.25,
-                col=ifelse(p.chi.mat[j.tmp,i]>.95|p.chi.mat[j.tmp,i]<.05,
-                           'orange','gray75'))
+                col=if(p.chi.mat[j.tmp,i]>.95|p.chi.mat[j.tmp,i]<.05&seedlings.mean.mat[j.tmp,i]>.95|seedlings.mean.mat[j.tmp,i]<.05){'orange'}
+                else if(p.chi.mat[j.tmp,i]>.95|p.chi.mat[j.tmp,i]<.05&seedlings.mean.mat[j.tmp,i]<.95&seedlings.mean.mat[j.tmp,i]>.05){'purple'}
+                else{ 'gray75'})
         }
         
         p = data$fruitplNumber[index]
@@ -300,8 +300,9 @@ for(i in 1:length(years)){
         tb = table(p.sim)
         tb.x = as.numeric(names(tb))
         segments(x0=tb.x,y0=0,y1=tb/sum(tb),
-                 col=ifelse(p.chi.mat[j.tmp,i]>.95|p.chi.mat[j.tmp,i]<.05,
-                            'orange','gray75'))
+                 col=if(p.chi.mat[j.tmp,i]>.95|p.chi.mat[j.tmp,i]<.05&seedlings.mean.mat[j.tmp,i]>.95|seedlings.mean.mat[j.tmp,i]<.05){'orange'}
+                 else if(p.chi.mat[j.tmp,i]>.95|p.chi.mat[j.tmp,i]<.05&seedlings.mean.mat[j.tmp,i]<.95&seedlings.mean.mat[j.tmp,i]>.05){'purple'}
+                 else{ 'gray75'})
         
       }
       
@@ -322,4 +323,115 @@ for(i in 1:length(years)){
 
 dev.off()
 
+# examine 2007 in detail
 
+sims=MCMCchains(mcmcSamples,params=c("fruitplNumber_sim"))
+df=data$fruitplNumber
+df2=data$seedlingNumber
+
+pdf(file=paste0(outputDirectory,"ppc-seedlingSurvivalFruiting-perPlot.pdf"),height=6,width=6)
+
+par(mfrow = c(2,2),
+    oma = c(2,2,0,0) + 0.1,
+    mar = c(1,0,1,1) + 0.1)
+
+
+for(j in c(1,3,16,sample(c(2,4:15,17:20),1))){
+  
+  j.tmp = siteIndex[j]
+  if(j.tmp %in% tmpSite){
+    
+    index=data$site==j.tmp&data$year==2
+    
+    p.obs=df[index]
+    p.sim=sims[,index]
+
+      plot(NA,NA,
+           xlim=c(1,length(p.obs)+1),
+           ylim=c(0,max(p.sim)),
+           xaxt='n',xlab='',ylab='',yaxt='n')
+      
+      rect(xleft=seq(1,50,by=2),
+           xright=seq(1,50,by=2)+1,
+           ybottom=-1000,ytop=1000,col='gray99',border='gray99')
+      
+      for(i in 1:length(p.obs)){
+        
+        index.rand = sample(1:45000,50)
+        tmp<-table(p.sim[index.rand,i])
+        segments(y0=as.numeric(names(tmp)),y1=as.numeric(names(tmp)),
+                 x0=i, x1=i+(tmp/max(tmp))*.8)
+      }
+      box()
+      points(1:length(p.obs),p.obs,pch=16)
+      
+    axis(2,cex=.25,tick=FALSE,line=-1)
+    axis(1,cex=.25,tick=FALSE,line=-1)
+    
+    legend("topright",paste0(siteNames[j.tmp],"\n n=",length(p.obs)),bty='n')
+  
+  }
+  
+}
+
+mtext(paste0("Fruiting plant counts"), side = 2, outer = TRUE, line = 1)
+mtext("Observation (index)", side = 1, outer = TRUE, line = 0.2)
+
+dev.off()
+
+
+pdf(file=paste0(outputDirectory,"ppc-seedlingSurvivalFruiting-populationLevel.pdf"),height=6,width=6)
+
+par(mfrow = c(3,5),
+    oma = c(2,2,0,0) + 0.1,
+    mar = c(1,0,1,1) + 0.1)
+
+
+for(j in 3){
+  
+  j.tmp = siteIndex[j]
+  if(j.tmp %in% tmpSite){
+    
+    for(i in 1:15){
+    index=data$site==j.tmp&data$year==i
+    
+    p.obs=df[index]
+    p.sim=as.matrix(sims[,index])
+    
+    if(sum(index)>0){
+    plot(NA,NA,
+         xlim=c(1,length(p.obs)+1),
+         ylim=c(0,max(p.sim)),
+         xaxt='n',xlab='',ylab='',yaxt='n')
+    
+    rect(xleft=seq(1,50,by=2),
+         xright=seq(1,50,by=2)+1,
+         ybottom=-1000,ytop=1000,col='gray99',border='gray99')
+    
+    for(h in 1:length(p.obs)){
+      
+      index.rand = sample(1:45000,50)
+      tmp<-table(p.sim[index.rand,h])
+      segments(y0=as.numeric(names(tmp)),y1=as.numeric(names(tmp)),
+               x0=h, x1=h+(tmp/max(tmp))*.8)
+    }
+    box()
+    points(1:length(p.obs),p.obs,pch=16)
+    
+    axis(2,cex=.25,tick=FALSE,line=-1)
+    axis(1,cex=.25,tick=FALSE,line=-1)
+    
+    legend("topright",paste0(years[i],"\n",siteNames[j.tmp],"\n n=",length(p.obs)),bty='n')
+    
+  }
+    } 
+  }
+  else {
+    plot(NA,xlim=c(0,1),ylim=c(0,1),axes=FALSE)
+  }
+}
+
+mtext(paste0("Fruiting plant counts"), side = 2, outer = TRUE, line = 1)
+mtext("Observation (index)", side = 1, outer = TRUE, line = 0.2)
+
+dev.off()

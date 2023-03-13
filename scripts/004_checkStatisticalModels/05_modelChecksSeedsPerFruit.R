@@ -57,11 +57,10 @@ y.sim=MCMCchains(mcmcSamples, params = "y_sd.sim")
 y.obs=data$sdno
 n.iter=dim(y.sim)[1]
 years=2006:2020
-sample.index = sample(1:n.iter,5000)
-y.sim=y.sim[sample.index,]
+y.sim=y.sim
 
-chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.sd.obs"))[sample.index,]
-chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.sd.sim"))[sample.index,]
+chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.sd.obs"))
+chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.sd.sim"))
 
 n.iter=dim(y.sim)[1]
 
@@ -140,10 +139,7 @@ f=function(y.sim=chains,y.obs=data,model.fun=mean){
 sims=y.sim
 df=data$sdno
 
-#sdno.min=f(y.sim=sims,y.obs=df,model.fun=min)
-#sdno.max=f(y.sim=sims,y.obs=df,model.fun=max)
 sdno.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
-#sdno.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
 
 # convert lists to matrix
 
@@ -161,14 +157,7 @@ f.convert = function(test.list){
 
 # return matrix objects
 p.chi.sdno.mat<-f.convert(p.chi.list)
-# sdno.min.mat<-f.convert(sdno.min)
-# sdno.max.mat<-f.convert(sdno.max)
 sdno.mean.mat<-f.convert(sdno.mean)
-# sdno.sd.mat<-f.convert(sdno.sd)
-
-colfunc <- colorRampPalette(c("white", "black"))
-col.vec=colfunc(length(years))
-
 
 f.plot = function(diagnostic.test.mat,years){
   
@@ -231,11 +220,10 @@ y.sim=MCMCchains(mcmcSamples, params = "y_sd_dam.sim")
 y.obs=data$sdno_dam
 n.iter=dim(y.sim)[1]
 years=2013:2020
-sample.index = sample(1:n.iter,5000)
-y.sim=y.sim[sample.index,]
+y.sim=y.sim
 
-chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.sd_dam.obs"))[sample.index,]
-chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.sd_dam.sim"))[sample.index,]
+chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.sd_dam.obs"))
+chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.sd_dam.sim"))
 
 p.chi.list = list()
 p.pop = matrix(NA,nrow=n.iter,ncol=data$n_siteYearIndex_dam)
@@ -312,10 +300,7 @@ f=function(y.sim=chains,y.obs=data,model.fun=mean){
 sims=y.sim
 df=data$sdno_dam
 
-# sdno.min=f(y.sim=sims,y.obs=df,model.fun=min)
-# sdno.max=f(y.sim=sims,y.obs=df,model.fun=max)
 sdno.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
-# sdno.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
 
 # convert lists to matrix
 
@@ -333,13 +318,7 @@ f.convert = function(test.list){
 
 # return matrix objects
 p.chi.sdnodam.mat<-f.convert(p.chi.list)
-# sdno.min.mat<-f.convert(sdno.min)
-# sdno.max.mat<-f.convert(sdno.max)
 sdnodam.mean.mat<-f.convert(sdno.mean)
-# sdno.sd.mat<-f.convert(sdno.sd)
-
-colfunc <- colorRampPalette(c("white", "black"))
-col.vec=colfunc(length(years))
 
 pdf(file=paste0(outputDirectory,"pvals-seedsPerDamagedFruit.pdf"),height=4,width=6)
 
@@ -365,10 +344,8 @@ dev.off()
 
 y.sim=MCMCchains(mcmcSamples, params = "y_sd.sim")
 y.obs=data$sdno
-#n.iter=dim(y.sim)[1]
 years=2006:2020
 n.samples = 50
-#y.sim = y.sim[sample(1:n.iter,n.samples),]
 plot.yr = c(2010)
 
 pdf(file=paste0(outputDirectory,"ppc-seedsPerUndamagedFruit-2010.pdf"),height=2.5,width=4)
@@ -453,12 +430,12 @@ for(i in (1:length(years))[ years %in% plot.yr]){
       axis(2,cex=.25,tick=FALSE,line=-1)
       axis(1,cex=.25,tick=FALSE,line=-1)
       
-      legend("topright",paste0(siteNames[j],': ',years[i],"\n n=",length(p)),bty='n')
+      legend("topright",paste0(siteAbiotic$site[j],': ',years[i],"\n n=",length(p)),bty='n')
       
     } 
   }
   
-  mtext(paste0("Counts of seeds per undamaged frut (",years[i],")"),
+  mtext(paste0("Counts of seeds per undamaged fruit (",years[i],")"),
         side = 1, outer = TRUE, line = .75)
   mtext("Density", side = 2, outer = TRUE, line = 1.2)
 } 
@@ -466,7 +443,6 @@ dev.off()
 
 y.sim=MCMCchains(mcmcSamples, params = "y_sd.sim")
 y.obs=data$sdno
-#n.iter=dim(y.sim)[1]
 years=2006:2020
 n.samples = 50
 plot.yr = c(2014)
@@ -553,7 +529,7 @@ for(i in (1:length(years))[ years %in% plot.yr]){
       axis(2,cex=.25,tick=FALSE,line=-1)
       axis(1,cex=.25,tick=FALSE,line=-1)
       
-      legend("topright",paste0(siteNames[j],': ',years[i],"\n n=",length(p)),bty='n')
+      legend("topright",paste0(siteAbiotic$site[j],': ',years[i],"\n n=",length(p)),bty='n')
       
     } 
   }
@@ -577,22 +553,21 @@ plot.yr = 2013
 
 pdf(file=paste0(outputDirectory,"ppc-seedsPerDamagedFruit.pdf"),height=4,width=6)
 
-
-par(mfrow = c(2,5),
+par(mfrow = c(2,4),
     oma = c(2,2.5,0,0) + 0.1,
     mar = c(0,.5,1,1) + 0.1,
     mgp=c(2,1,0))
 
 for(i in (1:length(years))[ years %in% plot.yr]){
-  if(colSums(sdnodam.mean.mat>.95,na.rm=TRUE)[i]==0){
+  if(colSums(p.chi.sdnodam.mat<.05,na.rm=TRUE)[i]==0){
     
   } else {
     
     iter.ind = sample(1:n.iter,n.samples)
     
     # get the sites with poor fit
-    site.index<-(1:20)[(sdnodam.mean.mat>.95&!is.na(sdnodam.mean.mat))[,i]]
-    # add two random sites
+    site.index<-(1:20)[(p.chi.sdnodam.mat<.05&!is.na(p.chi.sdnodam.mat))[,i]]
+    # add three random sites
     add.index <- c(sample((1:20)[!(1:20%in%site.index)],5))
     for(j in c(site.index,add.index)){
       
@@ -658,7 +633,7 @@ for(i in (1:length(years))[ years %in% plot.yr]){
         axis(2,cex=.25,tick=FALSE,line=-1)
         axis(1,cex=.25,tick=FALSE,line=-1)
         
-        legend("topright",paste0(siteNames[j],': ',years[i],"\n n=",length(p)),bty='n')
+        legend("topright",paste0(siteAbiotic$site[j],': ',years[i],"\n n=",length(p)),bty='n')
       } 
       
     }
@@ -666,6 +641,96 @@ for(i in (1:length(years))[ years %in% plot.yr]){
     mtext("Density", side = 2, outer = TRUE, line = 1.2)
   }
 }
+
+par(mfrow = c(1,2),
+    oma = c(2,2.5,0,0) + 0.1,
+    mar = c(0,.5,1,1) + 0.1,
+    mgp=c(2,1,0))
+
+for(i in (1:length(years))[ years %in% plot.yr]){
+  if(colSums(p.chi.sdnodam.mat>.95,na.rm=TRUE)[i]==0){
+    
+  } else {
+    
+    iter.ind = sample(1:n.iter,n.samples)
+    
+    # get the sites with poor fit
+    site.index<-(1:20)[(p.chi.sdnodam.mat>.95&!is.na(p.chi.sdnodam.mat))[,i]]
+    # add two random sites
+    add.index <- c(sample((1:20)[!(1:20%in%site.index)],1))
+    for(j in c(site.index,add.index)){
+      
+      index=data$site4==j&data$year4==i
+      
+      p.obs=y_dam.obs[index]
+      if(length(p.obs)>0){
+        p.sim=as.matrix(y_dam.sim[,index])
+        p.sim=as.matrix(p.sim[iter.ind,])
+        
+        if(is.matrix(p.sim)&dim(p.sim)[2]>1){
+          list.dens=apply(p.sim,1,density,na.rm=TRUE)
+          all.max.y=max(unlist(lapply(list.dens, "[", "y")))
+          all.max.x=max(unlist(lapply(list.dens, "[", "x")))
+          
+          m.max=max(p.obs,na.rm=TRUE)
+          m.min=min(p.obs,na.rm=TRUE)
+          dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)
+          
+          all.max.y = max(all.max.y,max(dens.obs$y))
+          all.max.x = max(all.max.x,max(dens.obs$x))
+          
+          plot(NA,NA,
+               ylim=c(0,all.max.y),xlim=c(0,all.max.x),
+               xaxt='n',xlab='',ylab='',yaxt='n')
+          for(h in 1:n.samples){
+            m.max=max(p.sim[h,],na.rm=TRUE)
+            m.min=min(p.sim[h,],na.rm=TRUE)
+            
+            dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
+            lines(x=dens.x$x,y=dens.x$y,lwd=0.25,
+                  col=ifelse(j %in% site.index,'orange','gray75'))
+          }
+          
+          p = data$sdno_dam[index]
+          
+          lines(x=dens.obs$x,y=dens.obs$y)
+          
+          if(length(unique(p))==1){ abline(v=unique(p),lty='dotted',col='black')}
+          
+        } else if(is.matrix(p.sim)&dim(p.sim)[2]==1){
+          # lines below are for the case where there is only 1 observation
+          
+          p.sim = p.sim
+          all.max.x= max(density(p.sim,na.rm=TRUE)$x)
+          all.max.y= max(density(p.sim,na.rm=TRUE)$y)
+          
+          plot(NA,NA,
+               ylim=c(0,all.max.y*1.5),xlim=c(0,all.max.x),
+               xaxt='n',xlab='',ylab='',yaxt='n')
+          
+          # plot observed value
+          p = data$sdno_dam[index]
+          abline(v=p,lty='dotted',col='black')
+          
+          # overlay simulated values
+          tb = table(p.sim)
+          tb.x = as.numeric(names(tb))
+          segments(x0=tb.x,y0=0,y1=tb/sum(tb),
+                   col=ifelse(j %in% site.index,'orange','gray75'))        
+        }
+        
+        axis(2,cex=.25,tick=FALSE,line=-1)
+        axis(1,cex=.25,tick=FALSE,line=-1)
+        
+        legend("topright",paste0(siteAbiotic$site[j],': ',years[i],"\n n=",length(p)),bty='n')
+      } 
+      
+    }
+    mtext(paste0("Counts of seeds per damaged fruit (",years[i],")"), side = 1, outer = TRUE, line = .75)
+    mtext("Density", side = 2, outer = TRUE, line = 1.2)
+  }
+}
+
 dev.off()
 
 

@@ -181,10 +181,7 @@ f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
 sims=y.sim
 df=data$y_tfe
 
-# tfe.min=f(y.sim=sims,y.obs=df,model.fun=min)
-# tfe.max=f(y.sim=sims,y.obs=df,model.fun=max)
 tfe.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
-# tfe.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
 
 # convert lists to matrix
 f.convert = function(test.list){
@@ -201,13 +198,8 @@ f.convert = function(test.list){
 
 # return matrix objects
 p.chi.mat<-f.convert(p.chi.list)
-# tfe.min.mat<-f.convert(tfe.min)
-# tfe.max.mat<-f.convert(tfe.max)
 tfe.mean.mat<-f.convert(tfe.mean)
-# tfe.sd.mat<-f.convert(tfe.sd)
 
-colfunc <- colorRampPalette(c("white", "black"))
-col.vec=colfunc(7)
 
 pdf(file=paste0(outputDirectory,"pvals-totalFruitEquivalentsPerPlant.pdf"),height=3,width=6)
 
@@ -239,7 +231,7 @@ plot.yr = 2009
 
 pdf(file=paste0(outputDirectory,"ppc-totalFruitEquivalentsPerPlant.pdf"),height=4,width=6)
 
-par(mfrow = c(2,3),
+par(mfrow = c(2,4),
     oma = c(2,2.5,0,0) + 0.1,
     mar = c(0,.5,1,1) + 0.1,
     mgp=c(2,1,0))
@@ -254,7 +246,7 @@ for(i in (1:length(years))[ years %in% plot.yr]){
     # get the sites with poor fit
     site.index<-(1:20)[(p.chi.mat>.95&!is.na(p.chi.mat))[,i]]
     # add two random sites
-    add.index <- c(sample((1:20)[!(1:20%in%site.index)],3))
+    add.index <- c(sample((1:20)[!(1:20%in%site.index)],4))
     for(j in c(site.index,add.index)){
       
       index=data$site==j&data$year==i
@@ -296,7 +288,7 @@ for(i in (1:length(years))[ years %in% plot.yr]){
         axis(2,cex=.25,tick=FALSE,line=-1)
         axis(1,cex=.25,tick=FALSE,line=-1)
         
-        legend("topright",paste0(siteNames[j],': ',years[i],"\n n=",length(p)),bty='n')
+        legend("topright",paste0(siteAbiotic$site[j],': ',years[i],"\n n=",length(p.obs)),bty='n')
         
       }
     }
@@ -427,19 +419,10 @@ f.convert = function(test.list){
 sims=y_tot.sim
 df=data$y_tot
 
-# tot.min=f(y.sim=sims,y.obs=df,model.fun=min)
-# tot.max=f(y.sim=sims,y.obs=df,model.fun=max)
 tot.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
-# tot.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
 
 p.chi.mat<-f.convert(p.chi.list)
-# tot.min.mat<-f.convert(tot.min)
-# tot.max.mat<-f.convert(tot.max)
 tot.mean.mat<-f.convert(tot.mean)
-# tot.sd.mat<-f.convert(tot.sd)
-
-colfunc <- colorRampPalette(c("white", "black"))
-col.vec=colfunc(length(years))
 
 pdf(file=paste0(outputDirectory,"pvals-totalFruitsPerPlant.pdf"),height=3,width=6)
 
@@ -553,7 +536,7 @@ for(i in (1:length(years))[ years %in% plot.yr]){
       axis(2,cex=.25,tick=FALSE,line=-1)
       axis(1,cex=.25,tick=FALSE,line=-1)
       
-      legend("topright",paste0(siteNames[j],': ',years[i],"\n n=",length(p)),bty='n')
+      legend("topright",paste0(siteAbiotic$site[j],': ',years[i],"\n n=",length(p)),bty='n')
       
     }
     
@@ -671,19 +654,10 @@ f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
 sims=y_dam.sim
 df=data$y_dam
 
-# dam.min=f(y.sim=sims,y.obs=df,model.fun=min)
-# dam.max=f(y.sim=sims,y.obs=df,model.fun=max)
 dam.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
-# dam.sd=f(y.sim=sims,y.obs=df,model.fun=sd)
 
 p.chi.mat <- f.convert(p.chi.list)
-# dam.min.mat<-f.convert(dam.min)
-# dam.max.mat<-f.convert(dam.max)
 dam.mean.mat<-f.convert(dam.mean)
-# dam.sd.mat<-f.convert(dam.sd)
-
-colfunc <- colorRampPalette(c("white", "black"))
-col.vec=colfunc(length(years))
 
 pdf(file=paste0(outputDirectory,"pvals-damagedFruitsPerPlant.pdf"),height=3,width=6)
 
@@ -721,14 +695,15 @@ par(mfrow = c(2,4),
     mgp=c(2,1,0))
 
 for(i in (1:length(years))[ years %in% plot.yr]){
-  if(colSums(dam.mean.mat>.95,na.rm=TRUE)[i]==0){
+  if(colSums(p.chi.mat>.95,na.rm=TRUE)[i]==0){
     
   } else {
     
     iter.ind = sample(1:n.iter,n.samples)
     
     # get the sites with poor fit
-    site.index<-(1:20)[(dam.mean.mat>.95&!is.na(dam.mean.mat))[,i]]
+    site.index<-(1:20)[(p.chi.mat>.95&!is.na(p.chi.mat))[,i]]
+    site.index<-c(site.index,(1:20)[(p.chi.mat<.05&!is.na(p.chi.mat))[,i]])
     # add two random sites
     add.index <- c(sample((1:20)[!(1:20%in%site.index)],4))
     
@@ -798,7 +773,7 @@ for(i in (1:length(years))[ years %in% plot.yr]){
       axis(2,cex=.25,tick=FALSE,line=-1)
       axis(1,cex=.25,tick=FALSE,line=-1)
       
-      legend("topright",paste0(siteNames[j],': ',years[i],"\n n=",length(p)),bty='n')
+      legend("topright",paste0(siteAbiotic$site[j],': ',years[i],"\n n=",length(p)),bty='n')
       
     }
     }
@@ -808,7 +783,3 @@ for(i in (1:length(years))[ years %in% plot.yr]){
   }
 }
 dev.off()
-
-
-
-
