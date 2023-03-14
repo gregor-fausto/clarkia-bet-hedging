@@ -241,11 +241,11 @@ plot(x=optima.g,y=g1.hat,pch=21,col='black',bg='white',cex=2.5,xlim=c(0,1),ylim=
 abline(a=0,b=1,lty='dotted')
 
 # # - Save manuscript data  ----
-# 
-# optimalGerminationFractions = data.frame(site=siteNames,optima=optima,g1.hat=g1.hat)
-# 
-# outputDirectory <- "outputs/006_hypothesisTesting/"
-# write.csv(optimalGerminationFractions,paste0(outputDirectory,"optimalGerminationFractions.csv"),row.names=FALSE)?cor
+
+optimalGerminationFractions = data.frame(site=siteNames,optima=optima,g1.hat=g1.hat)
+
+outputDirectory <- "outputs/006_hypothesisTesting/"
+write.csv(optimalGerminationFractions,paste0(outputDirectory,"optimalGerminationFractions.csv"),row.names=FALSE)
 
 
 # - PLOT  ----
