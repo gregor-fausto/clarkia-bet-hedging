@@ -9,12 +9,7 @@
 rm(list=(ls())) # if using in source(script), include variables to keep
 options(stringsAsFactors = FALSE)
 
-tmpDataDirectory = "outputs/001_prepareDataForModels/"
-mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
-modelDataDirectory = "outputs/002_fitStatisticalModels/data/"
-outputDirectory = "outputs/004_checkStatisticalModels/"
-
-# - Libraries ----
+# - +load libraries ----
 library(MCMCvis)
 library(tidybayes)
 library(tidyverse)
@@ -22,7 +17,12 @@ library(magrittr)
 library(bayesplot)
 library(rethinking)
 
-# - Read in what's needed for plotting ----
+# - Read in what's needed ----
+
+tmpDataDirectory = "outputs/001_prepareDataForModels/"
+mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
+modelDataDirectory = "outputs/002_fitStatisticalModels/data/"
+outputDirectory = "outputs/004_checkStatisticalModels/"
 
 # - +Read in data ----
 tmpDataDirectory <- paste0(tmpDataDirectory,list.files(tmpDataDirectory))
@@ -38,51 +38,72 @@ siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 siteIndex <- order(siteAbiotic$easting,decreasing=FALSE)
 siteNames = unique(siteAbiotic$site)[siteIndex]
 
-# ---
-# ---
-# Graphical Posterior Predictive Checks
-# ---
-# ---
+# - Function to plot Bayesian p-values ----
 
-# -------------------------------------------------------------------
-# -------------------------------------------------------------------
-# Posterior Predictive Checks
-# -------------------------------------------------------------------
-# -------------------------------------------------------------------
+f.plot = function(diagnostic.test.mat,years){
+  
+  plot(NA,NA,
+       ylim=c(0,1),pch=16,xlim=c(min(years),max(years)),
+       xlab="",ylab="",
+       main=NULL,type='n',
+       xaxt='n',yaxt='n',frame=FALSE)
+  
+  start = years[1]
+  offset = seq(0,length(years),by=1)
+  
+  for(j in 1:length(years)){
+    
+    points(x=rep(start+offset[j],20)+rnorm(20,0,.05),
+           pch=21,cex=.8,
+           bg=ifelse(diagnostic.test.mat[,j]>0.95|
+                       diagnostic.test.mat[,j]<0.05,'orange','gray95'),
+           y=diagnostic.test.mat[,j])
+    
+  }
+  
+  abline(h=.05,lty='dotted')
+  abline(h=.95,lty='dotted')
+  box(which="plot",bty="l",col='black')
+  
+  axis(1, seq(min(years),max(years),by=2),
+       labels = seq(min(years),max(years),by=2), 
+       las = 1,
+       col = NA, col.ticks = 1, cex.axis = 1)
+  axis(2, seq(0,1,by=.2),
+       seq(0,1,by=.2), las = 1,
+       col = NA, col.ticks = 1, cex.axis = 1)
+}
 
-# ---
-# Test statistics: Seeds per undamaged fruit ----
-# ---
+# - Seeds per undamaged fruit ----
+# *Posterior predictive checks ----
+
 y.sim=MCMCchains(mcmcSamples, params = "y_sd.sim")
 y.obs=data$sdno
 n.iter=dim(y.sim)[1]
 years=2006:2020
 y.sim=y.sim
 
+# - ++Get chi-squared calculated in JAGS ----
 chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.sd.obs"))
 chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.sd.sim"))
-
 n.iter=dim(y.sim)[1]
 
+# - ++Calculate Bayesian p-value per population and year ----
 p.chi.list = list()
 p.pop = matrix(NA,nrow=n.iter,ncol=data$n_siteYearIndex_und)
 for(j in 1:20){
-  
   tmpYear = data$year_und_observed[data$site_und_observed==j]
-  
   for(i in 1:length(tmpYear)){
     index = data$site3==j&data$year3==tmpYear[i]
     tmp.chi2.obs=chi2.obs[,index]
     tmp.chi2.sim=chi2.sim[,index]
-    
     if(is.matrix(tmp.chi2.obs)){
       fit.obs=apply(tmp.chi2.obs,1,sum)
       fit.sim=apply(tmp.chi2.sim,1,sum)
     } else if(is.vector(tmp.chi2.obs)){
       fit.obs=sum(tmp.chi2.obs)
       fit.sim=sum(tmp.chi2.sim)
-    }
-    
+    } 
     p.chi2.calc=ifelse(fit.sim-fit.obs>=0,1,0)
     index = data$siteYearIndex_und_observed[data$site_und_observed==j&data$year_und_observed==tmpYear[i]] 
     p.pop[,index] = p.chi2.calc
@@ -97,7 +118,7 @@ for(j in 1:20){
   p.chi.list[[j]] = p.chi.mat[tmpIndex]
 }
 
-
+# - +++function to calculate Bayesian p-value for specific test statistic ----
 f=function(y.sim=chains,y.obs=data,model.fun=mean){
   
   n.iter=dim(y.sim)[1]
@@ -136,13 +157,14 @@ f=function(y.sim=chains,y.obs=data,model.fun=mean){
   return(p.test.list)
 }
 
+# - ++get simulated observations and observed data ----
 sims=y.sim
 df=data$sdno
 
+# - ++Calculate Bayesian p-value per population/germination index ----
 sdno.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
 
-# convert lists to matrix
-
+# - +++function to convert list to matrix ----
 f.convert = function(test.list){
   out.list <- list()
   for(i in 1:20){
@@ -159,41 +181,7 @@ f.convert = function(test.list){
 p.chi.sdno.mat<-f.convert(p.chi.list)
 sdno.mean.mat<-f.convert(sdno.mean)
 
-f.plot = function(diagnostic.test.mat,years){
-  
-  plot(NA,NA,
-       ylim=c(0,1),pch=16,xlim=c(min(years),max(years)),
-       xlab="",ylab="",
-       main=NULL,type='n',
-       xaxt='n',yaxt='n',frame=FALSE)
-  
-  start = years[1]
-  offset = seq(0,length(years),by=1)
-  
-  for(j in 1:length(years)){
-    
-    points(x=rep(start+offset[j],20)+rnorm(20,0,.05),
-           pch=21,cex=.8,
-           bg=ifelse(diagnostic.test.mat[,j]>0.95|
-                       diagnostic.test.mat[,j]<0.05,'orange','gray95'),
-           y=diagnostic.test.mat[,j])
-    
-  }
-  
-  abline(h=.05,lty='dotted')
-  abline(h=.95,lty='dotted')
-  box(which="plot",bty="l",col='black')
-  
-  axis(1, seq(min(years),max(years),by=2),
-       labels = seq(min(years),max(years),by=2), 
-       las = 1,
-       col = NA, col.ticks = 1, cex.axis = 1)
-  axis(2, seq(0,1,by=.2),
-       seq(0,1,by=.2), las = 1,
-       col = NA, col.ticks = 1, cex.axis = 1)
-}
-
-
+# - +Plot Bayesian p-vals ----
 pdf(file=paste0(outputDirectory,"pvals-seedsPerUndamagedFruit.pdf"),height=4,width=6)
 
 par(mfrow = c(1,2),
@@ -212,10 +200,8 @@ title("B. Chi-squared",adj=0)
 dev.off()
 
 
-# ---
-# Test statistics: Seeds per damaged fruit ----
-# ---
-
+# - Seeds per damaged fruit ----
+# *Posterior predictive checks ----
 y.sim=MCMCchains(mcmcSamples, params = "y_sd_dam.sim")
 y.obs=data$sdno_dam
 n.iter=dim(y.sim)[1]
@@ -257,7 +243,6 @@ for(j in 1:20){
   tmpIndex = data$siteYearIndex_dam_observed[data$site_dam_observed==j]
   p.chi.list[[j]] = p.chi.mat[tmpIndex]
 }
-
 
 f=function(y.sim=chains,y.obs=data,model.fun=mean){
   
@@ -303,7 +288,6 @@ df=data$sdno_dam
 sdno.mean=f(y.sim=sims,y.obs=df,model.fun=mean)
 
 # convert lists to matrix
-
 f.convert = function(test.list){
   out.list <- list()
   for(i in 1:20){
@@ -320,6 +304,7 @@ f.convert = function(test.list){
 p.chi.sdnodam.mat<-f.convert(p.chi.list)
 sdnodam.mean.mat<-f.convert(sdno.mean)
 
+# - +Plot Bayesian p-vals ----
 pdf(file=paste0(outputDirectory,"pvals-seedsPerDamagedFruit.pdf"),height=4,width=6)
 
 par(mfrow = c(1,2),
@@ -337,11 +322,11 @@ title("B. Chi-squared",adj=0)
 
 dev.off()
 
+# - Seeds per undamaged fruit----
+# *Posterior predictive distribution ----
+# use 2010 as an example
 
-# ---
-# Graphical checks: Seeds per undamaged fruit ----
-# ---
-
+# - ++get simulated values and observations----
 y.sim=MCMCchains(mcmcSamples, params = "y_sd.sim")
 y.obs=data$sdno
 years=2006:2020
@@ -355,9 +340,9 @@ par(mfrow = c(1,2),
     mar = c(0,.5,1,1) + 0.1,
     mgp=c(2,1,0))
 
+# get data for 2010
 for(i in (1:length(years))[ years %in% plot.yr]){
-  if(colSums(p.chi.sdno.mat<.05,na.rm=TRUE)[i]==0){
-    
+  if(colSums(p.chi.sdno.mat<.05,na.rm=TRUE)[i]==0){   
   } else {
     
     iter.ind = sample(1:n.iter,n.samples)
@@ -368,40 +353,43 @@ for(i in (1:length(years))[ years %in% plot.yr]){
     add.index <- c(sample((1:20)[!(1:20%in%site.index)],1))
     for(j in c(site.index,add.index)){
       
+      # get index of data
       index=data$site3==j&data$year3==i
       
+      # get observations and simulated values
       p.obs=y.obs[index]
       p.sim=(y.sim[,index])
       p.sim=as.matrix(p.sim[iter.ind,])
       
+      # for multiple observations
       if(is.matrix(p.sim)&dim(p.sim)[2]>1){
+        # get density of values for constructing plot
         list.dens=apply(p.sim,1,density,na.rm=TRUE)
         all.max.y=max(unlist(lapply(list.dens, "[", "y")))
         all.max.x=max(unlist(lapply(list.dens, "[", "x")))
-        
         m.max=max(p.obs,na.rm=TRUE)
         m.min=min(p.obs,na.rm=TRUE)
         dens.obs = density(p.obs,from=m.min,to=m.max,na.rm=TRUE)
-        
         all.max.y = max(all.max.y,max(dens.obs$y))
         all.max.x = max(all.max.x,max(dens.obs$x))
-        
+        # build plot
         plot(NA,NA,
              ylim=c(0,all.max.y),xlim=c(0,all.max.x),
              xaxt='n',xlab='',ylab='',yaxt='n')
+        # for each dataset, plot the posterior predictive distribution
+        # coloring it according to whether or not the p-value is extreme
+        # use the p-values for the mean test statistic
         for(h in 1:n.samples){
           m.max=max(p.sim[h,],na.rm=TRUE)
           m.min=min(p.sim[h,],na.rm=TRUE)
-          
           dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
           lines(x=dens.x$x,y=dens.x$y,lwd=0.25,
                 col=ifelse(j %in% site.index,'orange','gray75'))
         }
         
+        # add observed values
         p = data$sdno[index]
-        
         lines(x=dens.obs$x,y=dens.obs$y)
-        
         if(length(unique(p))==1){ abline(v=unique(p),lty='dotted',col='black')}
         
       } else if(is.matrix(p.sim)&dim(p.sim)[2]==1){
@@ -440,6 +428,10 @@ for(i in (1:length(years))[ years %in% plot.yr]){
   mtext("Density", side = 2, outer = TRUE, line = 1.2)
 } 
 dev.off()
+
+# - Seeds per undamaged fruit----
+# *Posterior predictive distribution ----
+# use 2014 as an example
 
 y.sim=MCMCchains(mcmcSamples, params = "y_sd.sim")
 y.obs=data$sdno
@@ -540,9 +532,10 @@ for(i in (1:length(years))[ years %in% plot.yr]){
 } 
 dev.off()
 
-# ---
-# Graphical checks: Seeds per damaged fruit ----
-# ---
+# - Seeds per damaged fruit----
+# *Posterior predictive distribution ----
+# use 2013 as an example
+# focus here on populations with LOW p-values for chi-squared
 
 y_dam.sim=MCMCchains(mcmcSamples, params = "y_sd_dam.sim")
 y_dam.obs=data$sdno_dam
@@ -642,6 +635,10 @@ for(i in (1:length(years))[ years %in% plot.yr]){
   }
 }
 
+# *Posterior predictive distribution ----
+# use 2013 as an example
+# focus here on populations with HIGH p-values for chi-squared
+
 par(mfrow = c(1,2),
     oma = c(2,2.5,0,0) + 0.1,
     mar = c(0,.5,1,1) + 0.1,
@@ -732,5 +729,3 @@ for(i in (1:length(years))[ years %in% plot.yr]){
 }
 
 dev.off()
-
-

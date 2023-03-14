@@ -9,11 +9,7 @@
 rm(list=(ls())) # if using in source(script), include variables to keep
 options(stringsAsFactors = FALSE)
 
-mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
-modelDataDirectory = "outputs/002_fitStatisticalModels/data/"
-outputDirectory = "outputs/004_checkStatisticalModels/"
-
-# - Libraries ----
+# - +load libraries ----
 library(MCMCvis)
 library(tidybayes)
 library(tidyverse)
@@ -21,7 +17,11 @@ library(magrittr)
 library(bayesplot)
 library(rethinking)
 
-# - Read in what's needed for plotting ----
+# - Read in what's needed ----
+
+mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
+modelDataDirectory = "outputs/002_fitStatisticalModels/data/"
+outputDirectory = "outputs/004_checkStatisticalModels/"
 
 # - +Read in data ----
 modelDataDirectory <- paste0(modelDataDirectory,list.files(modelDataDirectory))
@@ -38,7 +38,7 @@ siteIndex <- order(siteAbiotic$easting,decreasing=FALSE)
 siteNames = unique(siteAbiotic$site)[siteIndex]
 
 
-# - Function to plot p-vals ----
+# - Function to plot Bayesian p-values ----
 
 f.plot = function(diagnostic.test.mat,years){
   
@@ -52,7 +52,6 @@ f.plot = function(diagnostic.test.mat,years){
   offset = seq(0,length(years),by=1)
   
   for(j in 1:length(years)){
-    
     points(x=rep(start+offset[j],20)+rnorm(20,0,.05),
            pch=21,cex=.8,
            bg=ifelse(diagnostic.test.mat[,j]>0.95|
@@ -74,20 +73,24 @@ f.plot = function(diagnostic.test.mat,years){
        col = NA, col.ticks = 1, cex.axis = 1)
 }
 
-# ---
+# - +Function to obtain posterior predictive densities----
+f.dens.plot = function(x){
+  x.max <- max(x)
+  x.min <- min(x)
+  dres <- density(x, from= x.min, to = x.max)
+  return(dres)
+}
+
 # Germination ----
-# ---
-
-# ---
 # *Posterior predictive checks ----
-# ---
 
-# extract chi-2 values
+# - ++Get chi-squared calculated in JAGS ----
 chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.germCount.obs"))
 chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.germCount.sim"))
-
 n.iter = dim(chi2.obs)[1]
 
+# - ++Calculate Bayesian p-value per population/germination index ----
+# chi-squared
 p.chi.list = list()
 p.pop = matrix(NA,nrow=n.iter,ncol=6)
 for(j in 1:20){
@@ -103,10 +106,9 @@ for(j in 1:20){
 }
 p.chi.mat=do.call(rbind,p.chi.list)
 
+# - +++function to calculate Bayesian p-value for specific test statistic ----
 f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
-  
   n.iter=dim(y.sim)[1]
-  
   p.test.list = list()
   p.pop = matrix(NA,nrow=n.iter,ncol=6)
   for(j in 1:20){
@@ -125,13 +127,16 @@ f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
   return(p.test.mat)
 }
 
+# - ++get simulated observations and observed data ----
 sims=MCMCchains(mcmcSamples,params=c("germCount_sim"))
 df=data$germCount
 df2=data$germStart
 
+# - ++Calculate Bayesian p-value per population/germination index ----
+# mean
 germ.mean=f(y.sim=sims,y.obs=df,n.obs=df2,model.fun=mean)
 
-# convert lists to matrix
+# - +++function to convert list to matrix ----
 f.convert = function(test.list){
   out.list <- list()
   for(i in 1:20){
@@ -148,7 +153,7 @@ f.convert = function(test.list){
 germ.mean.mat<-germ.mean
 p.chi.mat<-f.convert(p.chi.list)
 
-
+# - +Plot Bayesian p-vals for germination ----
 pdf(file=paste0(outputDirectory,"pvals-viabilityTrialsGermination.pdf"),height=3,width=6)
 
 par(mfrow = c(1,2),
@@ -156,8 +161,9 @@ par(mfrow = c(1,2),
     mar = c(0,.5,1,1) + 0.1,
     mgp=c(3,.5,0))
 
-# germination g1 in 2006, 2007, and 2008 
-# correspond to rounds 1, 2, 3
+# germination test in 2006, 2007, and 2008 
+# correspond to rounds 1, 2, 3 of seed bag experiment
+# age 1 seeds
 f.plot(diagnostic.test.mat = germ.mean.mat[,1:3],years=2006:2008)
 mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
 title("A. Mean", adj=0)
@@ -171,8 +177,9 @@ par(mfrow = c(1,2),
     mar = c(0,.5,1,1) + 0.1,
     mgp=c(3,.5,0))
 
-# germination g1 in  2007, and 2008 
-# correspond to rounds 2
+# germination test in  2007, and 2008 
+# correspond to rounds 1, 2 of seed bag experiment
+# age 2 seeds
 f.plot(diagnostic.test.mat = germ.mean.mat[,4:5],years=2007:2008)
 mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
 title("C. Mean", adj=0)
@@ -181,54 +188,57 @@ f.plot(diagnostic.test.mat = p.chi.mat[,4:5],years=2007:2008)
 box(which="plot",bty="l",col='black')
 title("D. Chi-squared",adj=0)
 
-
 dev.off()
 
-
-# ---
-# Graphical checks ----
-# ---
-
+# *Posterior predictive distribution ----
+# - ++get simulated observations----
 y.sim=MCMCchains(mcmcSamples, params = "germCount_sim")
 n.iter=dim(y.sim)[1]
 
-f = function(x){
-  x.max=max(x)
-  x.min=min(x)
-  dres <- density(x, from= x.min, to = x.max)
-  return(dres)
-}
+# - +Plot posterior predictive distribution for germination test in viability trials ----
 
 pdf(file=paste0(outputDirectory,"ppc-viabilityTrialsGermination.pdf"),height=6,width=6)
 
+# - ++ Plot for probability of germination in lab trial (1 year after seed production, round 1) ----
+# indexViab==1
 par(mfrow = c(4,5),
     oma = c(5,4,0,0) + 0.1,
     mar = c(0,0,.25,.25) + 0.1)
+
+# for each population
 for(i in 1:20){
   
-  tmp.i = siteIndex[i]
+   # order populations geographically
+   tmp.i = siteIndex[i]
   
-  # for each site get index for year 1 germination
+  # for each site get index
   index=data$siteViab==tmp.i&data$indexViab==1
   
   plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
        ylab='',xlab='',xaxt='n',yaxt='n')
-  tmp=sweep(y.sim[,index], 2, data$germStart[index], FUN = '/')
   
+    # calculate the probability of germination for simulated data
+  tmp=sweep(y.sim[,index], 2, data$germStart[index], FUN = '/')
+    # sample 50 datasets
   sample.index = sample(1:n.iter,50)
   tmp=tmp[sample.index,]
 
+  # for each dataset, plot the posterior predictive distribution
+  # coloring it according to whether or not the p-value is extreme
+  # use the p-values for the mean test statistic
   for(j in 1:50){
-    dres=f(tmp[j,])
+    dres=f.dens.plot(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
           col=ifelse(p.chi.mat[i,1]>.95|p.chi.mat[i,1]<.05,
                      'orange','gray75'))
   }
 
-  dres = f(data$germCount[index]/data$germStart[index])
-  
+  # get the distribution for the observed data
+  # plot it as a thick black line overlaying the ppd
+  dres = f.dens.plot(data$germCount[index]/data$germStart[index])
   lines(dres$x,dres$y,lwd=1,col='black')
   
+  # add legend with site name and axes
   mtext(siteNames[i], side = 3, adj = 0.05, 
         line = -1.3,cex=.75)
   ifelse(i%in%c(16:20),axis(1L),NA)
@@ -239,182 +249,144 @@ mtext("Probability of germination in lab trial\n (1 year after seed production, 
       side = 1, outer = TRUE, line = 3.5)
 mtext("Density", side = 2, outer = TRUE, line = 2.2)
 
+# - ++ Plot for probability of germination in lab trial (1 year after seed production, round 2) ----
+# indexViab===2
 par(mfrow = c(4,5),
     oma = c(5,4,0,0) + 0.1,
     mar = c(0,0,.25,.25) + 0.1)
 for(i in 1:20){
   
   tmp.i = siteIndex[i]
-  
   index=data$siteViab==tmp.i&data$indexViab==2
-  
   plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
        ylab='',xlab='',xaxt='n',yaxt='n')
   tmp=sweep(y.sim[,index], 2, data$germStart[index], FUN = '/')
-  
   sample.index = sample(1:n.iter,50)
   tmp=tmp[sample.index,]
-  
   for(j in 1:50){
-    dres=f(tmp[j,])
+    dres=f.dens.plot(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
           col=ifelse(p.chi.mat[i,2]>.95|p.chi.mat[i,2]<.05,
                      'orange','gray75'))
   }
-  
-  dres = f(data$germCount[index]/data$germStart[index])
-  
+  dres = f.dens.plot(data$germCount[index]/data$germStart[index])
   lines(dres$x,dres$y,lwd=1,col='black')
-  
   mtext(siteNames[i], side = 3, adj = 0.05, 
         line = -1.3,cex=.75)
   ifelse(i%in%c(16:20),axis(1L),NA)
   ifelse(i%in%c(1,6,11,16),axis(2L),NA)
 }
-
-mtext("Probability of germination in lab trial\n (2 years after seed production, round 1)", 
-      side = 1, outer = TRUE, line = 3.5)
-mtext("Density", side = 2, outer = TRUE, line = 2.2)
-
-
-par(mfrow = c(4,5),
-    oma = c(5,4,0,0) + 0.1,
-    mar = c(0,0,.25,.25) + 0.1)
-for(i in 1:20){
-  
-  tmp.i = siteIndex[i]
-  
-  # for each site get index for year 1 germination
-  index=data$siteViab==tmp.i&data$indexViab==4
-  
-  plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
-       ylab='',xlab='',xaxt='n',yaxt='n')
-  tmp=sweep(y.sim[,index], 2, data$germStart[index], FUN = '/')
-  
-  sample.index = sample(1:n.iter,50)
-  tmp=tmp[sample.index,]
-  
-  for(j in 1:50){
-    dres=f(tmp[j,])
-    lines(dres$x,dres$y,lwd=0.25,
-          col=ifelse(p.chi.mat[i,4]>.95|p.chi.mat[i,4]<.05,
-                     'orange','gray75'))
-  }
-  
-  dres = f(data$germCount[index]/data$germStart[index])
-  
-  lines(dres$x,dres$y,lwd=1,col='black')
-  
-  mtext(siteNames[i], side = 3, adj = 0.05, 
-        line = -1.3,cex=.75)
-  ifelse(i%in%c(16:20),axis(1L),NA)
-  ifelse(i%in%c(1,6,11,16),axis(2L),NA)
-}
-
 mtext("Probability of germination in lab trial\n (1 year after seed production, round 2)", 
       side = 1, outer = TRUE, line = 3.5)
 mtext("Density", side = 2, outer = TRUE, line = 2.2)
 
+# - ++ Probability of germination in lab trial (1 year after seed production, round 3) ----
+# indexViab==3
 par(mfrow = c(4,5),
     oma = c(5,4,0,0) + 0.1,
     mar = c(0,0,.25,.25) + 0.1)
 for(i in 1:20){
-  
   tmp.i = siteIndex[i]
-  
-  index=data$siteViab==tmp.i&data$indexViab==5
-  
+  index=data$siteViab==tmp.i&data$indexViab==3
   plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
        ylab='',xlab='',xaxt='n',yaxt='n')
   tmp=sweep(y.sim[,index], 2, data$germStart[index], FUN = '/')
-  
   sample.index = sample(1:n.iter,50)
   tmp=tmp[sample.index,]
-  
   for(j in 1:50){
-    dres=f(tmp[j,])
+    dres=f.dens.plot(tmp[j,])
+    lines(dres$x,dres$y,lwd=0.25,
+          col=ifelse(p.chi.mat[i,4]>.95|p.chi.mat[i,4]<.05,
+                     'orange','gray75'))
+  }
+  dres = f.dens.plot(data$germCount[index]/data$germStart[index])
+  lines(dres$x,dres$y,lwd=1,col='black')
+  mtext(siteNames[i], side = 3, adj = 0.05, 
+        line = -1.3,cex=.75)
+  ifelse(i%in%c(16:20),axis(1L),NA)
+  ifelse(i%in%c(1,6,11,16),axis(2L),NA)
+}
+mtext("Probability of germination in lab trial\n (1 year after seed production, round 3)", 
+      side = 1, outer = TRUE, line = 3.5)
+mtext("Density", side = 2, outer = TRUE, line = 2.2)
+
+# - ++ Probability of germination in lab trial (2 years after seed production, round 1) ----
+# indexViab==4
+par(mfrow = c(4,5),
+    oma = c(5,4,0,0) + 0.1,
+    mar = c(0,0,.25,.25) + 0.1)
+for(i in 1:20){
+  tmp.i = siteIndex[i]
+  index=data$siteViab==tmp.i&data$indexViab==4
+  plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
+       ylab='',xlab='',xaxt='n',yaxt='n')
+  tmp=sweep(y.sim[,index], 2, data$germStart[index], FUN = '/')
+  sample.index = sample(1:n.iter,50)
+  tmp=tmp[sample.index,]
+  for(j in 1:50){
+    dres=f.dens.plot(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
           col=ifelse(p.chi.mat[i,5]>.95|p.chi.mat[i,5]<.05,
                      'orange','gray75'))
   }
-  
-  dres = f(data$germCount[index]/data$germStart[index])
-  
+  dres = f.dens.plot(data$germCount[index]/data$germStart[index])
   lines(dres$x,dres$y,lwd=1,col='black')
-  
   mtext(siteNames[i], side = 3, adj = 0.05, 
         line = -1.3,cex=.75)
   ifelse(i%in%c(16:20),axis(1L),NA)
   ifelse(i%in%c(1,6,11,16),axis(2L),NA)
 }
-
-mtext("Probability of germination in lab trial\n (2 years after seed production, round 2)", 
+mtext("Probability of germination in lab trial\n (2 years after seed production, round 1)", 
       side = 1, outer = TRUE, line = 3.5)
 mtext("Density", side = 2, outer = TRUE, line = 2.2)
 
-
+# - ++ Probability of germination in lab trial (2 years after seed production, round 2) ----
+# indexViab==5
 par(mfrow = c(4,5),
     oma = c(5,4,0,0) + 0.1,
     mar = c(0,0,.25,.25) + 0.1)
 for(i in 1:20){
-  
   tmp.i = siteIndex[i]
-  
-  index=data$siteViab==tmp.i&data$indexViab==6
-  
+  index=data$siteViab==tmp.i&data$indexViab==5
   plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
        ylab='',xlab='',xaxt='n',yaxt='n')
   tmp=sweep(y.sim[,index], 2, data$germStart[index], FUN = '/')
-  
   sample.index = sample(1:n.iter,50)
   tmp=tmp[sample.index,]
-  
   for(j in 1:50){
-    dres=f(tmp[j,])
+    dres=f.dens.plot(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
           col=ifelse(p.chi.mat[i,6]>.95|p.chi.mat[i,6]<.05,
                      'orange','gray75'))
   }
-  
-  dres = f(data$germCount[index]/data$germStart[index])
-  
+  dres = f.dens.plot(data$germCount[index]/data$germStart[index])
   lines(dres$x,dres$y,lwd=1,col='black')
-  
   mtext(siteNames[i], side = 3, adj = 0.05, 
         line = -1.3,cex=.75)
   ifelse(i%in%c(16:20),axis(1L),NA)
   ifelse(i%in%c(1,6,11,16),axis(2L),NA)
 }
-
-mtext("Probability of germination in lab trial\n (1 years after seed production, round 3)", 
+mtext("Probability of germination in lab trial\n (2 years after seed production, round 2)", 
       side = 1, outer = TRUE, line = 3.5)
 mtext("Density", side = 2, outer = TRUE, line = 2.2)
 
-
 dev.off()
 
-# ---
-# Viable, staining seeds count ----
-# ---
-
-# ---
+# - Viable, staining seeds count ----
 # *Posterior predictive checks ----
-# ---
 
-# get posterior for chi-2
+# - ++Get chi-squared calculated in JAGS ----
 chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.viabStain.obs"))
 chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.viabStain.sim"))
-
-# get length of chains
 n.iter = dim(chi2.obs)[1]
 
 # construct list to hold p-value for chi-square
 p.chi.list = list()
 
+# - ++Calculate Bayesian p-value per population/viability index ----
 # put together the p-values by age of seeds
 p.pop = matrix(NA,nrow=n.iter,ncol=6)
 for(j in 1:20){
-    
   for(i in 1:6){
     index = data$siteViab_v==j&data$indexViab_v==i
     tmp.chi2.obs=chi2.obs[,index]
@@ -428,15 +400,12 @@ for(j in 1:20){
 }
 p.chi.mat=do.call(rbind,p.chi.list)
 
-# write a function to calculate the p-value for different functions
+# - +++function to calculate Bayesian p-value for specific test statistic ----
 f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
-  
   n.iter=dim(y.sim)[1]
-  
   p.test.list = list()
   p.pop = matrix(NA,nrow=n.iter,ncol=6)
   for(j in 1:20){
-    
     for(i in 1:6){
       index = data$siteViab_v==j&data$indexViab_v==i
       tmp.obs=y.obs[index]/n.obs[index]
@@ -452,13 +421,16 @@ f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
   return(p.test.mat)
 }
 
+# - ++get simulated observations and observed data ----
 sims=MCMCchains(mcmcSamples,params=c("viabStain_sim"))
 df=data$viabStain
 df2=data$viabStart
 
+# - ++Calculate Bayesian p-value per population/germination index ----
+# mean
 seeds.mean=f(y.sim=sims,y.obs=df,n.obs=df2,model.fun=mean)
 
-# convert lists to matrix
+# - +++function to convert list to matrix ----
 f.convert = function(test.list){
   out.list <- list()
   for(i in 1:20){
@@ -475,6 +447,7 @@ f.convert = function(test.list){
 seeds.mean.mat<-seeds.mean
 p.chi.mat<-f.convert(p.chi.list)
 
+# - +Plot Bayesian p-vals for viability ----
 pdf(file=paste0(outputDirectory,"pvals-viabilityTrialsViability.pdf"),height=3,width=6)
 
 par(mfrow = c(1,2),
@@ -505,22 +478,13 @@ f.plot(diagnostic.test.mat = p.chi.mat[,4:5],years=2007:2008)
 box(which="plot",bty="l",col='black')
 title("D. Chi-squared",adj=0)
 
-
 dev.off()
 
-# ---
-# Graphical checks ----
-# ---
-
+# *Posterior predictive distribution ----
+# - ++get simulated observations----
+# plots are similar as for the germination trials
 y.sim=MCMCchains(mcmcSamples, params = "viabStain_sim")
 n.iter=dim(y.sim)[1]
-
-f = function(x){
-  x.max=max(x)
-  x.min=min(x)
-  dres <- density(x, from= x.min, to = x.max)
-  return(dres)
-}
 
 pdf(file=paste0(outputDirectory,"ppc-viabilityTrialsViability.pdf"),height=6,width=6)
 
@@ -542,13 +506,13 @@ for(i in 1:20){
   tmp=tmp[sample.index,]
   
   for(j in 1:50){
-    dres=f(tmp[j,])
+    dres=f.dens.plot(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
           col=ifelse(p.chi.mat[i,1]>.95|p.chi.mat[i,1]<.05,
                      'orange','gray75'))
   }
   
-  dres = f(data$viabStain[index]/data$viabStart[index])
+  dres = f.dens.plot(data$viabStain[index]/data$viabStart[index])
   
   lines(dres$x,dres$y,lwd=1,col='black')
   
@@ -579,51 +543,13 @@ for(i in 1:20){
   tmp=tmp[sample.index,]
   
   for(j in 1:50){
-    dres=f(tmp[j,])
+    dres=f.dens.plot(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
           col=ifelse(p.chi.mat[i,2]>.95|p.chi.mat[i,2]<.05,
                      'orange','gray75'))
   }
   
-  dres = f(data$viabStain[index]/data$viabStart[index])
-  
-  lines(dres$x,dres$y,lwd=1,col='black')
-  
-  mtext(siteNames[i], side = 3, adj = 0.05, 
-        line = -1.3,cex=.75)
-  ifelse(i%in%c(16:20),axis(1L),NA)
-  ifelse(i%in%c(1,6,11,16),axis(2L),NA)
-}
-
-mtext("Probability of viability, conditional on not germinating, in lab trial\n (2 years after seed production, round 1)", 
-      side = 1, outer = TRUE, line = 3.5,cex=.8)
-mtext("Density", side = 2, outer = TRUE, line = 2.2)
-
-par(mfrow = c(4,5),
-    oma = c(5,4,0,0) + 0.1,
-    mar = c(0,0,.25,.25) + 0.1)
-for(i in 1:20){
-  
-  tmp.i = siteIndex[i]
-  
-  # for each site get index for year 1 germination
-  index=data$siteViab_v==tmp.i&data$indexViab_v==4
-  
-  plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
-       ylab='',xlab='',xaxt='n',yaxt='n')
-  tmp=sweep(y.sim[,index], 2, data$viabStart[index], FUN = '/')
-  
-  sample.index = sample(1:n.iter,50)
-  tmp=tmp[sample.index,]
-  
-  for(j in 1:50){
-    dres=f(tmp[j,])
-    lines(dres$x,dres$y,lwd=0.25,
-          col=ifelse(p.chi.mat[i,4]>.95|p.chi.mat[i,4]<.05,
-                     'orange','gray75'))
-  }
-  
-  dres = f(data$viabStain[index]/data$viabStart[index])
+  dres = f.dens.plot(data$viabStain[index]/data$viabStart[index])
   
   lines(dres$x,dres$y,lwd=1,col='black')
   
@@ -644,7 +570,8 @@ for(i in 1:20){
   
   tmp.i = siteIndex[i]
   
-  index=data$siteViab_v==tmp.i&data$indexViab_v==5
+  # for each site get index for year 1 germination
+  index=data$siteViab_v==tmp.i&data$indexViab_v==3
   
   plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
        ylab='',xlab='',xaxt='n',yaxt='n')
@@ -654,51 +581,13 @@ for(i in 1:20){
   tmp=tmp[sample.index,]
   
   for(j in 1:50){
-    dres=f(tmp[j,])
+    dres=f.dens.plot(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
-          col=ifelse(p.chi.mat[i,5]>.95|p.chi.mat[i,5]<.05,
+          col=ifelse(p.chi.mat[i,4]>.95|p.chi.mat[i,4]<.05,
                      'orange','gray75'))
   }
   
-  dres = f(data$viabStain[index]/data$viabStart[index])
-  
-  lines(dres$x,dres$y,lwd=1,col='black')
-  
-  mtext(siteNames[i], side = 3, adj = 0.05, 
-        line = -1.3,cex=.75)
-  ifelse(i%in%c(16:20),axis(1L),NA)
-  ifelse(i%in%c(1,6,11,16),axis(2L),NA)
-}
-
-mtext("Probability of viability, conditional on not germinating, in lab trial\n (2 years after seed production, round 2)", 
-      side = 1, outer = TRUE, line = 3.5,cex=.8)
-mtext("Density", side = 2, outer = TRUE, line = 2.2)
-
-
-par(mfrow = c(4,5),
-    oma = c(5,4,0,0) + 0.1,
-    mar = c(0,0,.25,.25) + 0.1)
-for(i in 1:20){
-  
-  tmp.i = siteIndex[i]
-  
-  index=data$siteViab_v==tmp.i&data$indexViab_v==6
-  
-  plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
-       ylab='',xlab='',xaxt='n',yaxt='n')
-  tmp=sweep(y.sim[,index], 2, data$viabStart[index], FUN = '/')
-  
-  sample.index = sample(1:n.iter,50)
-  tmp=tmp[sample.index,]
-  
-  for(j in 1:50){
-    dres=f(tmp[j,])
-    lines(dres$x,dres$y,lwd=0.25,
-          col=ifelse(p.chi.mat[i,6]>.95|p.chi.mat[i,6]<.05,
-                     'orange','gray75'))
-  }
-  
-  dres = f(data$viabStain[index]/data$viabStart[index])
+  dres = f.dens.plot(data$viabStain[index]/data$viabStart[index])
   
   lines(dres$x,dres$y,lwd=1,col='black')
   
@@ -709,6 +598,80 @@ for(i in 1:20){
 }
 
 mtext("Probability of viability, conditional on not germinating, in lab trial\n (1 year after seed production, round 3)", 
+      side = 1, outer = TRUE, line = 3.5,cex=.8)
+mtext("Density", side = 2, outer = TRUE, line = 2.2)
+
+par(mfrow = c(4,5),
+    oma = c(5,4,0,0) + 0.1,
+    mar = c(0,0,.25,.25) + 0.1)
+for(i in 1:20){
+  
+  tmp.i = siteIndex[i]
+  
+  index=data$siteViab_v==tmp.i&data$indexViab_v==4
+  
+  plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
+       ylab='',xlab='',xaxt='n',yaxt='n')
+  tmp=sweep(y.sim[,index], 2, data$viabStart[index], FUN = '/')
+  
+  sample.index = sample(1:n.iter,50)
+  tmp=tmp[sample.index,]
+  
+  for(j in 1:50){
+    dres=f.dens.plot(tmp[j,])
+    lines(dres$x,dres$y,lwd=0.25,
+          col=ifelse(p.chi.mat[i,5]>.95|p.chi.mat[i,5]<.05,
+                     'orange','gray75'))
+  }
+  
+  dres = f.dens.plot(data$viabStain[index]/data$viabStart[index])
+  
+  lines(dres$x,dres$y,lwd=1,col='black')
+  
+  mtext(siteNames[i], side = 3, adj = 0.05, 
+        line = -1.3,cex=.75)
+  ifelse(i%in%c(16:20),axis(1L),NA)
+  ifelse(i%in%c(1,6,11,16),axis(2L),NA)
+}
+
+mtext("Probability of viability, conditional on not germinating, in lab trial\n (2 years after seed production, round 1)", 
+      side = 1, outer = TRUE, line = 3.5,cex=.8)
+mtext("Density", side = 2, outer = TRUE, line = 2.2)
+
+par(mfrow = c(4,5),
+    oma = c(5,4,0,0) + 0.1,
+    mar = c(0,0,.25,.25) + 0.1)
+for(i in 1:20){
+  
+  tmp.i = siteIndex[i]
+  
+  index=data$siteViab_v==tmp.i&data$indexViab_v==5
+  
+  plot(NA,NA,xlim=c(0,1),ylim=c(0,10), main='',
+       ylab='',xlab='',xaxt='n',yaxt='n')
+  tmp=sweep(y.sim[,index], 2, data$viabStart[index], FUN = '/')
+  
+  sample.index = sample(1:n.iter,50)
+  tmp=tmp[sample.index,]
+  
+  for(j in 1:50){
+    dres=f.dens.plot(tmp[j,])
+    lines(dres$x,dres$y,lwd=0.25,
+          col=ifelse(p.chi.mat[i,6]>.95|p.chi.mat[i,6]<.05,
+                     'orange','gray75'))
+  }
+  
+  dres = f.dens.plot(data$viabStain[index]/data$viabStart[index])
+  
+  lines(dres$x,dres$y,lwd=1,col='black')
+  
+  mtext(siteNames[i], side = 3, adj = 0.05, 
+        line = -1.3,cex=.75)
+  ifelse(i%in%c(16:20),axis(1L),NA)
+  ifelse(i%in%c(1,6,11,16),axis(2L),NA)
+}
+
+mtext("Probability of viability, conditional on not germinating, in lab trial\n (2 years after seed production, round 2)", 
       side = 1, outer = TRUE, line = 3.5,cex=.8)
 mtext("Density", side = 2, outer = TRUE, line = 2.2)
 

@@ -9,11 +9,7 @@
 rm(list=(ls())) # if using in source(script), include variables to keep
 options(stringsAsFactors = FALSE)
 
-mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
-fullDataDirectory = "outputs/001_prepareDataForModels/"
-outputDirectory = "outputs/004_checkStatisticalModels/"
-
-# - Libraries ----
+# - +load libraries ----
 library(MCMCvis)
 library(tidybayes)
 library(tidyverse)
@@ -21,7 +17,11 @@ library(magrittr)
 library(bayesplot)
 library(rethinking)
 
-# - Read in what's needed for plotting ----
+# - Read in what's needed ----
+
+mcmcDirectory = "outputs/002_fitStatisticalModels/mcmcSamples/"
+fullDataDirectory = "outputs/001_prepareDataForModels/"
+outputDirectory = "outputs/004_checkStatisticalModels/"
 
 # - +Read in data ----
 fullDataDirectory <- paste0(fullDataDirectory,list.files(fullDataDirectory))
@@ -39,22 +39,48 @@ siteNames = unique(siteAbiotic$site)
 siteIndex <- order(siteAbiotic$easting,decreasing=FALSE)
 
 
-# ---
-# ---
+# - Function to plot Bayesian p-values ----
+f.plot = function(diagnostic.test.mat,years){
+  
+  plot(NA,NA,
+       ylim=c(0,1),pch=16,xlim=c(min(years),max(years)),
+       xlab="",ylab="",
+       main=NULL,type='n',
+       xaxt='n',yaxt='n',frame=FALSE)
+  
+  start = years[1]
+  offset = seq(0,length(years),by=1)
+  
+  for(j in 1:length(years)){
+    
+    points(x=rep(start+offset[j],20)+rnorm(20,0,.05),
+           pch=21,cex=.8,
+           bg=ifelse(diagnostic.test.mat[,j]>0.95|
+                       diagnostic.test.mat[,j]<0.05,'orange','gray95'),
+           y=diagnostic.test.mat[,j])
+  }
+  
+  abline(h=.05,lty='dotted')
+  abline(h=.95,lty='dotted')
+  box(which="plot",bty="l",col='black')
+  
+  axis(1, seq(min(years),max(years),by=2),
+       labels = seq(min(years),max(years),by=2), 
+       las = 1,
+       col = NA, col.ticks = 1, cex.axis = 1)
+  axis(2, seq(0,1,by=.2),
+       seq(0,1,by=.2), las = 1,
+       col = NA, col.ticks = 1, cex.axis = 1)
+}
+
 # - Posterior Predictive Checks ---
-# ---
-# ---
-
-# ---
-# Test statistics ----
-# ---
-chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.obs"))
-
-n.iter=dim(chi2.obs)[1]
-
+# - ++Get chi-squared calculated in JAGS ----
 chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.obs"))
 chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.sim"))
+n.iter=dim(chi2.obs)[1]
 
+# - ++Calculate Bayesian p-value per population/year ----
+# chi-squared
 p.pop = matrix(NA,nrow=n.iter,ncol=data$n_siteYearIndex)
 for(j in 1:20){
   
@@ -81,13 +107,14 @@ for(j in 1:20){
 
 p.chi.mat = apply(p.pop,2,mean,na.rm=TRUE)
 
+# put in list
 p.chi.list = list()
 for(j in 1:20){
   tmpIndex = data$siteYearIndex_observed[data$site_observed==j]
   p.chi.list[[j]] = p.chi.mat[tmpIndex]
 }
 
-
+# - +++function to calculate Bayesian p-value for specific test statistic ----
 f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
   
   n.iter=dim(y.sim)[1]
@@ -125,13 +152,16 @@ f=function(y.sim=chains,y.obs=data,n.obs=data2,model.fun=mean){
   return(p.test.list)
 }
 
+# - ++get simulated observations and observed data ----
 sims=MCMCchains(mcmcSamples,params=c("fruitplNumber_sim"))
 df=data$fruitplNumber
 df2=data$seedlingNumber
 
+# - ++Calculate Bayesian p-value ----
+# mean
 seedlings.mean=f(y.sim=sims,y.obs=df,n.obs=df2,model.fun=mean)
 
-# convert lists to matrix
+# - +++function to convert list to matrix ----
 f.convert = function(test.list){
   out.list <- list()
   for(i in 1:20){
@@ -148,42 +178,7 @@ f.convert = function(test.list){
 p.chi.mat<-f.convert(p.chi.list)
 seedlings.mean.mat<-f.convert(seedlings.mean)
 
-
-
-f.plot = function(diagnostic.test.mat,years){
-  
-  plot(NA,NA,
-       ylim=c(0,1),pch=16,xlim=c(min(years),max(years)),
-       xlab="",ylab="",
-       main=NULL,type='n',
-       xaxt='n',yaxt='n',frame=FALSE)
-  
-  start = years[1]
-  offset = seq(0,length(years),by=1)
-  
-  for(j in 1:length(years)){
-    
-    points(x=rep(start+offset[j],20)+rnorm(20,0,.05),
-           pch=21,cex=.8,
-           bg=ifelse(diagnostic.test.mat[,j]>0.95|
-                       diagnostic.test.mat[,j]<0.05,'orange','gray95'),
-           y=diagnostic.test.mat[,j])
-    
-  }
-  
-  abline(h=.05,lty='dotted')
-  abline(h=.95,lty='dotted')
-  box(which="plot",bty="l",col='black')
-  
-  axis(1, seq(min(years),max(years),by=2),
-       labels = seq(min(years),max(years),by=2), 
-       las = 1,
-       col = NA, col.ticks = 1, cex.axis = 1)
-  axis(2, seq(0,1,by=.2),
-       seq(0,1,by=.2), las = 1,
-       col = NA, col.ticks = 1, cex.axis = 1)
-}
-
+# - +Plot Bayesian p-vals ----
 
 pdf(file=paste0(outputDirectory,"pvals-seedlingSurvivalFruiting-chi.pdf"),height=4,width=6)
 
@@ -202,13 +197,8 @@ title("B. Chi-squared",adj=0)
 
 dev.off()
 
-
-
-# ---
-# Graphical checks ----
-# ---
-
-
+# *Posterior predictive distribution ----
+# - ++get simulated values and observations----
 y.sim=MCMCchains(mcmcSamples, params = "fruitplNumber_sim")
 y.obs=data$fruitplNumber
 n.obs=data$seedlingNumber
@@ -216,9 +206,10 @@ years=2006:2020
 n.samples = 25
 n.sim=5000
 
-
+# - +Plot posterior predictive distributionin all years----
 pdf(file=paste0(outputDirectory,"ppc-seedlingSurvivalFruiting.pdf"),height=6,width=6)
 
+# for each year
 for(i in 1:length(years)){
   
   par(mfrow = c(4,5),
@@ -230,28 +221,36 @@ for(i in 1:length(years)){
   
   tmpSite = data$site_observed[data$year_observed==i]
   
+  # for each population
   for(j in 1:20){
     
+    # order populations geographically
     j.tmp = siteIndex[j]
     if(j.tmp %in% tmpSite){
       
+      # get index
       index=data$site==j.tmp&data$year==i
       
+      # get simulated and observed values
       p.obs=y.obs[index]
       p.sim=y.sim[,index]
       if(is.matrix(p.sim)){
+        # calculate density for simulated values 
         p.sim=p.sim[iter.ind,]
         list.dens=apply(p.sim,1,density,na.rm=TRUE)
+        # get max values for plot dimensions
         all.max.y=max(unlist(lapply(list.dens, "[", "y")))
         all.max.x=max(unlist(lapply(list.dens, "[", "x")))
         
         plot(NA,NA,
              ylim=c(0,all.max.y),xlim=c(0,all.max.x),
              xaxt='n',xlab='',ylab='',yaxt='n')
+        # for each dataset, plot the posterior predictive distribution
+        # coloring it according to whether or not the p-value is extreme
+        # use the p-values for the mean test statistic
         for(h in 1:n.samples){
           m.max=max(p.sim[h,],na.rm=TRUE)
           m.min=min(p.sim[h,],na.rm=TRUE)
-          
           dens.x = density(p.sim[h,],from=m.min,to=m.max,na.rm=TRUE)
           lines(x=dens.x$x,y=dens.x$y,lwd=0.25,
                 col=if(p.chi.mat[j.tmp,i]>.95|p.chi.mat[j.tmp,i]<.05&seedlings.mean.mat[j.tmp,i]>.95|seedlings.mean.mat[j.tmp,i]<.05){'orange'}
@@ -259,18 +258,20 @@ for(i in 1:length(years)){
                 else{ 'gray75'})
         }
         
+        # get the distribution for the observed data
+        # plot it as a black line overlaying the ppd
         p = data$fruitplNumber[index]
         m.max=max(p,na.rm=TRUE)
         m.min=min(p,na.rm=TRUE)
-        
         dens.x = density(p,from=m.min,to=m.max,na.rm=TRUE)
-        
         lines(x=dens.x$x,y=dens.x$y)
         
+        # plot single observations as a dotted line
         if(length(unique(p))==1){ abline(v=unique(p),lty='dotted',col='black')}
         
-      } else if(is.vector(p.sim)){
         # lines below are for the case where there is only 1 observation
+        # plot a single dotted line and make a discrete density plot
+      } else if(is.vector(p.sim)){
         
         p.sim = p.sim[iter.ind]
         all.max.x= max(density(p.sim,na.rm=TRUE)$x)
@@ -291,10 +292,7 @@ for(i in 1:length(years)){
                  col=if(p.chi.mat[j.tmp,i]>.95|p.chi.mat[j.tmp,i]<.05&seedlings.mean.mat[j.tmp,i]>.95|seedlings.mean.mat[j.tmp,i]<.05){'orange'}
                  else if(p.chi.mat[j.tmp,i]>.95|p.chi.mat[j.tmp,i]<.05&seedlings.mean.mat[j.tmp,i]<.95&seedlings.mean.mat[j.tmp,i]>.05){'purple'}
                  else{ 'gray75'})
-        
       }
-      
-      # ifelse(i%in%c(1),axis(2L),NA)
       
       axis(2,cex=.25,tick=FALSE,line=-1)
       axis(1,cex=.25,tick=FALSE,line=-1)
@@ -311,7 +309,10 @@ for(i in 1:length(years)){
 
 dev.off()
 
-# examine 2007 in detail
+# - ++ Plot for 2007 ----
+# plot 4 sites
+# pick 3 ahead of time (site 1, 3, 16, and then randomly sample 1 more)
+# here graph the plot-level simulated values against the observed values
 
 sims=MCMCchains(mcmcSamples,params=c("fruitplNumber_sim"))
 df=data$fruitplNumber
@@ -323,7 +324,6 @@ par(mfrow = c(2,2),
     oma = c(2,2,0,0) + 0.1,
     mar = c(1,0,1,1) + 0.1)
 
-
 for(j in c(1,3,16,sample(c(2,4:15,17:20),1))){
   
   j.tmp = siteIndex[j]
@@ -333,60 +333,7 @@ for(j in c(1,3,16,sample(c(2,4:15,17:20),1))){
     
     p.obs=df[index]
     p.sim=sims[,index]
-
-      plot(NA,NA,
-           xlim=c(1,length(p.obs)+1),
-           ylim=c(0,max(p.sim)),
-           xaxt='n',xlab='',ylab='',yaxt='n')
-      
-      rect(xleft=seq(1,50,by=2),
-           xright=seq(1,50,by=2)+1,
-           ybottom=-1000,ytop=1000,col='gray99',border='gray99')
-      
-      for(i in 1:length(p.obs)){
-        
-        index.rand = sample(1:45000,50)
-        tmp<-table(p.sim[index.rand,i])
-        segments(y0=as.numeric(names(tmp)),y1=as.numeric(names(tmp)),
-                 x0=i, x1=i+(tmp/max(tmp))*.8)
-      }
-      box()
-      points(1:length(p.obs),p.obs,pch=16)
-      
-    axis(2,cex=.25,tick=FALSE,line=-1)
-    axis(1,cex=.25,tick=FALSE,line=-1)
     
-    legend("topright",paste0(siteNames[j.tmp],"\n n=",length(p.obs)),bty='n')
-  
-  }
-  
-}
-
-mtext(paste0("Fruiting plant counts"), side = 2, outer = TRUE, line = 1)
-mtext("Observation (index)", side = 1, outer = TRUE, line = 0.2)
-
-dev.off()
-
-
-pdf(file=paste0(outputDirectory,"ppc-seedlingSurvivalFruiting-populationLevel.pdf"),height=6,width=6)
-
-par(mfrow = c(3,5),
-    oma = c(2,2,0,0) + 0.1,
-    mar = c(1,0,1,1) + 0.1)
-
-
-for(j in 3){
-  
-  j.tmp = siteIndex[j]
-  if(j.tmp %in% tmpSite){
-    
-    for(i in 1:15){
-    index=data$site==j.tmp&data$year==i
-    
-    p.obs=df[index]
-    p.sim=as.matrix(sims[,index])
-    
-    if(sum(index)>0){
     plot(NA,NA,
          xlim=c(1,length(p.obs)+1),
          ylim=c(0,max(p.sim)),
@@ -396,12 +343,11 @@ for(j in 3){
          xright=seq(1,50,by=2)+1,
          ybottom=-1000,ytop=1000,col='gray99',border='gray99')
     
-    for(h in 1:length(p.obs)){
-      
+    for(i in 1:length(p.obs)){
       index.rand = sample(1:45000,50)
-      tmp<-table(p.sim[index.rand,h])
+      tmp<-table(p.sim[index.rand,i])
       segments(y0=as.numeric(names(tmp)),y1=as.numeric(names(tmp)),
-               x0=h, x1=h+(tmp/max(tmp))*.8)
+               x0=i, x1=i+(tmp/max(tmp))*.8)
     }
     box()
     points(1:length(p.obs),p.obs,pch=16)
@@ -409,9 +355,64 @@ for(j in 3){
     axis(2,cex=.25,tick=FALSE,line=-1)
     axis(1,cex=.25,tick=FALSE,line=-1)
     
-    legend("topright",paste0(years[i],"\n",siteNames[j.tmp],"\n n=",length(p.obs)),bty='n')
+    legend("topright",paste0(siteNames[j.tmp],"\n n=",length(p.obs)),bty='n')
     
   }
+  
+}
+
+mtext(paste0("Fruiting plant counts"), side = 2, outer = TRUE, line = 1)
+mtext("Observation (index)", side = 1, outer = TRUE, line = 0.2)
+
+dev.off()
+
+# - ++ Plot for LCW ----
+# here graph the plot-level simulated values against the observed values
+# for all years for LCW
+
+pdf(file=paste0(outputDirectory,"ppc-seedlingSurvivalFruiting-populationLevel.pdf"),height=6,width=6)
+
+par(mfrow = c(3,5),
+    oma = c(2,2,0,0) + 0.1,
+    mar = c(1,0,1,1) + 0.1)
+
+# get LCW
+for(j in 3){
+  
+  j.tmp = siteIndex[j]
+  if(j.tmp %in% tmpSite){
+    
+    for(i in 1:15){
+      index=data$site==j.tmp&data$year==i
+      
+      p.obs=df[index]
+      p.sim=as.matrix(sims[,index])
+      
+      if(sum(index)>0){
+        plot(NA,NA,
+             xlim=c(1,length(p.obs)+1),
+             ylim=c(0,max(p.sim)),
+             xaxt='n',xlab='',ylab='',yaxt='n')
+        
+        rect(xleft=seq(1,50,by=2),
+             xright=seq(1,50,by=2)+1,
+             ybottom=-1000,ytop=1000,col='gray99',border='gray99')
+        
+        for(h in 1:length(p.obs)){ 
+          index.rand = sample(1:45000,50)
+          tmp<-table(p.sim[index.rand,h])
+          segments(y0=as.numeric(names(tmp)),y1=as.numeric(names(tmp)),
+                   x0=h, x1=h+(tmp/max(tmp))*.8)
+        }
+        box()
+        points(1:length(p.obs),p.obs,pch=16)
+        
+        axis(2,cex=.25,tick=FALSE,line=-1)
+        axis(1,cex=.25,tick=FALSE,line=-1)
+        
+        legend("topright",paste0(years[i],"\n",siteNames[j.tmp],"\n n=",length(p.obs)),bty='n')
+        
+      }
     } 
   }
   else {
