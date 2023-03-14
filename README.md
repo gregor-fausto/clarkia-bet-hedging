@@ -11,8 +11,8 @@
 
   This repository contains the scripts for the project on bet hedging in <i>Clarkia xantiana</i> ssp. <i>xantiana</i>.
 
-2nd release, associated with resubmission of manuscript after one round of peer review: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7734839.svg)](https://doi.org/10.5281/zenodo.7734839)
-1st release, asociated with first submission of manuscript: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7082021.svg)](https://doi.org/10.5281/zenodo.7082021)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7734839.svg)](https://doi.org/10.5281/zenodo.7734839) 2nd release, associated with resubmission of manuscript after one round of peer review.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7082021.svg)](https://doi.org/10.5281/zenodo.7082021) 1st release, asociated with first submission of manuscript.
 
 -----
 
