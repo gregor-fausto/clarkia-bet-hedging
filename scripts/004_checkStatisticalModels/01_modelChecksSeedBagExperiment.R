@@ -202,7 +202,7 @@ for(i in 1:20){
   index=data$siteGermination==i.tmp&data$germinationIndex%in%c(1)
   
   tmp=sweep(y.sim[,index], 2, data$totalJan[index], FUN = '/')
-  sample.index = sample(1:n.iter,50)
+  sample.index = sample(1:n.iter,25)
   tmp=tmp[sample.index,]
   list.dens=apply(tmp,1,density,na.rm=TRUE)
   all.max.y=max(unlist(lapply(list.dens, "[", "y")))
@@ -212,7 +212,7 @@ for(i in 1:20){
        ylim=c(0,all.max.y),xlim=c(0,1),
        xaxt='n',xlab='',ylab='',yaxt='n')
   
-  for(j in 1:50){
+  for(j in 1:25){
     dres=f(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
           col=ifelse(germ.mean.mat[i,1]>.95|germ.mean.mat[i,1]<.05,
@@ -245,7 +245,7 @@ for(i in 1:20){
   index=data$siteGermination==i.tmp&data$germinationIndex%in%c(4)
   
   tmp=sweep(y.sim[,index], 2, data$totalJan[index], FUN = '/')
-  sample.index = sample(1:n.iter,50)
+  sample.index = sample(1:n.iter,25)
   tmp=tmp[sample.index,]
   list.dens=apply(tmp,1,density,na.rm=TRUE)
   all.max.y=max(unlist(lapply(list.dens, "[", "y")))
@@ -255,7 +255,7 @@ for(i in 1:20){
        ylim=c(0,all.max.y),xlim=c(0,1),
        xaxt='n',xlab='',ylab='',yaxt='n')
   
-  for(j in 1:50){
+  for(j in 1:25){
     dres=f(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
           col=ifelse(germ.mean.mat[i,4]>.95|germ.mean.mat[i,4]<.05,
@@ -288,7 +288,7 @@ for(i in 1:20){
   index=data$siteGermination==i.tmp&data$germinationIndex%in%c(6)
   
   tmp=sweep(y.sim[,index], 2, data$totalJan[index], FUN = '/')
-  sample.index = sample(1:n.iter,50)
+  sample.index = sample(1:n.iter,25)
   tmp=tmp[sample.index,]
   list.dens=apply(tmp,1,density,na.rm=TRUE)
   all.max.y=max(unlist(lapply(list.dens, "[", "y")))
@@ -298,7 +298,7 @@ for(i in 1:20){
        ylim=c(0,all.max.y),xlim=c(0,1),
        xaxt='n',xlab='',ylab='',yaxt='n')
   
-  for(j in 1:50){
+  for(j in 1:25){
     dres=f(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
           col=ifelse(germ.mean.mat[i,6]>.95|germ.mean.mat[i,6]<.05,
@@ -350,7 +350,7 @@ for(i in 9){
     
     for(h in 1:length(p.obs)){
       
-      index.rand = sample(1:45000,50)
+      index.rand = sample(1:45000,25)
       tmp<-table(p.sim[index.rand,h])
       segments(y0=as.numeric(names(tmp)),y1=as.numeric(names(tmp)),
                x0=h, x1=h+(tmp/max(tmp))*.8)
@@ -534,7 +534,7 @@ for(j in 1:2){
   
   j.tmp=group.tmp[j]
   
-  n.samples = 50
+  n.samples = 25
   iter.ind = sample(1:n.iter,n.samples)
   
   for(i in 1:3){
@@ -683,7 +683,7 @@ par(mfrow = c(4,5),
     oma = c(5,4,0,0) + 0.1,
     mar = c(0,0,1,1) + 0.1)
 for(i in 1:20){
-  n.samples = 50
+  n.samples = 25
   iter.ind = sample(1:n.iter,n.samples)
   
   i.tmp = siteIndex[i]
@@ -701,7 +701,7 @@ for(i in 1:20){
   m.max=max(p.obs)
   m.min=min(p.obs)
   dens.x.obs = density(p.obs,from=m.min,to=m.max)
-  list.dens[[51]] <- dens.x.obs
+  list.dens[[26]] <- dens.x.obs
   
   all.max.y=max(unlist(lapply(list.dens, "[", "y")))
   all.max.x=max(unlist(lapply(list.dens, "[", "x")))

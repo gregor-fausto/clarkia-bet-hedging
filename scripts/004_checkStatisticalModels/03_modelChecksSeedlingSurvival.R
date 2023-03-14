@@ -202,18 +202,6 @@ title("B. Chi-squared",adj=0)
 
 dev.off()
 
-var.mat = matrix(NA,nrow=20,ncol=15)
-for(i in 1:20){
-  for(j in 1:15){
-    index=data$site==i&data$year==j
-    n_sdlg=data$seedlingNumber[index]
-    n_frts=data$fruitplNumber[index]
-    #p=n_frts/n_sdlg
-    #  var.mat[i,j]=var(n_sdlg,na.rm=TRUE)
-    var.mat[i,j]=sum(n_sdlg,na.rm=TRUE)
-  }
-}
-dev.off()
 
 
 # ---
@@ -225,7 +213,7 @@ y.sim=MCMCchains(mcmcSamples, params = "fruitplNumber_sim")
 y.obs=data$fruitplNumber
 n.obs=data$seedlingNumber
 years=2006:2020
-n.samples = 50
+n.samples = 25
 n.sim=5000
 
 
@@ -237,7 +225,7 @@ for(i in 1:length(years)){
       oma = c(4,5,0,0) + 0.1,
       mar = c(1,0,1,1) + 0.1)
   
-  n.samples = 50
+  n.samples = 25
   iter.ind = sample(1:n.iter,n.samples)
   
   tmpSite = data$site_observed[data$year_observed==i]
