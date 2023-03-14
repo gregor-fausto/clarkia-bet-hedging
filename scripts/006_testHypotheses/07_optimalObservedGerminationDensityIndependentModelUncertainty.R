@@ -81,6 +81,12 @@ fr1 <- function(x,pars,pars_rs){
 }
 
 # code for revision
+# the script here uses the single, long run of 100000 years
+# instead of the 1000 runs of 1000 years
+# the code from the original submission of the paper
+# is included at the end of this script as a commented out section
+# see also 03_optimalObservedGerminationDensityIndependentModelOptimization
+# for a comparison that shows the two methods produce equivalent results
 
 vec.list = list()
 
