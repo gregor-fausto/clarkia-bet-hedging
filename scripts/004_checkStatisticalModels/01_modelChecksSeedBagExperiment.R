@@ -83,6 +83,7 @@ f.plot = function(diagnostic.test.mat,years){
 
 chi2.obs=MCMCchains(mcmcSamples,params=c("chi2.obs"))
 chi2.sim=MCMCchains(mcmcSamples,params=c("chi2.sim"))
+n.iter=dim(chi2.obs)[1]
 
 # calculations are rowwise
 fit.obs=apply(chi2.obs,1,sum)
@@ -153,9 +154,6 @@ f.convert = function(test.list){
 germ.mean.mat<-germ.mean
 p.chi.mat<-f.convert(p.chi.list)
 
-colfunc <- colorRampPalette(c("white", "black"))
-col.vec=colfunc(3)
-
 pdf(file=paste0(outputDirectory,"pvals-germinationSeedBagExperiment.pdf"),height=3,width=6)
 
 par(mfrow = c(1,2),
@@ -164,12 +162,13 @@ par(mfrow = c(1,2),
     mgp=c(3,.5,0))
 
 # germination g1 in 2006, 2007, and 2008 
-# correspond to germinationIndex 1, 2, 3
-f.plot(diagnostic.test.mat = germ.mean.mat[,1:3],years=2006:2008)
+# correspond to germinationIndex 1, 4, 6 
+# see lines 102-107 in scripts/001_prepareDataForModels/01_prepDataForSeedModel.R
+f.plot(diagnostic.test.mat = germ.mean.mat[,c(1,4,6)],years=2006:2008)
 mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
 title("A. Mean", adj=0)
 
-f.plot(diagnostic.test.mat = p.chi.mat[,1:3],years=2006:2008)
+f.plot(diagnostic.test.mat = p.chi.mat[,c(1,4,6)],years=2006:2008)
 box(which="plot",bty="l",col='black')
 title("B. Chi-squared",adj=0)
 
@@ -199,11 +198,11 @@ for(i in 1:20){
   
   i.tmp = siteIndex[i]
   
-  # for each site get index for year 1 germination
+  # for each site get index for year 1 germination in 2006
   index=data$siteGermination==i.tmp&data$germinationIndex%in%c(1)
   
   tmp=sweep(y.sim[,index], 2, data$totalJan[index], FUN = '/')
-  sample.index = sample(1:n.iter,25)
+  sample.index = sample(1:n.iter,50)
   tmp=tmp[sample.index,]
   list.dens=apply(tmp,1,density,na.rm=TRUE)
   all.max.y=max(unlist(lapply(list.dens, "[", "y")))
@@ -213,10 +212,10 @@ for(i in 1:20){
        ylim=c(0,all.max.y),xlim=c(0,1),
        xaxt='n',xlab='',ylab='',yaxt='n')
   
-  for(j in 1:25){
+  for(j in 1:50){
     dres=f(tmp[j,])
     lines(dres$x,dres$y,lwd=0.25,
-          col=ifelse(p.chi.mat[i,1]>.95|p.chi.mat[i,1]<.05,
+          col=ifelse(germ.mean.mat[i,1]>.95|germ.mean.mat[i,1]<.05,
                      'orange','gray75'))
   }
   
@@ -232,6 +231,146 @@ for(i in 1:20){
 
 mtext("Probability of germination in 2006 (year t+1 after seed production)", side = 1, outer = TRUE, line = 2.2)
 mtext("Density", side = 2, outer = TRUE, line = 2.2)
+
+
+par(mfrow = c(4,5),
+    oma = c(5,4,0,0) + 0.1,
+    mar = c(0,0,1,1) + 0.1)
+
+for(i in 1:20){
+  
+  i.tmp = siteIndex[i]
+  
+  # for each site get index for year 1 germination in 2007
+  index=data$siteGermination==i.tmp&data$germinationIndex%in%c(4)
+  
+  tmp=sweep(y.sim[,index], 2, data$totalJan[index], FUN = '/')
+  sample.index = sample(1:n.iter,50)
+  tmp=tmp[sample.index,]
+  list.dens=apply(tmp,1,density,na.rm=TRUE)
+  all.max.y=max(unlist(lapply(list.dens, "[", "y")))
+  all.max.x=max(unlist(lapply(list.dens, "[", "x")))
+  
+  plot(NA,NA,
+       ylim=c(0,all.max.y),xlim=c(0,1),
+       xaxt='n',xlab='',ylab='',yaxt='n')
+  
+  for(j in 1:50){
+    dres=f(tmp[j,])
+    lines(dres$x,dres$y,lwd=0.25,
+          col=ifelse(germ.mean.mat[i,4]>.95|germ.mean.mat[i,4]<.05,
+                     'orange','gray75'))
+  }
+  
+  dres = f(data$seedlingJan[index]/data$totalJan[index])
+  
+  lines(dres$x,dres$y,lwd=1,col='black')
+  
+  legend("topright",paste0(siteNames[i],"\n n=",length(data$totalJan[index])),bty='n')
+  
+  ifelse(i%in%c(16:20),axis(1L),NA)
+  ifelse(i%in%c(1,6,11,16),axis(2L),NA)
+}
+
+mtext("Probability of germination in 2007 (year t+1 after seed production)", side = 1, outer = TRUE, line = 2.2)
+mtext("Density", side = 2, outer = TRUE, line = 2.2)
+
+
+par(mfrow = c(4,5),
+    oma = c(5,4,0,0) + 0.1,
+    mar = c(0,0,1,1) + 0.1)
+
+for(i in 1:20){
+  
+  i.tmp = siteIndex[i]
+  
+  # for each site get index for year 1 germination in 2007
+  index=data$siteGermination==i.tmp&data$germinationIndex%in%c(6)
+  
+  tmp=sweep(y.sim[,index], 2, data$totalJan[index], FUN = '/')
+  sample.index = sample(1:n.iter,50)
+  tmp=tmp[sample.index,]
+  list.dens=apply(tmp,1,density,na.rm=TRUE)
+  all.max.y=max(unlist(lapply(list.dens, "[", "y")))
+  all.max.x=max(unlist(lapply(list.dens, "[", "x")))
+  
+  plot(NA,NA,
+       ylim=c(0,all.max.y),xlim=c(0,1),
+       xaxt='n',xlab='',ylab='',yaxt='n')
+  
+  for(j in 1:50){
+    dres=f(tmp[j,])
+    lines(dres$x,dres$y,lwd=0.25,
+          col=ifelse(germ.mean.mat[i,6]>.95|germ.mean.mat[i,6]<.05,
+                     'orange','gray75'))
+  }
+  
+  dres = f(data$seedlingJan[index]/data$totalJan[index])
+  
+  lines(dres$x,dres$y,lwd=1,col='black')
+  
+  legend("topright",paste0(siteNames[i],"\n n=",length(data$totalJan[index])),bty='n')
+  
+  ifelse(i%in%c(16:20),axis(1L),NA)
+  ifelse(i%in%c(1,6,11,16),axis(2L),NA)
+}
+
+mtext("Probability of germination in 2008 (year t+1 after seed production)", side = 1, outer = TRUE, line = 2.2)
+mtext("Density", side = 2, outer = TRUE, line = 2.2)
+
+dev.off()
+
+
+pdf(file=paste0(outputDirectory,"ppc-germinationSeedBagExperiment-populationLevel.pdf"),height=4,width=6)
+
+par(mfrow = c(1,3),
+    oma = c(2,2,0,0) + 0.1,
+    mar = c(1,0,1,1) + 0.1)
+
+for(i in 9){
+  
+  for(k in c(1:3)){
+  i.tmp = siteIndex[i]
+  
+  # for each site get index for year 1 germination in 2006
+  index=data$siteGermination==i.tmp&data$germinationIndex%in%c(1,4,6)[k]
+  
+  p.obs=data$seedlingJan[index]
+  p.sim=as.matrix(y.sim[,index])
+  
+  if(sum(index)>0){
+    plot(NA,NA,
+         xlim=c(1,length(p.obs)+1),
+         ylim=c(0,max(p.sim,p.obs)),
+         xaxt='n',xlab='',ylab='',yaxt='n')
+    
+    rect(xleft=seq(1,50,by=2),
+         xright=seq(1,50,by=2)+1,
+         ybottom=-1000,ytop=1000,col='gray99',border='gray99')
+    
+    for(h in 1:length(p.obs)){
+      
+      index.rand = sample(1:45000,50)
+      tmp<-table(p.sim[index.rand,h])
+      segments(y0=as.numeric(names(tmp)),y1=as.numeric(names(tmp)),
+               x0=h, x1=h+(tmp/max(tmp))*.8)
+    }
+    box()
+    points(1:length(p.obs),p.obs,pch=16)
+    
+    axis(2,cex=.25,tick=FALSE,line=-1)
+    axis(1,cex=.25,tick=FALSE,line=-1)
+    
+    legend("topright",paste0((2006:2008)[k],"\n",siteNames[i],
+                             "\n bags=",length(p.obs),
+                             "\n total seeds=",sum(p.obs)),bty='n')
+    }
+  } 
+}
+
+
+mtext(paste0("Germinant counts"), side = 2, outer = TRUE, line = 1)
+mtext("Observation (index)", side = 1, outer = TRUE, line = 0.2)
 
 dev.off()
 
@@ -322,7 +461,7 @@ p.chi.mat<-f.convert(p.chi.list)
 pdf(file=paste0(outputDirectory,"pvals-seedSurvivalSeedBagExperiment.pdf"),height=3,width=6)
 
 par(mfrow = c(1,2),
-    oma = c(2,2.5,0,0) + 0.1,
+    oma = c(2,3.5,0,0) + 0.1,
     mar = c(0,.5,1,1) + 0.1,
     mgp=c(3,.5,0))
 
@@ -330,46 +469,36 @@ par(mfrow = c(1,2),
 # correspond to compIndex  c(1,7,11)
 
 f.plot(diagnostic.test.mat = seeds.mean.mat[,c(1,7,11)],years=2006:2008)
-mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
+mtext("Intact seeds in January (year t+1) \n Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
 title("A. Mean", adj=0)
 
 f.plot(diagnostic.test.mat = p.chi.mat[,c(1,7,11)],years=2006:2008)
 box(which="plot",bty="l",col='black')
 title("B. Chi-squared",adj=0)
 
-par(mfrow = c(1,2),
-    oma = c(2,2.5,0,0) + 0.1,
-    mar = c(0,.5,1,1) + 0.1,
-    mgp=c(3,.5,0))
 
 # seed survival s2 in 2006, 2007, and 2008 
 # correspond to compIndex  c(2,8,12)
 # classes = list(c(1,7,11),c(2,8,12),c(3,9),c(4,10),c(5),c(6))
 
 f.plot(diagnostic.test.mat = seeds.mean.mat[,c(2,8,12)],years=2006:2008)
-mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
-title("A. Mean", adj=0)
+mtext("Intact seeds in October (year t+1) \n Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
+title("C. Mean", adj=0)
 
 f.plot(diagnostic.test.mat = p.chi.mat[,c(2,8,12)],years=2006:2008)
 box(which="plot",bty="l",col='black')
-title("B. Chi-squared",adj=0)
-
-
-par(mfrow = c(1,2),
-    oma = c(2,2.5,0,0) + 0.1,
-    mar = c(0,.5,1,1) + 0.1,
-    mgp=c(3,.5,0))
+title("D. Chi-squared",adj=0)
 
 # seed survival s3 in 2006, 2007
 # correspond to compIndex  c(3,9)
 
-f.plot(diagnostic.test.mat = seeds.mean.mat[,c(3,9)],years=2006:2007)
-mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
-title("A. Mean", adj=0)
+f.plot(diagnostic.test.mat = seeds.mean.mat[,c(3,9)],years=2007:2008)
+mtext("Intact seeds in January (year t+2) \n Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
+title("E. Mean", adj=0)
 
-f.plot(diagnostic.test.mat = p.chi.mat[,c(3,9)],years=2006:2007)
+f.plot(diagnostic.test.mat = p.chi.mat[,c(3,9)],years=2007:2008)
 box(which="plot",bty="l",col='black')
-title("B. Chi-squared",adj=0)
+title("F. Chi-squared",adj=0)
 
 dev.off()
 
@@ -388,20 +517,24 @@ f = function(x){
 }
 
 pdf(file=paste0(outputDirectory,"ppc-seedSurvivalSeedBagExperiment.pdf"),height=6,width=6)
-par(mfrow=c(3,3),
+
+par(mfrow=c(2,3),
     oma = c(5,4,0,0) + 0.1,
     mar = c(0,0,1,1) + 0.1)
 
 time.sample = 1:3
 months.names = c("Four months", "Twelve months", "Sixteen months")
 
-group.tmp=sample(1:20,3)
 
-for(j in 1:3){
+x1=(1:20)[seeds.mean.mat[,2]>.95&!is.na(seeds.mean.mat[,2])]
+add.index <- c(sample((1:20)[!(1:20%in%x1)],1))
+group.tmp=c(sample(x1,1),add.index)
+
+for(j in 1:2){
   
   j.tmp=group.tmp[j]
   
-  n.samples = 25
+  n.samples = 50
   iter.ind = sample(1:n.iter,n.samples)
   
   for(i in 1:3){
@@ -419,6 +552,7 @@ for(j in 1:3){
          xlim=c(0,all.max),ylim=c(0,1),
          main=ifelse(j==1,months.names[i],''),
          xaxt='n',xlab='',ylab='',yaxt='n')
+    
     for(h in 1:n.samples){
       m.max=max(tmp[h,],na.rm=TRUE)
       m.min=min(tmp[h,],na.rm=TRUE)
@@ -426,7 +560,10 @@ for(j in 1:3){
       dens.x = density(tmp[h,],from=m.min,to=m.max)
       
       lines(y=dens.x$x,x=dens.x$y,lwd=0.25,
-            col=ifelse(p.chi.mat[i,1]>.95|p.chi.mat[i,1]<.05,'orange','gray75'))
+            col=if(seeds.mean.mat[j.tmp,i]>.95){'orange'}
+            else if(seeds.mean.mat[j.tmp,i]<.05){'purple'}
+            else{ 'gray75'})
+              
     }
     
     p = data$y[index]/data$seedStart[index]
@@ -441,13 +578,14 @@ for(j in 1:3){
     ifelse(j%in%c(3),axis(1L),NA)
     if(i==1){
       legend("topright",
-                     paste0(siteNames[group.tmp[j]],"\n n=",
-                            length(data$seedStart[index])),bty='n') 
+             paste0(siteAbiotic$site[group.tmp[j]],"\n n=",
+                    length(data$seedStart[index])),bty='n') 
     } else {
       legend("topright",
              paste0("n=",
                     length(data$seedStart[index])),bty='n') 
-      }
+    }
+    axis(1,cex=.25,tick=FALSE,line=-1)
     
   }
   
@@ -492,14 +630,14 @@ f=function(y.sim=chains,y.obs=data,model.fun=mean){
   #p.pop = matrix(NA,nrow=n.iter,ncol=length(datasitePlot))
   for(j in 1:20){
     
-      index = data$sitePlot==j
-      
-      tmp.obs=as.matrix(y.obs[index])
-      tmp.sim=as.matrix(y.sim[,index])
-      test.obs=model.fun(tmp.obs,na.rm=TRUE)
-      test.sim=apply(tmp.sim,1,model.fun,na.rm=TRUE)
-      p.test.calc=ifelse(test.sim-test.obs>=0,1,0)
-
+    index = data$sitePlot==j
+    
+    tmp.obs=as.matrix(y.obs[index])
+    tmp.sim=as.matrix(y.sim[,index])
+    test.obs=model.fun(tmp.obs,na.rm=TRUE)
+    test.sim=apply(tmp.sim,1,model.fun,na.rm=TRUE)
+    p.test.calc=ifelse(test.sim-test.obs>=0,1,0)
+    
     p.test.list[[j]] = mean(p.test.calc,na.rm=TRUE)
   }
   p.test.mat=do.call(rbind,p.test.list)
@@ -516,14 +654,12 @@ seedlings.mean.mat<-seedlings.mean
 p.chi.mat<-do.call(rbind,p.chi.list)
 
 
-pdf(file=paste0(outputDirectory,"pvals-seedlingsEmergingPlots.pdf"),height=6,width=6)
-
+pdf(file=paste0(outputDirectory,"pvals-seedlingsEmergingPlots.pdf"),height=3,width=6)
 
 par(mfrow = c(1,2),
     oma = c(2,2.5,0,0) + 0.1,
     mar = c(0,.5,1,1) + 0.1,
     mgp=c(3,.5,0))
-
 
 f.plot(diagnostic.test.mat = seedlings.mean.mat,years=2008)
 mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
@@ -547,7 +683,7 @@ par(mfrow = c(4,5),
     oma = c(5,4,0,0) + 0.1,
     mar = c(0,0,1,1) + 0.1)
 for(i in 1:20){
-  n.samples = 25
+  n.samples = 50
   iter.ind = sample(1:n.iter,n.samples)
   
   i.tmp = siteIndex[i]
@@ -565,7 +701,7 @@ for(i in 1:20){
   m.max=max(p.obs)
   m.min=min(p.obs)
   dens.x.obs = density(p.obs,from=m.min,to=m.max)
-  list.dens[[26]] <- dens.x.obs
+  list.dens[[51]] <- dens.x.obs
   
   all.max.y=max(unlist(lapply(list.dens, "[", "y")))
   all.max.x=max(unlist(lapply(list.dens, "[", "x")))
@@ -580,7 +716,11 @@ for(i in 1:20){
     
     dens.x = density(tmp[h,],from=m.min,to=m.max)
     
-    lines(x=dens.x$x,y=dens.x$y,lwd=0.25,col='orange')
+  #  lines(x=dens.x$x,y=dens.x$y,lwd=0.25,col='orange')
+    lines(x=dens.x$x,y=dens.x$y,lwd=0.25,
+          col=if(seedlings.mean.mat[i.tmp,1]>.95){'orange'}
+          else if(seedlings.mean.mat[i.tmp,1]<.05){'purple'}
+          else{ 'gray75'})
   }
   
   p = data$plotSeedlings[index]
@@ -593,7 +733,8 @@ for(i in 1:20){
   
   legend("topright",paste0(siteNames[i],"\n n=",sum(data$plotSeedlings[index])),bty='n')
   
-  ifelse(i%in%c(16:20),axis(1L),NA)
+ # ifelse(i%in%c(16:20),axis(1L),NA)
+  axis(1,cex=.25,tick=FALSE,line=-1)
   ifelse(i%in%c(1,6,11,16),axis(2L),NA)
 }
 

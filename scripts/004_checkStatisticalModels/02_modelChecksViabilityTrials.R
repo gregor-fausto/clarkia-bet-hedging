@@ -149,7 +149,7 @@ germ.mean.mat<-germ.mean
 p.chi.mat<-f.convert(p.chi.list)
 
 
-pdf(file=paste0(outputDirectory,"pvals-germinationSeedBagExperiment.pdf"),height=3,width=6)
+pdf(file=paste0(outputDirectory,"pvals-viabilityTrialsGermination.pdf"),height=3,width=6)
 
 par(mfrow = c(1,2),
     oma = c(2,2.5,0,0) + 0.1,
@@ -175,11 +175,11 @@ par(mfrow = c(1,2),
 # correspond to rounds 2
 f.plot(diagnostic.test.mat = germ.mean.mat[,4:5],years=2007:2008)
 mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
-title("A. Mean", adj=0)
+title("C. Mean", adj=0)
 
 f.plot(diagnostic.test.mat = p.chi.mat[,4:5],years=2007:2008)
 box(which="plot",bty="l",col='black')
-title("B. Chi-squared",adj=0)
+title("D. Chi-squared",adj=0)
 
 
 dev.off()
@@ -499,11 +499,11 @@ par(mfrow = c(1,2),
 # correspond to rounds 2
 f.plot(diagnostic.test.mat = seeds.mean.mat[,4:5],years=2007:2008)
 mtext("Bayesian p-value", side=2, line=2, cex.lab=1,las=0, col="black")
-title("A. Mean", adj=0)
+title("C. Mean", adj=0)
 
 f.plot(diagnostic.test.mat = p.chi.mat[,4:5],years=2007:2008)
 box(which="plot",bty="l",col='black')
-title("B. Chi-squared",adj=0)
+title("D. Chi-squared",adj=0)
 
 
 dev.off()
