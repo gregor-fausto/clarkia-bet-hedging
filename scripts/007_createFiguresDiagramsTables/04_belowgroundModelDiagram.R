@@ -26,7 +26,7 @@ tiff("products/figures/seed-bag-trials.tif",
      units='px',height = 800*2*scale, width = 800*3*scale,res=800,compression='lzw')
 
 par(mfrow=c(1,1),mar=c(0,.25,0,0),
-    oma=c(1.5,1.5,0,0), mgp=c(3,.1,0))
+    oma=c(1.3,1.3,0,0), mgp=c(3,.1,0))
 
 # times at which bags were collected
 t.sample = c(0,4,4,12,16,16,24,28,28,36)/36
@@ -39,15 +39,17 @@ plot(NA,
 
 # x axis (time)
 axis(1, c(0,10,20,30,40), 
-     cex.axis = pt6, pos = 5,
-     las = 1,  tck=-0.01, padj = -1,
+     cex.axis = pt6, 
+     las = 1,  tck=-0.01, padj = -.75,
      col = 'black', col.ticks = 1, 
-     cex.axis = pt6)
+     cex.axis = pt8)
 
 # y axis (experimental round)
 axis(2, c(35-adj.y*2,22.5-adj.y,10), tck=-0.01, 
      labels = c("Age 0","Age 1","Age 2"), 
-     col = "black", col.ticks = c(1,1,1,1,1,1,0), las =2 ,
+     # col = "black", col.ticks = c(1,1,1,1,1,1,0), 
+     col = NA,
+     las =2 , hadj = .8,
      cex.axis=pt9)
 
 # full time of each set of seed bags in the round
@@ -69,19 +71,19 @@ points(x=c(4,4,12,16,16,24,28,28,36),
        col=c("#0077bb","#e7298a","#0077bb","#0077bb","#e7298a","#0077bb","#0077bb","#e7298a","#0077bb"))
 
 # observations of age 0 seeds
-text(x=4,34-adj.y*2-.5,expression(paste(y)[1]),cex=pt7)
-text(x=12,34-adj.y*2-.5,expression(paste(y)[2]),cex=pt7)
-text(x=6.8,39-adj.y*2,expression(paste(y["1"]^"germ")),cex=pt7)
+text(x=4,34-adj.y*2-.6,expression(paste(y)[1]),cex=pt8)
+text(x=12,34-adj.y*2-.6,expression(paste(y)[2]),cex=pt8)
+text(x=7,39-adj.y*2,expression(paste(y["1"]^"germ")),cex=pt8)
 
 # observations of age 1 seeds
-text(x=(16),21.5-adj.y-.5,expression(paste(y)[3]),cex=pt7)
-text(x=(24),21.5-adj.y-.5,expression(paste(y)[4]),cex=pt7)
-text(x=18.8,26.5-adj.y,expression(paste(y["2"]^"germ")),cex=pt7)
+text(x=(16),21.5-adj.y-.6,expression(paste(y)[3]),cex=pt8)
+text(x=(24),21.5-adj.y-.6,expression(paste(y)[4]),cex=pt8)
+text(x=19,26.5-adj.y,expression(paste(y["2"]^"germ")),cex=pt8)
 
 # observations of age 2 seeds
-text(x=(28),9-.5,expression(paste(y)[5]),cex=pt7)
-text(x=(36),9-.5,expression(paste(y)[6]),cex=pt7)
-text(x=30.8,14,expression(paste(y["3"]^"germ")),cex=pt7)
+text(x=(28),9-.6,expression(paste(y)[5]),cex=pt8)
+text(x=(36),9-.6,expression(paste(y)[6]),cex=pt8)
+text(x=31,14,expression(paste(y["3"]^"germ")),cex=pt8)
 
 # legend
 legend("topright",
@@ -89,9 +91,11 @@ legend("topright",
        col = c('#0077bb','#e7298a'),#,'black','black'),
        lty = c(FALSE,FALSE,1,3),
        legend = c("Intact seed count", "Seedling count"),#,"Survival",'Germination'),
-       cex=pt8,
+       cex=pt9, pt.cex = 1,
        box.lty=0,
-       bg=NA)
+       x.intersp=0.1,
+       bg=NA,
+       inset = c(-.01,-.04))
 
 # time (months)
 rect(c(0,4,12,16,24,28,36),5.5,c(4,12,16,24,28,36,40),6,
@@ -99,7 +103,7 @@ rect(c(0,4,12,16,24,28,36),5.5,c(4,12,16,24,28,36,40),6,
 # add time of year
 text(c(0,4,12,16,24,28,36,40),6.75,
      c("O","J"),cex=pt7)
-mtext("Time (months)",side=1,line=.25,cex=pt9)
+mtext("Time (months)",side=1,line=.3,cex=pt9,adj=.475)
 
 dev.off()
 
@@ -275,7 +279,7 @@ tiff("products/figures/viability-data.tif",
      units='px',height = 800*2*scale, width = 800*2*scale,res=800,compression='lzw')
 
 par(mfrow=c(1,1),mar=c(0,.25,0,0),
-    oma=c(1.5,1.5,0,0), mgp=c(3,.1,0))
+    oma=c(1.35,1.5,0,0), mgp=c(3,.1,0))
 t.sample = c(0,4,4,12,16,16,24,28,28,36)/36
 
 ## Panel B
@@ -287,17 +291,17 @@ plot(NA,
 
 axis(1, c(0,10,20,30,40), 
      cex.axis = pt6,
-     las = 1,  tck=-0.01, padj = -1,
+     las = 1,  tck=-0.01, padj = -.75,
      col = 'black', col.ticks = 1, 
-     cex.axis = pt6)
+     cex.axis = pt8)
 
 axis(2, seq(.5,1,by=.1),
      labels = seq(.5,1,by=.1),
      tck=-0.01, las=1, hadj=1.1,
      col = 'black', col.ticks = 1, 
-     cex.axis = pt6)
+     cex.axis = pt8)
 mtext('Pr(seed is viable)',side=2,line=1,adj=.5,col='black',cex=pt9)
-mtext("Time (months)",side=1,line=.5,cex=pt9)
+mtext("Time (months)",side=1,line=.35,cex=pt9,adj=.475)
 
 x0=seq(0,1,by=1/3)
 lines(x=x0*12,v[1]^(x0),
@@ -320,13 +324,14 @@ points(c(4,16,28),
        pch=21,bg='white',
        col='#1b9e77')
 
-legend("topright",
+legend("topright", inset = c(-.02,-.04),
        pch = c(19,21),
        col = c('#1b9e77','#1b9e77'),
        bg = c(NA,'white'),
        legend = c("Estimated viability", "Inferred viability"),
-       cex=pt8,
-       box.lty=0)
+       cex=8.5/12, pt.cex = 1,
+       box.lty=0,
+       x.intersp = 0.5)
 
 rect(c(0,4,12,16,24,28,36),.6,c(4,12,16,24,28,36,40),.61,
      col=c('gray50','gray90'),lwd=0,border=0)
@@ -343,7 +348,7 @@ tiff("products/figures/survival.tif",
      units='px',height = 800*2*scale, width = 800*3*scale,res=800,compression='lzw')
 
 par(mfrow=c(1,1),mar=c(0,.25,0,0),
-    oma=c(1.5,1.5,0,0), mgp=c(3,.1,0))
+    oma=c(1.3,1.4,0,0), mgp=c(3,.1,0))
 
 t.sample = c(0,4,4,12,16,16,24,28,28,36)/36
 
@@ -356,19 +361,19 @@ plot(NA,
 # x axis
 axis(1, c(0,10,20,30,40), 
      cex.axis = pt6,
-     las = 1,  tck=-0.01, padj = -1,
+     las = 1,  tck=-0.01, padj = -.75,
      col = 'black', col.ticks = 1, 
-     cex.axis = pt6)
+     cex.axis = pt8)
 
 # y axis
 axis(2, c(0,.2,.4,.6,.8,1),
      labels = c(0,.2,.4,.6,.8,1),
      tck=-0.01, las=1, hadj=1.1,
      col = 'black', col.ticks = 1, 
-     cex.axis = pt6)
+     cex.axis = pt8)
 
 mtext('Pr(remaining in seed bank)',
-      side=2,line=1,adj=1.5,col='black',cex=pt9)
+      side=2,line=.9,adj=1,col='black',cex=pt9)
 
 l.x.s=l.x[c(3,6,9)]+l.x[c(2,5,8)]*c(Jangerm_1,Jangerm_2,Jangerm_3)
 
@@ -407,18 +412,18 @@ l.x.s=l.x.viability[c(2,5,8)]
 
 points(t.sample[1:10]*36,l.x.viability[1:10],col='#1b9e77',pch=19,cex=.5)
 
-
 legend("topright",
        col = c('#0077bb',"#e7298a",'#1b9e77'),
        lty = c(1,3,NA),
        pch = c(NA,NA,19),
        legend = c("Persistence",
                   "Emergence",
-                  "Probability after\nadjusting for viability"),
-       cex=pt8,
-       box.lty=0,inset=c(0,-.1))
+                  "After adjusting\nfor viability"),
+       cex=pt9, pt.cex = 1,
+       box.lty=0,inset=c(0,-.1),
+       x.intersp = .25, seg.len = 1.3)
 
-mtext("Time (months)",side=1,line=.5,cex=pt9)
+mtext("Time (months)",side=1,line=.35,cex=pt9,adj=.475)
 
 rect(c(0,4,12,16,24,28,36),0,c(4,12,16,24,28,36,40),.025,
      col=c('gray50','gray90'),lwd=0,border=0)
