@@ -26,19 +26,16 @@ library(tmap)
 library(rgdal)
 library(khroma) # iridescent color scheme
 
-source("scripts/007_createFiguresDiagrams/00_utilityFunctions.R")
+source("scripts/007_createFiguresDiagramsTables/00_utilityFunctions.R")
 
 # - Define temporary directory ----
 # define temporary directory to hold shapefiles and rasters for plotting
-
-
 currentDirectory <- getwd()
 tmpDirectory <- "outputs/007_createFiguresDiagrams/"
 figureDirectory <- "products/figures/"
 
 # - Import data ----
 # select population/site name, easting/northing coordinates (units of meters) 
-
 data<-read.csv(file="data/siteAbioticData.csv",header=TRUE) %>% 
   dplyr::select(site,easting,northing)
 
