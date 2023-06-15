@@ -168,42 +168,44 @@ pt10 = 10/12
 pt9 = 9/12
 pt8 = 8/12
 pt7 = 7/12
+pt65 = 6.25/12
 pt6 = 6/12
 
 tiff(filename=paste0("products/figures/zero-fitness.tif"),
      units='px',height = 5600/3, width = 5400/2,res=800,pointsize=12)
 
-par(mfrow=c(1,1),mar=c(.5,1,0,0),oma=c(0,.5,0,0)+.1,mgp=c(3,.1,0),xpd=TRUE)
+par(mfrow=c(1,1),mar=c(.1,1,0,0),oma=c(0,.5,0,0)+.1,
+    mgp=c(3,.1,0),xpd=TRUE)
 plot(NA,NA,xlim=c(2006,2020),ylim=c(0,23),
      axes=FALSE,frame=FALSE,xaxt='n',yaxt='n',
      xlab='',ylab='')
 polygon(x=c(2006,2007,2007,2006)+.5,
-        y=c(0,0,21,21),
+        y=c(0.5,0.5,20.5,20.5),
         col='gray97',border='gray97')
 polygon(x=c(2008,2009,2009,2008)+.5,
-        y=c(0,0,21,21),
+        y=c(0.5,0.5,20.5,20.5),
         col='gray97',border='gray97')
 polygon(x=c(2010,2011,2011,2010)+.5,
-        y=c(0,0,21,21),
+        y=c(0.5,0.5,20.5,20.5),
         col='gray97',border='gray97')
 polygon(x=c(2012,2013,2013,2012)+.5,
-        y=c(0,0,21,21),
+        y=c(0.5,0.5,20.5,20.5),
         col='gray97',border='gray97')
 polygon(x=c(2014,2015,2015,2014)+.5,
-        y=c(0,0,21,21),
+        y=c(0.5,0.5,20.5,20.5),
         col='gray97',border='gray97')
 polygon(x=c(2016,2017,2017,2016)+.5,
-        y=c(0,0,21,21),
+        y=c(0.5,0.5,20.5,20.5),
         col='gray97',border='gray97')
 polygon(x=c(2018,2019,2019,2018)+.5,
-        y=c(0,0,21,21),
+        y=c(0.5,0.5,20.5,20.5),
         col='gray97',border='gray97')
 
-text(x=2007.5,y=21.5,cex=pt6,
+text(x=2007.25,y=21.75,cex=pt7,
      "Seedling survival")
-text(x=2011,y=21.5,cex=pt6,
+text(x=2011,y=21.75,cex=pt7,
      "Fruits per plant")
-text(x=2014.25,y=21.5,cex=pt6,
+text(x=2014.5,y=21.75,cex=pt7,
      "Seeds per fruit")
 
 segments(x0=2009.1,x1=2011-.25,y0=21.15,y1=20.15,lty='solid')
@@ -233,25 +235,23 @@ for(i in 20:1){
 year.labs = c("2006","","2008","","2010","","2012","","2014","","2016","","2018","","2020")
 
 axis(1,  at=2006:2020, labels = year.labs, 
-     col.ticks = 1,las=1, 
-     cex.axis = pt7, padj=-1,  tck=-0.01)
+     col.ticks = 1,las=1, line = -0.5,
+     cex.axis = pt8, padj=-.75,  tck=-0.01)
 axis(2, (1:20), lwd.ticks = 0 ,
-     labels = rev(siteNames), las = 2, 
+     labels = rev(siteNames), las = 2, line=-.1,
      col = NA, col.ticks = 1, cex.axis = pt7)
 
-legend(x=2004.5,y=24,
+legend(x=2004.2,y=24.5,
        legend = c("Observations of fitness component",
                   "0 seedlings survive in plots",
                   "No observations"),
        pch=c(19,21,4),
        col=c("black","#EECC66","#EECC66"),
-       cex=pt6, pt.cex = .45,
+       cex=pt65, pt.cex = .45,
        horiz=TRUE,
        bty='n',
       x.intersp=0.5,
-      text.width=c(1,6.4,5.7),
+      text.width=c(6.5,5,5.7),
       xjust = 0)
-
-
 
 dev.off()
