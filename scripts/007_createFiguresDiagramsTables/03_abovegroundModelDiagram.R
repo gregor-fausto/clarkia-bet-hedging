@@ -157,7 +157,7 @@ pt6 = 6/12
 tiff("products/figures/marginal-posterior.tif",
      units='px',height = 1600, width = 1600,res=800,compression='lzw')
 
-par(mfrow=c(1,1),mar=c(.5,.5,.75,0),oma=c(.75,.75,0,0)+.1,mgp=c(3,.1,0))
+par(mfrow=c(1,1),mar=c(.5,.5,.75,0),oma=c(.75,.55,0,0)+.1,mgp=c(3,.1,0))
 
 plot(x=NA,y=NA,
      type='n',
@@ -191,15 +191,15 @@ axis(1, at = seq(0,1,by=.2), labels = seq(0,1,by=.2),
      col = 'black', col.ticks = 1, 
      cex.axis = pt6)
 axis(2, at = 2*(c(2:6)-.5), labels = c(1:5), 
-     las = 1,  tck=-0.01,
+     las = 1,  tck=-0.01, hadj = 1.5,
      col = 'black', col.ticks = 1, 
      cex.axis = pt6)
 
 # add axis labels
-mtext("Year",side=2,adj=.6,line=.5,cex=pt7,cex.lab=pt7)
+mtext("Year",side=2,adj=.6,line=.5,cex=pt8,cex.lab=pt8)
 mtext("Pr(seedling survival to fruiting)",
       side=1,adj=.4,padj=-.5,
-      line=.5,cex=pt7,cex.lab=pt7)
+      line=.5,cex=pt8,cex.lab=pt8)
 
 # add the population-level marginal posterior distribution
 df.tmp=boot::inv.logit(mu0.post)
@@ -210,10 +210,10 @@ upper.limit=max(f(full.post)[,2])*.8
 polygon(y=f(full.post)[,2]/upper.limit,x=f(full.post)[,1],col='gray80',border='gray80')
 
 # add some text to the plot to emphasize the population and year level vs. population level parts
-text(.375,11.9,
-     labels = "Population and year level" ,cex = pt6, pos = 4)
-text(.585,.9,
-     labels = "Population level" ,cex = pt6, pos = 4)
+text(.55,11.35,
+     labels = " Population and\n         year level" ,cex = pt7, pos = 4)
+text(.53,.9,
+     labels = "Population level" ,cex = pt7, pos = 4)
 
 abline(h=1.5,lty='dotted')
 
@@ -228,7 +228,7 @@ dev.off()
 tiff("products/figures/parameter.tif",
      units='px',height = 1600, width = 1600,res=800,compression='lzw')
 
-par(mfrow=c(1,2),mar=c(.5,.25,.75,0),oma=c(.75,1,0,.1)+.1,mgp=c(3,.1,0))
+par(mfrow=c(1,2),mar=c(.5,.25,.75,0),oma=c(.75,.8,0,.175)+.1,mgp=c(3,.1,0))
 
 plot(x=NA,y=NA,
      type='n',
@@ -260,8 +260,8 @@ axis(1, at= seq(-6,2,by=2), labels = seq(-6,2,by=2),
      las = 1, col = 'black', padj=-1.1,
      col.ticks = 1,  tck=-0.01, 
      cex.axis = pt6)
-axis(2, at=  2*(c(2:6)-.5), labels = c(1:5),
-     las = 1,  tck=-0.01, 
+axis(2, at = 2*(c(2:6)-.5), labels = c(1:5), 
+     las = 1,  tck=-0.01, hadj = 1.5,
      col = 'black', col.ticks = 1, 
      cex.axis = pt6)
 
@@ -275,12 +275,12 @@ abline(h=1.5,lty='dotted')
 box()
 
 # add axis labels
-mtext("Year",side=2,adj=.6,line=.5,cex=pt7,cex.lab=pt7)
+mtext("Year",side=2,adj=.6,line=.5,cex=pt8,cex.lab=pt8)
 mtext("Model parameters",
       side=3,adj=0,cex=pt9)
 mtext("Means",
       side=1,adj=.5,padj=-.5,
-      line=.5,cex=pt7,cex.lab=pt7)
+      line=.5,cex=pt8,cex.lab=pt8)
 
 plot(x=NA,NA,
      type='n',
@@ -321,9 +321,9 @@ polygon(y=f(df.tmp)[,2]/upper.limit,x=f(df.tmp)[,1],col='#7570b3',border='#7570b
 abline(h=1.5,lty='dotted')
 
 # add axis
-mtext("Standard deviations",
+mtext("Standard deviation",
       side=1,adj=.4,padj=-.5,
-      line=.5,cex=pt7,cex.lab=pt7)
+      line=.5,cex=pt8,cex.lab=pt8)
 box()
 
 dev.off()
