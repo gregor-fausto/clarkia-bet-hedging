@@ -86,18 +86,18 @@ initsSigma0 <- function(samps = data$n_site){
   extraDistr::rhnorm(n = samps, sigma = 1)
 }
 
-initsSigma <- function(rows = data$n_site, cols = data$n_year){
-  matrix(extraDistr::rhnorm(n = rows*cols, sigma = 1), rows, cols)
-}
+# initsSigma <- function(rows = data$n_site, cols = data$n_year){
+#   matrix(extraDistr::rhnorm(n = rows*cols, sigma = 1), rows, cols)
+# }
 
 # - Set the initial conditions for JAGS ----
 
 inits <- list()
 
 for(i in 1:3){
-  inits[[i]] <- list(initsMu0(), initsSigma0(), initsSigma() )
+  inits[[i]] <- list(initsMu0(), initsSigma0())
   
-  names(inits[[i]]) = c("mu0","sigma0","sigma")
+  names(inits[[i]]) = c("mu0","sigma0")
   
 }
 
@@ -127,7 +127,7 @@ MCMCsummary(samples.rjags,params=c("mu0","sigma0","mu","sigma"))
 mu0.post = MCMCchains(samples.rjags,params="mu0")
 sigma0.post = MCMCchains(samples.rjags,params="sigma0")
 mu.post = MCMCchains(samples.rjags,params="mu")
-sigma.post = MCMCchains(samples.rjags,params="sigma")
+#sigma.post = MCMCchains(samples.rjags,params="sigma")
 
 # - Function to create object for plotting ----
 # extracts a kernel density with a smoothed resolution
@@ -210,7 +210,7 @@ upper.limit=max(f(full.post)[,2])*.8
 polygon(y=f(full.post)[,2]/upper.limit,x=f(full.post)[,1],col='gray80',border='gray80')
 
 # add some text to the plot to emphasize the population and year level vs. population level parts
-text(.55,11.35,
+text(.55,11.25,
      labels = " Population and\n         year level" ,cex = pt7, pos = 4)
 text(.53,.9,
      labels = "Population level" ,cex = pt7, pos = 4)
