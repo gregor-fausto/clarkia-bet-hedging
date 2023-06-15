@@ -166,15 +166,16 @@ demographicBetHedgingTestData = data.frame(site=siteNames,
 outputDirectory <- "outputs/006_hypothesisTesting/"
 saveRDS(demographicBetHedgingTestData,paste0(outputDirectory,"demographicBetHedgingTest.RDS"))
 
-demographicBetHedgingTestData<-readRDS(paste0(outputDirectory,"demographicBetHedgingTest.RDS"))
-siteNames=demographicBetHedgingTestData$site;
-lambda.a=demographicBetHedgingTestData$lambda.a;lambda.a.nosb=demographicBetHedgingTestData$lambda.a.nosb;
-var.lambda.mean=demographicBetHedgingTestData$var.lambda;var.lambda.nosb.mean=demographicBetHedgingTestData$var.lambda.nosb;
-lambda.mean=demographicBetHedgingTestData$lambda;lambda.nosb.mean=demographicBetHedgingTestData$lambda.nosb
+# uncomment to replot the figure 
+# demographicBetHedgingTestData<-readRDS(paste0(outputDirectory,"demographicBetHedgingTest.RDS"))
+# siteNames=demographicBetHedgingTestData$site;
+# lambda.a=demographicBetHedgingTestData$lambda.a;lambda.a.nosb=demographicBetHedgingTestData$lambda.a.nosb;
+# var.lambda.mean=demographicBetHedgingTestData$var.lambda;var.lambda.nosb.mean=demographicBetHedgingTestData$var.lambda.nosb;
+# lambda.mean=demographicBetHedgingTestData$lambda;lambda.nosb.mean=demographicBetHedgingTestData$lambda.nosb
 
 # - Plot Figure 3  ----
 
-tiff(filename=paste0("products/figures/betHedgingTest-finalRevision.tif"),
+tiff(filename=paste0("products/figures/betHedgingTest.tif"),
      height=6.5,width=2.5,units="in",res=800,compression="lzw",pointsize=12)
 
 par(mfrow=c(3,1),mar=c(3,3.75,0,0)+.1,oma=c(0,0,1,0)+.1,mgp=c(3,.45,0))
@@ -207,7 +208,7 @@ axis(2, seq(5,35,10),labels=FALSE,tck=-0.02)
 mtext(expression(lambda[a] ~ 'without seedbank'),
       side=2,line=2,adj=.5,col='black',cex=pt11)
 mtext(expression(lambda[a] ~ 'with seedbank'),
-      side=1,line=1.75,col='black',cex=pt11,adj=.5)
+      side=1,line=1.9,col='black',cex=pt11,adj=.5)
 
 abline(a=0,b=1,lty='dotted')
 mtext("A.", adj = 0, cex=pt12)
@@ -238,9 +239,9 @@ axis(2, seq(0,3000,by=500), tcl = -0.4,
 axis(2, seq(250,2750,500),labels=FALSE,tck=-0.02)
 
 mtext(expression(Var(lambda) ~ 'without seedbank'),
-      side=2,line=2.25,adj=.5,col='black',cex=pt11)
+      side=2,line=2.5,adj=.5,col='black',cex=pt11)
 mtext(expression(Var(lambda) ~ 'with seedbank'),
-      side=1,line=1.75,col='black',cex=pt11,adj=.5)
+      side=1,line=1.9,col='black',cex=pt11,adj=.5)
 
 abline(a=0,b=1,lty='dotted')
 mtext("B.", adj = 0, cex=pt12)
@@ -279,7 +280,7 @@ axis(2, seq(2,20,4),labels=FALSE,tck = -.02)
 mtext(expression(lambda[s] ~ 'without seedbank'),
       side=2,line=2,adj=.5,col='black',cex=pt11)
 mtext(expression(lambda[s] ~ 'with seedbank'),
-      side=1,line=1.5,col='black',cex=pt11,adj=.5)
+      side=1,line=1.9,col='black',cex=pt11,adj=.5)
 
 mtext("C.", adj = 0, cex=pt12)
 
