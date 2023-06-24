@@ -317,11 +317,11 @@ points(var.lambda.mean,var.lambda.nosb.mean,
 axis(1, seq(0,60,by=10), padj = -.5,
      labels = seq(0,60,by=10), line = 0,
      col = NA, col.ticks = 1, cex.axis = pt8)
-axis(1, seq(5,55,by=10),labels=FALSE)
+axis(1, seq(5,55,by=10),labels=FALSE,tck = -.02)
 axis(2, seq(0,3000,by=500),
      labels = seq(0,3000,by=500), las = 1, line = 0, hadj= 1.2,
      col = NA, col.ticks = 1, cex.axis = pt8)
-axis(2, seq(250,2750,500),labels=FALSE)
+axis(2, seq(250,2750,500),labels=FALSE,tck = -.02)
 
 mtext(expression(Var(lambda) ~ 'without seedbank'),
       side=2,line=1.75,adj=.5,col='black',cex=pt8)
@@ -355,11 +355,11 @@ points(var.lambda.mean,var.lambda.nosb.mean,
 axis(1, seq(0,10,by=2), padj = -.5,
      labels = seq(0,10,by=2), line = 0,
      col = NA, col.ticks = 1, cex.axis = pt8)
-axis(1, seq(1,9,by=2),labels=FALSE)
+axis(1, seq(1,9,by=2),labels=FALSE,tck = -.02)
 axis(2, seq(0,600,by=200),
      labels = seq(0,600,by=200), las = 1, line = 0, hadj= 1.2,
      col = NA, col.ticks = 1, cex.axis = pt8)
-axis(2, seq(100,500,100),labels=FALSE)
+axis(2, seq(100,500,100),labels=FALSE,tck = -.02)
 
 mtext(expression(Var(lambda) ~ 'without seedbank'),
       side=2,line=1.75,adj=.5,col='black',cex=pt8)
