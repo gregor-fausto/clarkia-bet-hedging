@@ -5,8 +5,8 @@
 ### Authors
 
   - Gregor-Fausto Siegmund, Cornell University, <gs589@cornell.edu>
-  - Vincent M. Eckhart, Grinnell College
   - David A. Moeller, University of Minnesota
+  - Vincent M. Eckhart, Grinnell College
   - Monica A. Geber, Cornell University
 
   This repository contains the scripts for the project on bet hedging in <i>Clarkia xantiana</i> ssp. <i>xantiana</i>.
