@@ -145,7 +145,8 @@ pt5 = 5/12
 dev.off()
 
 tiff(filename=paste0("products/figures/correlationGerminationVariabilityRS.tif"),
-     height=3.2,width=3.2,units="in",res=800,compression="lzw",pointsize=12)
+     height=3.2,width=3.2,units="in",res=800,compression="lzw",pointsize=12,
+     family = "ArialMT")
 
 par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2.2,2.6,.75,0)+.1,mgp=c(3,.45,0))
 plot(x = NA,

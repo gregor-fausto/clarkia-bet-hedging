@@ -23,7 +23,8 @@ adj.y2 = 10
 
 # two one panel plots
 tiff("products/figures/seed-bag-trials.tif",
-     units='px',height = 800*2*scale, width = 800*3*scale,res=800,compression='lzw')
+     units='px',height = 800*2*scale, width = 800*3*scale,res=800,compression='lzw',
+     family = "ArialMT")
 
 par(mfrow=c(1,1),mar=c(0,.25,0,0),
     oma=c(1.3,1.3,0,0), mgp=c(3,.1,0))
@@ -112,7 +113,8 @@ dev.off()
 # - Panel for lab germination and viability trials ----
 
 tiff("products/figures/lab-trials.tif",
-     units='px',height = 800*1.5*scale, width = 800*2*scale,res=800,compression='lzw')
+     units='px',height = 800*1.5*scale, width = 800*2*scale,res=800,compression='lzw',
+     family = "ArialMT")
 
 par(mfrow=c(1,1),mar=c(0,0,0,0),
     oma=c(0,0,0,0)+.1, mgp=c(3,.1,0))
@@ -276,7 +278,8 @@ l.x.viability[11]=NA
 # and viability inferred to the intervening times, with January marked in open circle
 
 tiff("products/figures/viability-data.tif",
-     units='px',height = 800*2*scale, width = 800*2*scale,res=800,compression='lzw')
+     units='px',height = 800*2*scale, width = 800*2*scale,res=800,compression='lzw',
+     family = "ArialMT")
 
 par(mfrow=c(1,1),mar=c(0,.25,0,0),
     oma=c(1.35,1.5,0,0), mgp=c(3,.1,0))
@@ -345,7 +348,8 @@ dev.off()
 #1b9e77 purple
 #e7298a green
 tiff("products/figures/survival.tif",
-     units='px',height = 800*2*scale, width = 800*3*scale,res=800,compression='lzw')
+     units='px',height = 800*2*scale, width = 800*3*scale,res=800,compression='lzw',
+     family = "ArialMT")
 
 par(mfrow=c(1,1),mar=c(0,.25,0,0),
     oma=c(1.3,1.4,0,0), mgp=c(3,.1,0))

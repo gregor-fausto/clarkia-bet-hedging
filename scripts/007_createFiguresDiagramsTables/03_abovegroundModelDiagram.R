@@ -155,7 +155,8 @@ pt6 = 6/12
 # - + Plot marginal posterior ----
 
 tiff("products/figures/marginal-posterior.tif",
-     units='px',height = 1600, width = 1600,res=800,compression='lzw')
+     units='px',height = 1600, width = 1600,res=800,compression='lzw',
+     family = "ArialMT")
 
 par(mfrow=c(1,1),mar=c(.5,.5,.75,0),oma=c(.75,.55,0,0)+.1,mgp=c(3,.1,0))
 
@@ -226,7 +227,8 @@ dev.off()
 # - + Plot full posterior distribution of parameter estimates ----
 
 tiff("products/figures/parameter.tif",
-     units='px',height = 1600, width = 1600,res=800,compression='lzw')
+     units='px',height = 1600, width = 1600,res=800,compression='lzw',
+     family = "ArialMT")
 
 par(mfrow=c(1,2),mar=c(.5,.25,.75,0),oma=c(.75,.8,0,.175)+.1,mgp=c(3,.1,0))
 

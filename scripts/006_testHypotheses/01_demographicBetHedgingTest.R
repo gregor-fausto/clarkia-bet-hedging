@@ -167,16 +167,17 @@ outputDirectory <- "outputs/006_hypothesisTesting/"
 saveRDS(demographicBetHedgingTestData,paste0(outputDirectory,"demographicBetHedgingTest.RDS"))
 
 # uncomment to replot the figure 
-# demographicBetHedgingTestData<-readRDS(paste0(outputDirectory,"demographicBetHedgingTest.RDS"))
-# siteNames=demographicBetHedgingTestData$site;
-# lambda.a=demographicBetHedgingTestData$lambda.a;lambda.a.nosb=demographicBetHedgingTestData$lambda.a.nosb;
-# var.lambda.mean=demographicBetHedgingTestData$var.lambda;var.lambda.nosb.mean=demographicBetHedgingTestData$var.lambda.nosb;
-# lambda.mean=demographicBetHedgingTestData$lambda;lambda.nosb.mean=demographicBetHedgingTestData$lambda.nosb
+demographicBetHedgingTestData<-readRDS(paste0(outputDirectory,"demographicBetHedgingTest.RDS"))
+siteNames=demographicBetHedgingTestData$site;
+lambda.a=demographicBetHedgingTestData$lambda.a;lambda.a.nosb=demographicBetHedgingTestData$lambda.a.nosb;
+var.lambda.mean=demographicBetHedgingTestData$var.lambda;var.lambda.nosb.mean=demographicBetHedgingTestData$var.lambda.nosb;
+lambda.mean=demographicBetHedgingTestData$lambda;lambda.nosb.mean=demographicBetHedgingTestData$lambda.nosb
 
 # - Plot Figure 3  ----
 
 tiff(filename=paste0("products/figures/betHedgingTest.tif"),
-     height=6.5,width=2.5,units="in",res=800,compression="lzw",pointsize=12)
+     height=6.5,width=2.5,units="in",res=800,compression="lzw",pointsize=12,
+     family = "ArialMT")
 
 par(mfrow=c(3,1),mar=c(3,3.75,0,0)+.1,oma=c(0,0,1,0)+.1,mgp=c(3,.45,0))
 
@@ -293,7 +294,8 @@ dev.off()
 # we include this figure in our response to reviewers
 
 tiff(filename=paste0("products/figures/rev-betHedgingTestB.tif"),
-     height=2.5,width=4.5,units="in",res=800,compression="lzw",pointsize=12)
+     height=2.5,width=4.5,units="in",res=800,compression="lzw",pointsize=12,
+     family = "ArialMT")
 
 par(mfrow=c(1,2),mar=c(0,3,0,0)+.1,oma=c(2.5,0,.8,0)+.1,mgp=c(3,.45,0))
 # - +original PANEL B plus gray highlight ----

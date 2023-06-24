@@ -260,7 +260,8 @@ pt6 = 6/12
 pt5 = 5/12
 
 tiff(filename=paste0("products/figures/optimalGerminationFractionPlusYearResampling-revised.tif"),
-     height=3.75,width=3.5,units="in",res=300,compression="lzw",pointsize=12)
+     height=3.75,width=3.5,units="in",res=300,compression="lzw",pointsize=12,
+     family = "ArialMT")
 
 par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2.2,2.6,0,0)+.1,mgp=c(3,.45,0))
 

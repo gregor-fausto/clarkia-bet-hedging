@@ -172,7 +172,8 @@ pt65 = 6.25/12
 pt6 = 6/12
 
 tiff(filename=paste0("products/figures/zero-fitness.tif"),
-     units='px',height = 5600/3, width = 5400/2,res=800,pointsize=12)
+     units='px',height = 5600/3, width = 5400/2,res=800,pointsize=12,
+     family = "ArialMT")
 
 par(mfrow=c(1,1),mar=c(.1,1,0,0),oma=c(0,.5,0,0)+.1,
     mgp=c(3,.1,0),xpd=TRUE)
