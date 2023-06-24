@@ -251,6 +251,7 @@ write.csv(optimalGerminationFractions,paste0(outputDirectory,"optimalGermination
 # - PLOT  ----
 
 pt12 = 1
+pt11 = 11/12
 pt10 = 10/12
 pt9 = 9/12
 pt8 = 8/12
@@ -261,15 +262,12 @@ pt5 = 5/12
 tiff(filename=paste0("products/figures/optimalGerminationFractionPlusYearResampling-revised.tif"),
      height=3.75,width=3.5,units="in",res=300,compression="lzw",pointsize=12)
 
-par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2.2,.7,1)+.1,mgp=c(3,.45,0))
+par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2.2,2.6,0,0)+.1,mgp=c(3,.45,0))
 
 plot(NA,NA,xlim=c(.4,1.04),ylim=c(0,.4),
      xlab = "",
      ylab = "",bty='n',
      xaxt= "n", yaxt="n",)
-
-
-# segments(x0=optima.est[1,],x1=optima.est[3,],y0=g1.hat,pch=21,col='black',bg='white',cex=2.5,xlim=c(0,1),ylim=c(0,1))
 
 points(x=optima.g,y=g1.hat,
        pch=21,cex=2.5,
@@ -278,43 +276,32 @@ points(x=optima.g,y=g1.hat,lwd = 0.5,
        pch=21,col='black',cex=2.5,
        bg=rgb(red = 1, green = 1, blue = 1, alpha = 0.5))
 
-
-# Now, define a custom axis
+# Add site names to plot
 d.plot=data.frame(optima.g,
                   g1.hat,site=siteNames)
-
-
-# # Now, define a custom axis
-
+# adjust some coordinates to avoid overplotting
 d.plot[c(4,5,6),1]=c(1.04,.9575,1.04)
 d.plot[c(3,5,12,13),2]=c(.1665,.16,.14,0.12)
 d.plot[18,c(1:2)]=d.plot[18,c(1:2)]*c(.995,1.01)
 
+# plot site names
 text(d.plot[,1:2],siteNames,cex=4/12)
 
+# add axes and labels
 box()
 
-#abline(a=0,b=1,lty='dotted')
-
-axis(1, seq(0,1,by=.1), padj = -.5,
+axis(1, seq(0,1,by=.1), padj = 0,
      labels = seq(0,1,by=.1), line = 0,
-     col = NA, col.ticks = 1, cex.axis = pt8)
-axis(1, seq(.25,1,by=.1),labels=FALSE)
+     col = NA, col.ticks = 1, cex.axis = pt11)
+axis(1, seq(.25,1,by=.1),labels=FALSE,tck=-0.02)
 axis(2, seq(0,1,by=.1),
      labels = seq(0,1,by=.1), las = 1, line = 0, hadj= 1.2,
-     col = NA, col.ticks = 1, cex.axis = pt8)
-axis(2, seq(.05,1,by=.1),labels=FALSE)
+     col = NA, col.ticks = 1, cex.axis = pt11)
+axis(2, seq(.05,1,by=.1),labels=FALSE,tck=-0.02)
 
 mtext("Observed germination fraction",
-      side=2,line=1.5,adj=.5,col='black',cex=pt10)
+      side=2,line=1.75,adj=.5,col='black',cex=pt12)
 mtext("Predicted germination fraction",
-      side=1,line=1,adj=.5,col='black',cex=pt10)
-
-# uncomment if more than one panel
-# mtext("A.", adj = 0, cex=pt10)
+      side=1,line=1.25,adj=.5,col='black',cex=pt12)
 
 dev.off()
-
-
-
-
