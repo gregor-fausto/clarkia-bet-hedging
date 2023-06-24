@@ -23,7 +23,7 @@ library(bayesplot)
 # ---
 # - Site names by position ----
 # ---
-siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
+siteAbiotic <- read.csv("~/Dropbox/clarkia-demography-projects/data/siteAbioticData.csv",header=TRUE)
 
 position<-siteAbiotic %>%
   dplyr::select(site,easting) %>%
@@ -143,6 +143,7 @@ signif(correlationPosteriorSummary,3)
 
 # - +set font sizes ----
 pt12 = 1
+pt11 = 11/12
 pt10 = 10/12
 pt9 = 9/12
 pt8 = 8/12
@@ -152,10 +153,10 @@ pt5 = 5/12
 
 dev.off()
 
-tiff(filename=paste0("products/figures/correlationGerminationSeedSurvival.tif"),
+tiff(filename=paste0("products/figures/correlationGerminationSeedSurvival-new.tif"),
      height=3.2,width=3.2,units="in",res=800,compression="lzw",pointsize=12)
 
-par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2,2.2,.7,0)+.1,mgp=c(3,.45,0))
+par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2.2,2.6,.75,0)+.1,mgp=c(3,.45,0))
 # plot mode of g1 vs. mode of s2*s3 with CIs
 plot(x = NA,
      y = NA,
@@ -196,28 +197,28 @@ points(survivalPosteriorSummary$mode.surv,g1PosteriorSummary$mode.g1,
 # text(d.plot[,1:2],siteNames,cex=4/12)
 
 
-axis(1, seq(0,1,by=.1), padj = -.5,
+axis(1, seq(0,1,by=.1), padj = 0,
      labels = seq(0,1,by=.1), line = 0,
-     col = NA, col.ticks = 1, cex.axis = pt8)
-axis(1, seq(.25,1,by=.1),labels=FALSE)
+     col = NA, col.ticks = 1, cex.axis = pt11)
+axis(1, seq(.25,1,by=.1),labels=FALSE,tck=-.02)
 axis(2, seq(0,1,by=.1),
      labels = seq(0,1,by=.1), las = 1, line = 0, hadj= 1.2,
-     col = NA, col.ticks = 1, cex.axis = pt8)
-axis(2, seq(.05,1,by=.1),labels=FALSE)
+     col = NA, col.ticks = 1, cex.axis = pt11)
+axis(2, seq(.05,1,by=.1),labels=FALSE,tck=-.02)
 
 mtext("Germination probability",
-      side=2,line=1.5,adj=.5,col='black',cex=pt10)
+      side=2,line=1.75,adj=.5,col='black',cex=pt12)
 mtext("Seed survival probability",
-      side=1,line=1,adj=.5,col='black',cex=pt10)
+      side=1,line=1.25,adj=.5,col='black',cex=pt12)
 
 box()
-legend("topleft",bty='n',inset=c(-.05,0),
+legend("topleft",bty='n',inset=c(-.075,-.025),
      paste0("Pearson's r=",round(correlationPosteriorSummary[3],3),
             " (",round(correlationPosteriorSummary[1],3),", ",
             round(correlationPosteriorSummary[2],3),")"),
-     cex=pt7)
+     cex=pt9)
 
-mtext("A.", adj = 0, cex=pt10)
+mtext("A.", adj = 0, cex=pt12)
 
 
 dev.off()
