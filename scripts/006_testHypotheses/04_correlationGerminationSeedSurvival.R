@@ -23,7 +23,7 @@ library(bayesplot)
 # ---
 # - Site names by position ----
 # ---
-siteAbiotic <- read.csv("~/Dropbox/clarkia-demography-projects/data/siteAbioticData.csv",header=TRUE)
+siteAbiotic <- read.csv("data/siteAbioticData.csv",header=TRUE)
 
 position<-siteAbiotic %>%
   dplyr::select(site,easting) %>%
@@ -153,7 +153,7 @@ pt5 = 5/12
 
 dev.off()
 
-tiff(filename=paste0("products/figures/correlationGerminationSeedSurvival-new.tif"),
+tiff(filename=paste0("products/figures/correlationGerminationSeedSurvival.tif"),
      height=3.2,width=3.2,units="in",res=800,compression="lzw",pointsize=12)
 
 par(mfrow=c(1,1),mar=c(0,0,0,0),oma=c(2.2,2.6,.75,0)+.1,mgp=c(3,.45,0))
@@ -178,7 +178,6 @@ plot(x = NA,
 # d.plot[8,1:2] = c(.78,.125)
 # d.plot[14,1:2] = c(.73,.07)
 # d.plot[10,1:2] = c(.68,.06)
-
 
 segments(x0=survivalPosteriorSummary$lo.surv,x1=survivalPosteriorSummary$hi.surv,
          y0=g1PosteriorSummary$mode.g1, lwd=1)
