@@ -214,7 +214,7 @@ for(i in 1:20){
   segments(x0=HPDI.s2[1,k],x1=HPDI.s2[2,k],y0=0)
   
   
-  legend("bottomleft",siteNames[k],bty='n',cex=.9)
+  legend("bottomleft",siteNames[k],bty='n',cex=.9,inset=c(-.075,0))
   
   ifelse(i%in%c(1,6,11,16),axis(2L,las=1),NA)
   ifelse(i%in%c(16:20),axis(1L),NA)
