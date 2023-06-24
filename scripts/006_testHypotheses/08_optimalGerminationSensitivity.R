@@ -201,7 +201,7 @@ for(i in 1:20){
   x.hi = which.min(abs(s.seq - HPDI.s2[2,k]))
   
   polygon(c(s.seq[x.lo:x.hi],rev(s.seq[x.lo:x.hi])),
-          c(vec.list[[k]][x.lo:x.hi],rep(.5,length(x.lo:x.hi))),
+          c(vec.list[[k]][x.lo:x.hi],rep(0,length(x.lo:x.hi))),
           col='gray99',border=FALSE)
   
   segments(x0=s2.hat[k],y0=-1,y1=vec.list[[k]][index],lty='dotted')
