@@ -129,8 +129,11 @@ for(i in 1:20){
   points(x=s0.hat[k],y=0,pch=16,cex=1.2)
   segments(x0=HPDI.s0[1,k],x1=HPDI.s0[2,k],y0=0)
   
-  
-  legend("bottomright",siteNames[k],bty='n',cex=.9)
+  if(i%in%c(1, 3)){
+    legend("bottomright",siteNames[k],bty='n',cex=.9,inset=c(.25,0))
+  } else {
+    legend("bottomright",siteNames[k],bty='n',cex=.9)
+  }
   
   ifelse(i%in%c(1,6,11,16),axis(2L,las=1),NA)
   ifelse(i%in%c(16:20),axis(1L),NA)
