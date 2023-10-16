@@ -219,7 +219,7 @@ text(.53,.9,
 abline(h=1.5,lty='dotted')
 
 box()
-mtext("Marginalized probabilitities",adj=0,cex=pt9)
+mtext("Marginalized probabilities",adj=0,cex=pt9)
 
 dev.off()
 
